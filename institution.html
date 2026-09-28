@@ -58,12 +58,12 @@
   --ink-050: #F6F8FB;
 
   /* 语义 */
-  --bg: #F4F7FB;
+  --bg: #F5F6F8;
   --bg-alt: #FFFFFF;
   --surface: #FFFFFF;
-  --surface-2: #FAFCFE;
-  --line: #E1E8F1;
-  --line-strong: #CBD6E4;
+  --surface-2: #FAFBFD;
+  --line: #E3E7EE;
+  --line-strong: #CFD6E2;
 
   --ok: #0E7A67;
   --warn: #B45309;
@@ -80,10 +80,11 @@
   --font-sans: "Inter", "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
     "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, "Segoe UI",
     "Noto Sans Arabic", "Noto Sans", sans-serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
-  --fs-display: clamp(2.1rem, 4.4vw, 3.5rem);
-  --fs-h1: clamp(1.7rem, 3vw, 2.35rem);
+  --fs-display: clamp(2.4rem, 5.2vw, 4.1rem);
+  --fs-h1: clamp(1.75rem, 3.1vw, 2.5rem);
   --fs-h2: clamp(1.3rem, 2.1vw, 1.7rem);
   --fs-h3: 1.16rem;
   --fs-body: 1rem;
@@ -102,10 +103,10 @@
   --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
 
   /* 阴影（统一高度层级） */
-  --sh-1: 0 1px 2px rgba(10, 22, 40, .05), 0 1px 3px rgba(10, 22, 40, .04);
-  --sh-2: 0 2px 6px rgba(10, 22, 40, .06), 0 6px 16px rgba(10, 22, 40, .05);
-  --sh-3: 0 8px 24px rgba(10, 22, 40, .09), 0 2px 8px rgba(10, 22, 40, .05);
-  --sh-4: 0 18px 48px rgba(10, 22, 40, .14), 0 4px 12px rgba(10, 22, 40, .06);
+  --sh-1: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .03);
+  --sh-2: 0 2px 6px rgba(16, 24, 40, .05), 0 8px 20px rgba(16, 24, 40, .05);
+  --sh-3: 0 8px 24px rgba(16, 24, 40, .08), 0 2px 8px rgba(16, 24, 40, .04);
+  --sh-4: 0 18px 48px rgba(16, 24, 40, .12), 0 4px 12px rgba(16, 24, 40, .05);
   --ring: 0 0 0 3px rgba(31, 102, 176, .32);
 
   --dur-fast: 150ms;
@@ -156,6 +157,7 @@ body {
   line-height: var(--lh-body);
   color: var(--ink-800);
   background: var(--bg);
+  background-image: linear-gradient(180deg, #FFFFFF 0%, var(--bg) 42%);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -208,8 +210,8 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 
 /* ---------- 4. Typography helpers ---------- */
 .eyebrow {
-  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--brand-600); margin-bottom: var(--sp-3);
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--brand-600); margin-bottom: var(--sp-4);
 }
 .lead { font-size: 1.075rem; line-height: 1.7; color: var(--ink-600); }
 .muted { color: var(--ink-500); }
@@ -221,14 +223,15 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 /* ---------- 5. Header / Nav ---------- */
 .appbar {
   position: sticky; top: 0; z-index: 60;
-  background: rgba(255, 255, 255, .88);
-  backdrop-filter: saturate(180%) blur(14px);
+  background: rgba(255, 255, 255, .82);
+  backdrop-filter: saturate(160%) blur(16px);
   border-bottom: 1px solid var(--line);
 }
 [data-theme="dark"] .appbar { background: rgba(11, 23, 48, .86); }
 .appbar-inner { display: flex; align-items: center; gap: var(--sp-5); min-height: 66px; }
 .brand { display: flex; align-items: center; gap: var(--sp-3); font-weight: 800; color: var(--ink-900); }
 .brand:hover { text-decoration: none; }
+.brand-mark { box-shadow: 0 2px 10px rgba(23, 78, 140, .22), 0 1px 2px rgba(16, 24, 40, .08); }
 .brand-mark {
   width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto;
   background: linear-gradient(140deg, var(--brand-600), var(--jade-600));
@@ -276,6 +279,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
   padding: var(--sp-6); box-shadow: var(--sh-1);
   transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
+.card-hover:hover { box-shadow: var(--sh-3); transform: translateY(-3px); border-color: var(--brand-200); }
 .card-hover:hover { box-shadow: var(--sh-3); transform: translateY(-3px); border-color: var(--brand-200); }
 .card-flush { padding: 0; overflow: hidden; }
 .card-head { display: flex; align-items: flex-start; gap: var(--sp-3); justify-content: space-between; margin-bottom: var(--sp-4); }
@@ -547,6 +551,104 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
   background: var(--brand-100); color: var(--brand-700); font-size: .78rem; font-weight: 800; flex: 0 0 auto;
 }
 
+
+/* =========================================================================
+   v2.1 质感升级：门户影像 hero · 精制入口 · 全局搜索条（学生端）
+   ========================================================================= */
+
+/* ---- 门户 hero（对标高端品牌官网：真实影像 + 深scrim + 大字号标题） ---- */
+.gate-hero-media { position: absolute; inset: 0; }
+.gate-hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 34%; }
+.gate-hero-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10, 22, 40, .06) 0%, rgba(10, 22, 40, .22) 42%, rgba(9, 16, 30, .82) 100%);
+}
+.gate-hero-inner { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; min-height: min(68vh, 640px); padding: var(--sp-16) 0 var(--sp-12); }
+.gate-hero-inner .eyebrow { color: rgba(255, 255, 255, .72); margin-bottom: var(--sp-4); }
+.gate-hero-inner h1 { color: #fff; font-family: var(--font-serif); font-weight: 600; letter-spacing: .01em; line-height: 1.18; }
+.gate-hero-inner h1 em { font-style: normal; background: linear-gradient(100deg, #FFFFFF 20%, #EAF2E4 78%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.gate-hero-inner p { color: rgba(255, 255, 255, .9); font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.78; max-width: 58ch; }
+.gate-hero-rule { width: 72px; height: 2px; background: linear-gradient(90deg, #FFFFFF, rgba(255, 255, 255, 0)); margin: 0 0 var(--sp-5); }
+
+/* ---- 精制入口卡：去掉顶部色条，改左侧细线 + 更多留白 ---- */
+.door { border-radius: var(--r-lg); border-color: var(--line); padding: var(--sp-8) var(--sp-7); }
+.door::before { width: 3px; height: 34px; left: 0; top: var(--sp-8); right: auto; inset: auto; position: absolute; border-radius: 0 3px 3px 0; }
+.door-ico { width: 50px; height: 50px; flex-basis: 50px; border-radius: 15px; box-shadow: var(--sh-1); }
+.door .role { letter-spacing: .16em; font-size: .72rem; }
+.door h2 { font-family: var(--font-serif); font-size: 1.34rem; }
+.door-list li { font-size: .92rem; }
+
+/* ---- 学生端：顶部全局搜索条 ---- */
+.searchbar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-full);
+  padding: 9px 10px 9px 18px; min-height: 52px;
+  box-shadow: var(--sh-1); cursor: text;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.searchbar:hover { border-color: var(--brand-400); box-shadow: var(--sh-2); }
+.searchbar .sb-ico { color: var(--brand-600); flex: 0 0 auto; display: grid; place-items: center; }
+.searchbar .sb-ico svg { width: 21px; height: 21px; }
+.searchbar .sb-ph { flex: 1; font-size: .96rem; color: var(--ink-500); }
+.searchbar .sb-go {
+  flex: 0 0 auto; min-height: 36px; padding: 7px 16px; border-radius: var(--r-full);
+  background: var(--brand-600); color: #fff; font-size: .86rem; font-weight: 650;
+  display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.searchbar .sb-go:hover { background: var(--brand-700); }
+@media (max-width: 620px) {
+  .searchbar { border-radius: var(--r-md); }
+  .searchbar .sb-go { min-height: 34px; padding: 6px 12px; font-size: .82rem; }
+}
+
+/* ---- 推荐内容卡片（学生端首页）---- */
+.rec-card {
+  display: flex; gap: var(--sp-4); align-items: stretch;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  padding: var(--sp-5); box-shadow: var(--sh-1);
+  transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.rec-card:hover { box-shadow: var(--sh-3); transform: translateY(-2px); border-color: var(--brand-200); }
+.rec-card .rec-ico { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 13px; display: grid; place-items: center; background: var(--brand-050); color: var(--brand-700); }
+.rec-card .rec-ico svg { width: 22px; height: 22px; }
+.rec-card .rec-body { flex: 1; min-width: 0; }
+.rec-card .rec-t { font-weight: 700; color: var(--ink-900); font-size: .97rem; line-height: 1.4; }
+.rec-card .rec-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 7px; font-size: .76rem; color: var(--ink-500); }
+.rec-card .rec-meta .m { display: inline-flex; align-items: center; gap: 4px; }
+.rec-card .rec-meta .m svg { width: 13px; height: 13px; }
+.rec-card .rec-meta .m.deadline { color: var(--cinnabar-600); font-weight: 650; }
+.rec-card .rec-meta .m.stage { color: var(--brand-600); font-weight: 650; }
+
+
+/* ---- 机构端精工：步骤条 / 预览纸面 / 表单聚焦 ---- */
+.stepbar { display: flex; align-items: center; gap: 10px; margin: var(--sp-6) 0 var(--sp-3); }
+.step-dot {
+  width: 26px; height: 26px; flex: 0 0 26px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--brand-600); color: #fff;
+  font-size: .8rem; font-weight: 700; box-shadow: 0 2px 6px rgba(23, 78, 140, .28);
+}
+.step-tx { font-size: .84rem; font-weight: 800; letter-spacing: .05em; color: var(--ink-700); }
+.paper {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  box-shadow: var(--sh-2); overflow: hidden; margin-top: var(--sp-3);
+}
+.paper-head {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  border-bottom: 1px solid var(--line); background: var(--surface-2);
+  font-size: .74rem; color: var(--ink-500); letter-spacing: .02em;
+}
+.paper-dots { display: flex; gap: 5px; }
+.paper-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-200); }
+.paper-name { margin-left: auto; font-weight: 650; color: var(--ink-600); }
+.paper-body { padding: var(--sp-5); }
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px rgba(31, 102, 176, .12);
+  outline: none;
+}
+.select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
+
 </style>
 </head>
 <body>
@@ -590,14 +692,14 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
       </div>
       <div class="grid g2" style="grid-template-columns:.85fr 1.15fr;align-items:start">
         <div class="card card-pad-lg reveal">
-          <div class="ct" style="font-size:.82rem;font-weight:800;letter-spacing:.08em;color:var(--brand-700);margin-bottom:var(--sp-3)" data-i18n="orgStep1"></div>
+          <div class="stepbar"><span class="step-dot">1</span><span class="step-tx" data-i18n="orgStep1"></span></div>
           <div class="field">
             <label class="label" for="gTpl" data-i18n="genTemplate"></label>
             <select class="select" id="gTpl"></select>
             <div class="hint" id="gTplDesc"></div>
           </div>
 
-          <div class="ct" style="font-size:.82rem;font-weight:800;letter-spacing:.08em;color:var(--brand-700);margin:var(--sp-5) 0 var(--sp-3)" data-i18n="orgStep2"></div>
+          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">2</span><span class="step-tx" data-i18n="orgStep2"></span></div>
           <div class="grid g2" style="gap:var(--sp-4)">
             <div class="field">
               <label class="label" for="gCountry" data-i18n="genCountry"></label>
@@ -609,7 +711,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
             </div>
           </div>
 
-          <div class="ct" style="font-size:.82rem;font-weight:800;letter-spacing:.08em;color:var(--brand-700);margin:var(--sp-5) 0 var(--sp-3)" data-i18n="orgStep3"></div>
+          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">3</span><span class="step-tx" data-i18n="orgStep3"></span></div>
           <div class="field">
             <label class="label" for="gTopic" data-i18n="genTopic"></label>
             <input class="input" id="gTopic" value="秋季学期居留许可集中办理">
@@ -647,7 +749,10 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
             </div>
           </div>
           <p class="tiny muted" style="margin:var(--sp-2) 0 0" data-i18n="orgPvHint"></p>
-          <div id="pvBody" style="max-height:520px;overflow-y:auto;padding-right:6px"></div>
+          <div class="paper">
+            <div class="paper-head"><span class="paper-dots"><i></i><i></i><i></i></span><span class="paper-name" id="pvDocName">来华指南 · 预览</span></div>
+            <div class="paper-body"><div id="pvBody" style="max-height:460px;overflow-y:auto;padding-right:6px"></div></div>
+          </div>
           <div id="pvSrc" style="margin-top:var(--sp-4)"></div>
           <div class="wrapflex" style="margin-top:var(--sp-4)">
             <button class="btn" id="btnPublish"><span class="ico" id="ioPublish"></span><span data-i18n="genPublish"></span></button>
@@ -1954,7 +2059,9 @@ window.L10N = {
     ["orgPvHint", "学生视角预览：这就是学生在学生端会看到的内容。", "Student-view preview: this is exactly what students see in their portal.", "Предпросмотр глазами студента: именно так это увидят студенты.", "معاينة من منظور الطالب: هذا ما سيراه الطالب في بوابته.", "Aperçu côté étudiant : voici exactement ce que les étudiants verront.", "Vista previa desde el estudiante: esto es lo que verán en su portal."],
     ["genFast", "一键生成 · 秒级出稿", "Generate in seconds", "Генерация за секунды", "توليد خلال ثوانٍ", "Génération en quelques secondes", "Generación en segundos"],
     ["boardOptional", "内部复盘 · 可选", "Internal dashboard · optional", "Внутренняя панель · опционально", "لوحة داخلية · اختيارية", "Tableau interne · facultatif", "Panel interno · opcional"],
-    ["boardDemoNote", "以下图表为演示数据，展示机构端可获得的知识库与咨询复盘视角；试点后可替换为真实运营数据。", "Charts below are demo data showing the knowledge-base and enquiry review perspective; replace with real operating data after a pilot.", "Графики ниже — демонстрационные данные для наглядности панели; после пилота будут заменены реальными.", "الرسوم أدناه بيانات تجريبية لعرض المنظور التحليلي؛ تُستبدل ببيانات حقيقية بعد التجربة.", "Les graphiques ci-dessous sont des données de démonstration ; à remplacer par de vraies données après le pilote.", "Los gráficos son datos de demostración; se sustituyen por datos reales tras el piloto."]
+    ["boardDemoNote", "以下图表为演示数据，展示机构端可获得的知识库与咨询复盘视角；试点后可替换为真实运营数据。", "Charts below are demo data showing the knowledge-base and enquiry review perspective; replace with real operating data after a pilot.", "Графики ниже — демонстрационные данные для наглядности панели; после пилота будут заменены реальными.", "الرسوم أدناه بيانات تجريبية لعرض المنظور التحليلي؛ تُستبدل ببيانات حقيقية بعد التجربة.", "Les graphiques ci-dessous sont des données de démonstration ; à remplacer par de vraies données après le pilote.", "Los gráficos son datos de demostración; se sustituyen por datos reales tras el piloto."],
+    ["sbPh", "问任何来华问题：签证、住宿登记、就医、支付…", "Ask anything about coming to China: visas, accommodation registration, health care, payments…", "Спросите о приезде в Китай: визы, регистрация, медицина, платежи…", "اسأل عن القدوم إلى الصين: التأشيرات، تسجيل السكن، الرعاية الصحية، المدفوعات…", "Posez vos questions sur la Chine : visas, enregistrement, soins, paiements…", "Pregunta sobre venir a China: visados, registro, salud, pagos…"],
+    ["sbGo", "提问", "Ask", "Спросить", "اسأل", "Demander", "Preguntar"]
   ];
 
   /* 注入：缺失才写，避免覆盖既有词条 */
