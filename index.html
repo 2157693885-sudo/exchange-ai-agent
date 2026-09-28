@@ -671,6 +671,19 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .tpl-card .tpl-e{font-weight:400;font-size:.86em;color:var(--ink-500)}
 .tpl-card .tpl-p{font-size:var(--fs-xs);color:var(--ink-500);margin-top:2px}
 
+
+/* ---------- v2.5 简约高级微调 ---------- */
+.mod-head { margin-bottom: var(--sp-6); }
+.mod-head .eyebrow { margin-bottom: var(--sp-2); }
+.mod-head h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.65rem, 3.2vw, 2.5rem);
+  letter-spacing: -.015em;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+.mod-head p { color: var(--ink-500); font-size: .94rem; max-width: 56ch; line-height: 1.6; }
+
 </style>
 <style>
 /* ---- 入口页：只做身份分流，不承载任何项目介绍内容 ---- */
@@ -1260,7 +1273,7 @@ window.KB = (function () {
     { code: "zh", name: "中文", en: "Chinese", dir: "ltr", flag: "中" },
     { code: "en", name: "English", en: "English", dir: "ltr", flag: "EN" },
     { code: "ru", name: "Русский", en: "Russian", dir: "ltr", flag: "RU" },
-    { code: "ar", name: "العربية", en: "Arabic", dir: "rtl", flag: "AR" },
+    { code: "ar", name: "العربية", en: "Arabic", dir: "ltr", flag: "AR" },
     { code: "fr", name: "Français", en: "French", dir: "ltr", flag: "FR" },
     { code: "es", name: "Español", en: "Spanish", dir: "ltr", flag: "ES" }
   ];
@@ -1297,7 +1310,7 @@ window.I18N = {
     _label: "中文",
     appName: "来华交流全程助手",
     appSub: "EXCHANGE AI AGENT FOR CHINA",
-    tagline: "来华留学全程助手：学生端照着办，机构端一键出内容",
+    tagline: "来华交流全程助手：学生照着办，老师一键出内容",
     navHome: "首页", navStudent: "学生端", navOrg: "机构端", navFlow: "Agent 工作流", navData: "数据底座", navAbout: "关于",
     enterStudent: "进入学生端", enterOrg: "进入机构端", backHome: "返回首页",
     language: "语言", theme: "主题", themeLight: "浅色", themeDark: "深色", print: "打印 / 导出 PDF",
@@ -1349,7 +1362,7 @@ window.I18N = {
     planA: "假设 A：单次咨询平均耗时", planB: "假设 B：每月重复咨询量", planC: "咨询量下降比例",
     calcNow: "当前人工模式（月）", calcWith: "使用助手后（月）", calcSaved: "月度节省",
     disclaimer: "免责与合规说明", toolSource: "工具与技术来源",
-    footerNote: "帮你把信息理清楚、照着步骤办；内容不构成法律意见，办理要求以主管部门和学校的最新公布为准。",
+    footerNote: "这里做信息整理与流程指引，不构成法律意见；办理要求以主管部门和学校最新公布为准。",
     aiLabelNote: "AI 生成的内容会标注出来，发布前可人工复核；数据默认存在你的设备上，不收集护照号。",
     noData: "暂无数据", loading: "加载中…", confirm: "确认", cancel: "取消", close: "关闭",
     viewDetail: "查看详情", collapse: "收起", expand: "展开", all: "全部",
@@ -1375,7 +1388,7 @@ window.I18N = {
     _label: "English",
     appName: "Exchange AI Agent for China",
     appSub: "来华交流全程助手",
-    tagline: "Full-cycle assistant for studying in China — students get things done, institutions produce content",
+    tagline: "Full-cycle exchange assistant — students get things done, staff produce content in one click",
     navHome: "Home", navStudent: "Student", navOrg: "Institution", navFlow: "Agent workflow", navData: "Evidence base", navAbout: "About",
     enterStudent: "Open student portal", enterOrg: "Open institution console", backHome: "Back to home",
     language: "Language", theme: "Theme", themeLight: "Light", themeDark: "Dark", print: "Print / Export PDF",
@@ -1427,7 +1440,7 @@ window.I18N = {
     planA: "Assumption A: minutes per enquiry", planB: "Assumption B: repeat enquiries per month", planC: "Reduction ratio",
     calcNow: "Manual today (monthly)", calcWith: "With the agent (monthly)", calcSaved: "Monthly saving",
     disclaimer: "Disclaimer & compliance", toolSource: "Tools and technology sources",
-    footerNote: "We organise the information and walk you through each step. Nothing here is legal advice — always follow the latest requirements from the authorities and your university.",
+    footerNote: "This is information organisation and process guidance, not legal advice. Always follow the latest requirements from the authorities and your university.",
     aiLabelNote: "AI-generated content is clearly labelled and can be reviewed before publishing. Data stays on your device by default; passport numbers are never collected.",
     noData: "No data", loading: "Loading…", confirm: "Confirm", cancel: "Cancel", close: "Close",
     viewDetail: "Details", collapse: "Collapse", expand: "Expand", all: "All",
@@ -1453,7 +1466,7 @@ window.I18N = {
     _label: "Русский",
     appName: "Помощник по обмену с Китаем",
     appSub: "Exchange AI Agent for China",
-    tagline: "Помощник на весь период учёбы в Китае: студенты решают дела, вузы создают контент",
+    tagline: "Помощник на весь период пребывания: студенты решают дела, сотрудники создают контент",
     navHome: "Главная", navStudent: "Студенту", navOrg: "Вузу", navFlow: "Работа агента", navData: "База фактов", navAbout: "О проекте",
     enterStudent: "Кабинет студента", enterOrg: "Кабинет вуза", backHome: "На главную",
     language: "Язык", theme: "Тема", themeLight: "Светлая", themeDark: "Тёмная", print: "Печать / PDF",
@@ -1505,7 +1518,7 @@ window.I18N = {
     planA: "Допущение A: минут на обращение", planB: "Допущение B: обращений в месяц", planC: "Доля снижения",
     calcNow: "Вручную (месяц)", calcWith: "С агентом (месяц)", calcSaved: "Экономия в месяц",
     disclaimer: "Отказ от ответственности", toolSource: "Инструменты и источники",
-    footerNote: "Помогаем разобраться в информации и пройти шаг за шагом. Это не юридическая консультация — следуйте актуальным требованиям ведомств и вуза.",
+    footerNote: "Это информационная систематизация и сопровождение, а не юридическая консультация. Следуйте актуальным требованиям ведомств и вуза.",
     aiLabelNote: "Контент ИИ помечен и его можно проверить до публикации. Данные хранятся локально; номера паспортов не собираются.",
     noData: "Нет данных", loading: "Загрузка…", confirm: "ОК", cancel: "Отмена", close: "Закрыть",
     viewDetail: "Подробнее", collapse: "Свернуть", expand: "Развернуть", all: "Все",
@@ -1531,7 +1544,7 @@ window.I18N = {
     _label: "العربية",
     appName: "المساعد الذكي للتبادل مع الصين",
     appSub: "Exchange AI Agent for China",
-    tagline: "مساعد طوال فترة الدراسة في الصين: الطلاب ينجزون، المؤسسات تُنتج المحتوى",
+    tagline: "مساعد طوال فترة التبادل في الصين: الطلاب ينجزون، والموظفون ينتجون المحتوى",
     navHome: "الرئيسية", navStudent: "بوابة الطالب", navOrg: "بوابة المؤسسة", navFlow: "سير عمل الوكيل", navData: "قاعدة الأدلة", navAbout: "حول",
     enterStudent: "بوابة الطالب", enterOrg: "بوابة المؤسسة", backHome: "الرئيسية",
     language: "اللغة", theme: "المظهر", themeLight: "فاتح", themeDark: "داكن", print: "طباعة / PDF",
@@ -1583,7 +1596,7 @@ window.I18N = {
     planA: "الافتراض أ: دقائق للاستفسار", planB: "الافتراض ب: استفسارات شهريًا", planC: "نسبة الانخفاض",
     calcNow: "يدويًا (شهريًا)", calcWith: "مع الوكيل (شهريًا)", calcSaved: "التوفير الشهري",
     disclaimer: "إخلاء المسؤولية", toolSource: "الأدوات والمصادر",
-    footerNote: "نساعدك على تنظيم المعلومات والمضي خطوة بخطوة. هذا المحتوى ليس استشارة قانونية — اتبع دائماً أحدث متطلبات الجهات المختصة وجامعتك.",
+    footerNote: "هذه خدمة تنظيم معلومات وإرشاد، وليست استشارة قانونية — اتبع دائماً أحدث متطلبات الجهات المختصة وجامعتك.",
     aiLabelNote: "المحتوى المُنتَج بالذكاء الاصطناعي مُوسَّم ويمكن مراجعته قبل النشر. التخزين محلي افتراضيًا؛ لا تُجمع أرقام جوازات السفر.",
     noData: "لا توجد بيانات", loading: "جارٍ التحميل…", confirm: "تأكيد", cancel: "إلغاء", close: "إغلاق",
     viewDetail: "التفاصيل", collapse: "طي", expand: "توسيع", all: "الكل",
@@ -1609,7 +1622,7 @@ window.I18N = {
     _label: "Français",
     appName: "Assistant d'échange avec la Chine",
     appSub: "Exchange AI Agent for China",
-    tagline: "Assistant sur tout le séjour d'études en Chine — les étudiants avancent, l'institution produit",
+    tagline: "Assistant sur tout le séjour d'échange en Chine — les étudiants avancent, le personnel produit",
     navHome: "Accueil", navStudent: "Étudiant", navOrg: "Institution", navFlow: "Flux de l'agent", navData: "Base de preuves", navAbout: "À propos",
     enterStudent: "Portail étudiant", enterOrg: "Console institution", backHome: "Accueil",
     language: "Langue", theme: "Thème", themeLight: "Clair", themeDark: "Sombre", print: "Imprimer / PDF",
@@ -1661,7 +1674,7 @@ window.I18N = {
     planA: "Hypothèse A : minutes par demande", planB: "Hypothèse B : demandes par mois", planC: "Taux de réduction",
     calcNow: "Manuel (mois)", calcWith: "Avec l'agent (mois)", calcSaved: "Économie mensuelle",
     disclaimer: "Avertissement et conformité", toolSource: "Outils et sources",
-    footerNote: "Nous organisons l'information et vous guidons pas à pas. Ce contenu n'est pas un avis juridique — suivez toujours les exigences en vigueur des autorités et de votre établissement.",
+    footerNote: "Ceci est une organisation d'informations et un accompagnement, pas un avis juridique. Suivez toujours les exigences en vigueur des autorités et de votre établissement.",
     aiLabelNote: "Les contenus générés par IA sont clairement étiquetés et peuvent être relus avant publication. Les données restent sur votre appareil ; aucun numéro de passeport n'est collecté.",
     noData: "Aucune donnée", loading: "Chargement…", confirm: "Confirmer", cancel: "Annuler", close: "Fermer",
     viewDetail: "Détails", collapse: "Réduire", expand: "Développer", all: "Tous",
@@ -1687,7 +1700,7 @@ window.I18N = {
     _label: "Español",
     appName: "Asistente de intercambio con China",
     appSub: "Exchange AI Agent for China",
-    tagline: "Asistente para todo el ciclo de estudios en China: los estudiantes avanzan, la institución produce",
+    tagline: "Asistente para todo el ciclo de intercambio en China: los estudiantes avanzan, el personal produce",
     navHome: "Inicio", navStudent: "Estudiante", navOrg: "Institución", navFlow: "Flujo del agente", navData: "Base de evidencia", navAbout: "Acerca de",
     enterStudent: "Portal del estudiante", enterOrg: "Consola institucional", backHome: "Inicio",
     language: "Idioma", theme: "Tema", themeLight: "Claro", themeDark: "Oscuro", print: "Imprimir / PDF",
@@ -1739,7 +1752,7 @@ window.I18N = {
     planA: "Supuesto A: minutos por consulta", planB: "Supuesto B: consultas al mes", planC: "Tasa de reducción",
     calcNow: "Manual (mes)", calcWith: "Con el agente (mes)", calcSaved: "Ahorro mensual",
     disclaimer: "Aviso y cumplimiento", toolSource: "Herramientas y fuentes",
-    footerNote: "Te ayudamos a ordenar la información y avanzar paso a paso. Este contenido no es asesoramiento jurídico: sigue siempre los requisitos vigentes de las autoridades y tu universidad.",
+    footerNote: "Esto es organización de información y orientación, no asesoramiento jurídico. Sigue siempre los requisitos vigentes de las autoridades y tu universidad.",
     aiLabelNote: "El contenido generado por IA está claramente etiquetado y puede revisarse antes de publicarse. Los datos permanecen en tu dispositivo; no se recogen números de pasaporte.",
     noData: "Sin datos", loading: "Cargando…", confirm: "Confirmar", cancel: "Cancelar", close: "Cerrar",
     viewDetail: "Detalles", collapse: "Contraer", expand: "Expandir", all: "Todos",
@@ -1843,12 +1856,12 @@ window.L10N = {
 
     ["mHomeT", "你现在该做什么", "What to do now", "Что делать сейчас", "ما الذي عليك فعله الآن", "Que faire maintenant", "Qué hacer ahora"],
     ["mHomeD", "阶段时间轴、今日待办、关键倒计时与紧急联系", "Stage timeline, today's tasks, key countdowns and emergency contacts", "Шкала этапов, задачи на сегодня, обратный отсчёт и экстренные контакты", "الجدول الزمني للمراحل ومهام اليوم والعدّ التنازلي وجهات الاتصال الطارئة", "Chronologie des étapes, tâches du jour, comptes à rebours et contacts d'urgence", "Cronología de etapas, tareas de hoy, cuentas atrás y contactos de emergencia"],
-    ["mGuideT", "按办事顺序走，不漏不错", "Follow the order, miss nothing", "Идите по порядку, ничего не пропустите", "اتبع الترتيب، دون إغفال أي خطوة", "Suivez l'ordre, sans rien oublier", "Sigue el orden, sin olvidar nada"],
-    ["mGuideD", "签证、居留许可、住宿登记、报到、保险等全部事项", "Visas, residence permits, accommodation registration, enrolment, insurance and more", "Визы, ВНЖ, регистрация, зачисление, страховка и другое", "التأشيرات وتصاريح الإقامة وتسجيل السكن والتسجيل والتأمين وغيرها", "Visas, titres de séjour, enregistrement, inscription, assurance, etc.", "Visados, permisos, registro de alojamiento, matrícula, seguro y más"],
-    ["mCampusT", "把学校系统用起来", "Get the campus systems working for you", "Используйте системы кампуса", "استفد من أنظمة الجامعة", "Utilisez les systèmes du campus", "Aprovecha los sistemas del campus"],
-    ["mCampusD", "报到、课表、图书馆、校园卡、校历、学术规范与中文学习", "Enrolment, timetable, library, campus card, calendar, academic rules and Chinese learning", "Зачисление, расписание, библиотека, карта, календарь, правила и китайский язык", "التسجيل والجدول الدراسي والمكتبة وبطاقة الحرم والتقويم واللوائح وتعلّم الصينية", "Inscription, emploi du temps, bibliothèque, carte, calendrier, règles et chinois", "Matrícula, horario, biblioteca, tarjeta, calendario, normas y chino"],
-    ["mDailyT", "吃、住、行、医、钱", "Food, housing, transport, health, money", "Еда, жильё, транспорт, здоровье, деньги", "الطعام والسكن والتنقل والصحة والمال", "Manger, se loger, se déplacer, se soigner, payer", "Comer, vivir, moverse, sanar, pagar"],
-    ["mDailyD", "饮食、就医、支付、交通、租房、心理支持与安全防骗", "Diet, medical care, payments, transport, renting, mental health and safety", "Питание, медицина, платежи, транспорт, аренда, психология и безопасность", "الطعام والرعاية الصحية والمدفوعات والتنقل والإيجار والدعم النفسي والأمان", "Alimentation, soins, paiements, transport, logement, santé mentale et sécurité", "Alimentación, salud, pagos, transporte, alquiler, apoyo psicológico y seguridad"],
+    ["mGuideT", "从签证到离校，每一步按顺序办", "From visa to departure, one step at a time", "От визы до отъезда — шаг за шагом", "من التأشيرة إلى المغادرة، خطوة بخطوة", "Du visa au départ, étape par étape", "Del visado a la salida, paso a paso"],
+    ["mGuideD", "该办什么、去哪办、什么时候截止——按顺序排好，不会漏", "What to do, where, and by when — laid out in order, nothing slips", "Что делать, куда идти и до какого срока — по порядку, ничего не упустите", "ماذا تفعل وأين ومتى — مرتب خطوة بخطوة، لا شيء يفوتك", "Quoi faire, où, et avant quand — dans l'ordre, rien n'échappe", "Qué hacer, dónde y para cuándo — ordenado, nada se escapa"],
+    ["mCampusT", "开学头几周的事，一次理清", "Everything for the first weeks, sorted", "Всё для первых недель — по порядку", "كل ما يخص الأسابيع الأولى، مرتب", "Tout pour les premières semaines, au clair", "Todo para las primeras semanas, en orden"],
+    ["mCampusD", "报到、选课、图书馆、校园卡、校历——学校的事这里都列好", "Enrolment, courses, library, campus card, calendar — all campus matters in one list", "Зачисление, курсы, библиотека, карта, календарь — всё в одном списке", "التسجيل والمواد والمكتبة وبطاقة الحرم والتقويم — كل ما يخص الجامعة في قائمة واحدة", "Inscription, cours, bibliothèque, carte, calendrier — tout le campus dans une liste", "Matrícula, cursos, biblioteca, tarjeta, calendario: todo el campus en una lista"],
+    ["mDailyT", "吃住行医钱，落地就用得上", "Daily life, ready from day one", "Быт — с первого дня", "الحياة اليومية — من اليوم الأول", "La vie quotidienne, dès le premier jour", "La vida diaria, desde el primer día"],
+    ["mDailyD", "怎么吃饭、看病怎么挂号、钱怎么付、房怎么租、出事找谁", "How to eat, book a doctor, pay, rent, and who to call when things go wrong", "Как питаться, записаться к врачу, платить, снять жильё и куда звонить", "كيف تأكل وتحجز طبيباً وتدفع وتستأجر ومن تتصل عند الطوارئ", "Comment manger, prendre rendez-vous, payer, louer, et qui appeler en cas de pépin", "Cómo comer, pedir cita médica, pagar, alquilar y a quién llamar si algo va mal"],
     ["mMineT", "你的资料与设置", "Your profile and settings", "Ваш профиль и настройки", "ملفك وإعداداتك", "Votre profil et vos réglages", "Tu perfil y ajustes"],
     ["mMineD", "证件有效期、清单、收藏、语言、通知与隐私授权", "Document expiry, checklist, saved items, language, notifications and privacy", "Сроки документов, чек-лист, избранное, язык, уведомления и конфиденциальность", "صلاحية الوثائق وقائمة المهام والمحفوظات واللغة والإشعارات والخصوصية", "Validité des documents, liste, favoris, langue, notifications et confidentialité", "Validez de documentos, lista, guardados, idioma, avisos y privacidad"],
 
@@ -1948,7 +1961,7 @@ window.L10N = {
     ["updLabel", "知识库更新于", "Knowledge base updated", "База знаний обновлена", "آخر تحديث لقاعدة المعرفة", "Base de connaissances mise à jour", "Base de conocimiento actualizada"]
   ];
 
-  /* 注入：缺失才写，避免覆盖既有词条 */
+  /* 注入：v3 表为最新权威文案，总是覆盖既有词条（v3 后加载，优先级最高） */
   var ORDER = ["zh", "en", "ru", "ar", "fr", "es"];
   var added = 0;
   T.forEach(function (row) {
@@ -1956,7 +1969,7 @@ window.L10N = {
     for (var i = 0; i < ORDER.length; i++) {
       var lang = ORDER[i];
       if (!window.I18N[lang]) window.I18N[lang] = {};
-      if (window.I18N[lang][key] === undefined) { window.I18N[lang][key] = row[i + 1]; added++; }
+      window.I18N[lang][key] = row[i + 1]; added++;
     }
   });
 
