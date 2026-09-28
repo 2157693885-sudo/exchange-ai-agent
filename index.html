@@ -649,6 +649,21 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 }
 .select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
 
+
+/* ===== 机构端 · 模板卡片（模板画廊式选择） ===== */
+.tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3)}
+.tpl-card{display:flex;align-items:flex-start;gap:var(--sp-3);text-align:left;padding:var(--sp-3) var(--sp-4);
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);cursor:pointer;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.tpl-card:hover{border-color:var(--brand-300);box-shadow:var(--shadow-sm)}
+.tpl-card.on{border-color:var(--brand-600);box-shadow:0 0 0 1px var(--brand-600) inset,var(--shadow-sm)}
+.tpl-card .tpl-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;
+  border-radius:10px;background:var(--brand-50);color:var(--brand-700)}
+.tpl-card.on .tpl-ic{background:var(--brand-600);color:#fff}
+.tpl-card .tpl-n{font-size:var(--fs-s);font-weight:700;color:var(--ink-900);line-height:1.35}
+.tpl-card .tpl-e{font-weight:400;font-size:.86em;color:var(--ink-500)}
+.tpl-card .tpl-p{font-size:var(--fs-xs);color:var(--ink-500);margin-top:2px}
+
 </style>
 <style>
 /* ---- 入口页：只做身份分流，不承载任何项目介绍内容 ---- */

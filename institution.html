@@ -649,6 +649,21 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 }
 .select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
 
+
+/* ===== 机构端 · 模板卡片（模板画廊式选择） ===== */
+.tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3)}
+.tpl-card{display:flex;align-items:flex-start;gap:var(--sp-3);text-align:left;padding:var(--sp-3) var(--sp-4);
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);cursor:pointer;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.tpl-card:hover{border-color:var(--brand-300);box-shadow:var(--shadow-sm)}
+.tpl-card.on{border-color:var(--brand-600);box-shadow:0 0 0 1px var(--brand-600) inset,var(--shadow-sm)}
+.tpl-card .tpl-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;
+  border-radius:10px;background:var(--brand-50);color:var(--brand-700)}
+.tpl-card.on .tpl-ic{background:var(--brand-600);color:#fff}
+.tpl-card .tpl-n{font-size:var(--fs-s);font-weight:700;color:var(--ink-900);line-height:1.35}
+.tpl-card .tpl-e{font-weight:400;font-size:.86em;color:var(--ink-500)}
+.tpl-card .tpl-p{font-size:var(--fs-xs);color:var(--ink-500);margin-top:2px}
+
 </style>
 </head>
 <body>
@@ -694,8 +709,9 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
         <div class="card card-pad-lg reveal">
           <div class="stepbar"><span class="step-dot">1</span><span class="step-tx" data-i18n="orgStep1"></span></div>
           <div class="field">
-            <label class="label" for="gTpl" data-i18n="genTemplate"></label>
-            <select class="select" id="gTpl"></select>
+            <label class="label" data-i18n="genTemplate"></label>
+            <div class="tpl-grid" id="tplCards"></div>
+            <select class="select" id="gTpl" style="display:none" aria-hidden="true"></select>
             <div class="hint" id="gTplDesc"></div>
           </div>
 
@@ -2884,6 +2900,29 @@ window.UI = (function () {
 
   /* ================= 内容工作台 ================= */
   $("gTpl").innerHTML = KB.TEMPLATES.map(function (x, i) { return '<option value="' + x.id + '"' + (i === 0 ? " selected" : "") + ">" + x.name + " · " + x.name_en + "</option>"; }).join("");
+  /* 模板卡片（参考模板画廊的直观选择） */
+  var TPL_ICONS = { t_guide: "book", t_checklist: "list", t_notice: "bell", t_faq: "chat", t_brief: "clock", t_emergency: "alert" };
+  var TPL_PICK = { t_guide: "国别指南", t_checklist: "行前清单", t_notice: "公告", t_faq: "FAQ", t_brief: "迎新简报", t_emergency: "应急卡" };
+  function renderTplCards() {
+    var sel = $("gTpl").value;
+    $("tplCards").innerHTML = KB.TEMPLATES.map(function (x) {
+      var ic = U.icon(TPL_ICONS[x.id] || "doc");
+      var pick = TPL_PICK[x.id] || "";
+      return '<button type="button" class="tpl-card' + (x.id === sel ? " on" : "") + '" data-tpl="' + x.id + '">' +
+        '<span class="tpl-ic">' + ic + "</span>" +
+        "<div><div class=\"tpl-n\">" + U.esc(x.name) + " <span class=\"tpl-e\">" + U.esc(x.name_en) + "</span></div>" +
+        '<div class="tpl-p">' + pick + "</div></div></button>";
+    }).join("");
+    Array.prototype.forEach.call($("tplCards").querySelectorAll(".tpl-card"), function (b) {
+      b.addEventListener("click", function () {
+        $("gTpl").value = b.getAttribute("data-tpl");
+        Array.prototype.forEach.call($("tplCards").querySelectorAll(".tpl-card"), function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        tplDesc(); genContent();
+      });
+    });
+  }
+  renderTplCards();
   $("gCountry").innerHTML = Object.keys(KB.COUNTRY).map(function (k) {
     var c = KB.COUNTRY[k];
     return '<option value="' + k + '"' + (k === "PK" ? " selected" : "") + ">" + c.zh + (c.en !== c.zh ? " · " + c.en : "") + "</option>";
