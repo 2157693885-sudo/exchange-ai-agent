@@ -683,6 +683,9 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
   margin: 0 0 8px;
 }
 .mod-head p { color: var(--ink-500); font-size: .94rem; max-width: 56ch; line-height: 1.6; }
+.ai-note{display:flex;align-items:center;gap:7px}
+.ai-note-ico{flex:0 0 auto;display:grid;place-items:center;color:var(--ink-400)}
+.ai-note-ico svg{width:15px;height:15px}
 
 </style>
 </head>
@@ -2753,7 +2756,7 @@ window.UI = (function () {
       '<div><div class="brand" style="margin-bottom:12px"><span class="brand-mark">' + ICONS.logo + "</span>" +
       '<span class="brand-text"><span class="brand-name" data-i18n="appName">来华交流全程助手</span><span class="brand-sub">EXCHANGE AI AGENT FOR CHINA</span></span></div>' +
       '<p class="small muted" style="max-width:44ch" data-i18n="tagline"></p>' +
-      '<p class="tiny muted" style="margin-top:10px">' + ICONS.shield + ' <span data-i18n="aiLabelNote">' + window.L10N.t("aiLabelNote") + '</span></p></div>' +
+      '<p class="tiny muted ai-note" style="margin-top:10px"><span class="ai-note-ico">' + ICONS.shield + '</span><span data-i18n="aiLabelNote">' + window.L10N.t("aiLabelNote") + '</span></p></div>' +
       '<div><h4 data-i18n="sourceLabel">' + window.L10N.t("sourceLabel") + '</h4><ul>' +
       window.KB.META.channels.slice(0, 5).map(function (c) { return '<li><a href="' + c.url + '" target="_blank" rel="noopener">' + c.name + "</a></li>"; }).join("") +
       "</ul></div>" +
