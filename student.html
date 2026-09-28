@@ -2066,6 +2066,12 @@ window.L10N = {
     ["gateMetaLang", "中 / 英 / 俄 / 阿 / 法 / 西 六语种，阿拉伯语完整 RTL", "Six languages incl. full Arabic RTL", "Шесть языков, включая полный арабский RTL", "ست لغات، مع دعم كامل للعربية RTL", "Six langues, dont l'arabe RTL complet", "Seis idiomas, con árabe RTL completo"],
     ["gateMetaSrc", "每条政策附官方来源与更新时间", "Every policy entry carries an official source and update date", "Каждая запись содержит официальный источник и дату обновления", "كل سياسة مرفقة بمصدر رسمي وتاريخ تحديث", "Chaque politique est accompagnée d'une source officielle et d'une date de mise à jour", "Cada política incluye fuente oficial y fecha de actualización"],
     ["gateMetaLocal", "数据仅存本机浏览器，不上传", "Data stays in your browser; nothing is uploaded", "Данные хранятся только в вашем браузере", "تبقى البيانات في متصفحك فقط", "Les données restent dans votre navigateur", "Los datos permanecen en tu navegador"],
+    ["statK1", "语言界面", "Interface languages", "Языки интерфейса", "لغات الواجهة", "Langues d'interface", "Idiomas de interfaz"],
+    ["statD1", "中英俄阿法西，阿拉伯语完整 RTL", "CN · EN · RU · AR · FR · ES, with full Arabic RTL", "Кит., англ., рус., араб., фр., исп. — полный RTL для арабского", "الصينية، الإنجليزية، الروسية، العربية، الفرنسية، الإسبانية — مع دعم كامل للعربية", "Chinois, anglais, russe, arabe, français, espagnol — RTL arabe complet", "Chino, inglés, ruso, árabe, francés, español — con árabe RTL completo"],
+    ["statK2", "来华阶段", "Stages of stay", "Этапы пребывания", "مراحل الإقامة", "Étapes du séjour", "Etapas de la estancia"],
+    ["statD2", "来华前 · 抵达 · 在学 · 离境", "Before · Arrival · Study · Departure", "До приезда · Приезд · Учёба · Отъезд", "قبل القدوم · الوصول · الدراسة · المغادرة", "Avant · Arrivée · Études · Départ", "Antes · Llegada · Estudios · Salida"],
+    ["statK3", "服务端口", "Service portals", "Порталы", "بوابتا الخدمة", "Portails", "Portales"],
+    ["statD3", "学生端 + 机构端，共用同一知识库", "Student portal + staff studio, one shared knowledge base", "Портал студента + рабочее место сотрудника, единая база знаний", "بوابة الطالب + منصة الموظفين، قاعدة معرفة مشتركة", "Portail étudiant + espace équipe, même base de connaissances", "Portal estudiante + espacio del equipo, una misma base de datos"],
 
     /* ---- 学生端 5 板块 ---- */
     ["mHome", "首页", "Home", "Главная", "الرئيسية", "Accueil", "Inicio"],
@@ -3283,7 +3289,7 @@ window.UI = (function () {
     });
   }
 
-  function go(mod) {
+  function go(mod, noScroll) {
     S.mod = mod;
     document.querySelectorAll(".mod").forEach(function (s) {
       s.classList.toggle("active", s.getAttribute("data-mod") === mod);
@@ -3291,7 +3297,7 @@ window.UI = (function () {
     document.querySelectorAll("#tabbar .tab").forEach(function (b) {
       b.setAttribute("aria-selected", b.getAttribute("data-mod") === mod ? "true" : "false");
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!noScroll) window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   /* =====================================================================
@@ -3792,7 +3798,7 @@ window.UI = (function () {
     renderDaily();
     renderMine();
     if (typeof window.UI.bindChrome === "function") window.UI.bindChrome();
-    go(S.mod);
+    go(S.mod, true);
     window.UI.initReveal();
   }
 
