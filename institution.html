@@ -712,6 +712,20 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .opc-step p{font-size:.86rem;line-height:1.6;color:var(--ink-600);margin:0}
 @media(max-width:820px){.opc-inner{grid-template-columns:1fr;gap:var(--sp-6)}}
 
+
+/* ---------- v3.1 门户成熟产品化：CTA + 精修 ---------- */
+.gate-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.gate-cta .btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border-radius:var(--r-full);font-size:.95rem;font-weight:650;letter-spacing:.01em;text-decoration:none;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
+.gate-cta .btn-primary{background:var(--brand-600);color:#fff;box-shadow:0 10px 26px -12px rgba(13,72,64,.5)}
+.gate-cta .btn-primary:hover{background:var(--brand-700);transform:translateY(-2px)}
+.gate-cta .btn-ghost{background:transparent;color:var(--ink-800);border:1px solid var(--line-strong)}
+.gate-cta .btn-ghost:hover{border-color:var(--brand-400);color:var(--brand-700)}
+.gate-cta .btn .ico{width:18px;height:18px}
+.doors{margin-top:var(--sp-10)}
+.door-list li{gap:11px;padding:2px 0}
+.journey{margin-top:var(--sp-10);padding:var(--sp-6) var(--sp-7);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-lg)}
+.gate-kpis{margin-top:var(--sp-8)}
+
 </style>
 </head>
 <body>
@@ -2147,6 +2161,8 @@ window.L10N = {
     ["opcS3T", "快速验证迭代", "Fast validation & iteration", "Быстрая проверка и итерации", "تحقق سريع وتكرار", "Validation rapide et itérations", "Validación rápida e iteración"],
     ["opcS3D", "原型两周上线，中山大学国际学生事务参与试点，边用边改。", "Prototype live in two weeks, piloted with Sun Yat-sen University international student services.", "Прототип за две недели, пилот с отделом иностранных студентов СУН.", "نموذج أولي خلال أسبوعين وتجربة مع جامعة صن يات سين.", "Prototype en deux semaines, pilote avec l'office des étudiants internationaux de SYSU.", "Prototipo en dos semanas, piloto con la oficina de estudiantes internacionales de SYSU."],
     ["gatePilot", "中山大学试点", "Piloting at Sun Yat-sen University", "Пилот в университете Сунь Ятсена", "تجربة في جامعة صن يات سين", "Pilote à l'Université Sun Yat-sen", "Piloto en la Universidad Sun Yat-sen"],
+    ["gateCtaStu", "进入学生端 · 开始你的来华行程", "Student portal · Start your stay", "Кабинет студента · Начать путь", "بوابة الطالب · ابدأ رحلتك", "Portail étudiant · Commencer", "Portal del estudiante · Empezar"],
+    ["gateCtaOrg", "机构端 · 内容工作台", "Staff portal · Content studio", "Кабинет сотрудника · Студия контента", "بوابة الموظف · استوديو المحتوى", "Portail équipe · Studio de contenu", "Portal del equipo · Estudio de contenido"],
     ["boardOptional", "内部复盘 · 可选", "Internal dashboard · optional", "Внутренняя панель · опционально", "لوحة داخلية · اختيارية", "Tableau interne · facultatif", "Panel interno · opcional"],
     ["boardDemoNote", "以下图表为演示数据，展示机构端可获得的知识库与咨询复盘视角；试点后可替换为真实运营数据。", "Charts below are demo data showing the knowledge-base and enquiry review perspective; replace with real operating data after a pilot.", "Графики ниже — демонстрационные данные для наглядности панели; после пилота будут заменены реальными.", "الرسوم أدناه بيانات تجريبية لعرض المنظور التحليلي؛ تُستبدل ببيانات حقيقية بعد التجربة.", "Les graphiques ci-dessous sont des données de démonstration ; à remplacer par de vraies données après le pilote.", "Los gráficos son datos de demostración; se sustituyen por datos reales tras el piloto."],
     ["sbPh", "问任何来华问题：签证、住宿登记、就医、支付…", "Ask anything about coming to China: visas, accommodation registration, health care, payments…", "Спросите о приезде в Китай: визы, регистрация, медицина, платежи…", "اسأل عن القدوم إلى الصين: التأشيرات، تسجيل السكن، الرعاية الصحية، المدفوعات…", "Posez vos questions sur la Chine : visas, enregistrement, soins, paiements…", "Pregunta sobre venir a China: visados, registro, salud, pagos…"],
