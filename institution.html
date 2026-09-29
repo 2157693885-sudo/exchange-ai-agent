@@ -687,6 +687,31 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .ai-note-ico{flex:0 0 auto;display:grid;place-items:center;color:var(--ink-400)}
 .ai-note-ico svg{width:15px;height:15px}
 
+
+/* ---------- v3.0 门户：痛点区 + OPC 创业实践区 ---------- */
+.gate-pilot{display:inline-flex;align-items:center;gap:5px;margin-left:14px;padding:4px 12px;border:1px solid var(--brand-300);border-radius:var(--r-full);color:var(--brand-700);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-050) 70%,transparent)}
+.pain{margin-top:var(--sp-12)}
+.pain .sec-h{font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin:0 0 var(--sp-6);letter-spacing:-.01em}
+.pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+.pain-col{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--sp-6)}
+.pain-tag{font-size:.76rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-700);margin-bottom:var(--sp-4)}
+.pain-col:nth-child(2) .pain-tag{color:var(--cinnabar-600)}
+.pain-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-4)}
+.pain-list li{display:flex;gap:11px;align-items:flex-start;font-size:.9rem;line-height:1.6;color:var(--ink-700)}
+.pno{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:800;color:var(--surface);background:var(--brand-600);margin-top:2px}
+.pain-col:nth-child(2) .pno{background:var(--cinnabar-600)}
+@media(max-width:720px){.pain-grid{grid-template-columns:1fr}}
+.opc{margin-top:var(--sp-12);background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-7)}
+.opc-inner{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:var(--sp-8);align-items:start}
+.opc-intro .sec-h{font-family:var(--font-serif);font-size:clamp(1.45rem,2.5vw,2rem);margin:0 0 var(--sp-4);letter-spacing:-.01em}
+.opc-intro p{font-size:.95rem;color:var(--ink-600);line-height:1.7;margin:0}
+.opc-steps{display:flex;flex-direction:column;gap:var(--sp-5)}
+.opc-step{display:flex;gap:14px;align-items:flex-start}
+.opc-no{font-family:var(--font-serif);font-size:1.05rem;font-weight:700;color:var(--brand-500);flex:0 0 auto;margin-top:2px}
+.opc-step h4{font-size:.98rem;margin:0 0 4px;color:var(--ink-900)}
+.opc-step p{font-size:.86rem;line-height:1.6;color:var(--ink-600);margin:0}
+@media(max-width:820px){.opc-inner{grid-template-columns:1fr;gap:var(--sp-6)}}
+
 </style>
 </head>
 <body>
@@ -2103,6 +2128,25 @@ window.L10N = {
     ["orgStep4", "预览 · 翻译 · 发布", "Preview · translate · publish", "Просмотр · перевод · публикация", "معاينة · ترجمة · نشر", "Aperçu · traduction · publication", "Vista previa · traducir · publicar"],
     ["orgPvHint", "学生端的实际效果预览", "Live preview as students will see it", "Предпросмотр так, как увидят студенты", "معاينة كما سيراها الطلاب", "Aperçu tel que le verront les étudiants", "Vista previa tal como la verán los estudiantes"],
     ["genFast", "一键生成 · 秒级出稿", "Generate in seconds", "Генерация за секунды", "توليد خلال ثوانٍ", "Génération en quelques secondes", "Generación en segundos"],
+    ["painEyebrow", "为什么做这个", "Why we built this", "Зачем мы это сделали", "لماذا بنينا هذا", "Pourquoi ce projet", "Por qué lo hicimos"],
+    ["painTitle", "来华的每一步，都有人踩过坑", "Every step of coming to China, someone has tripped before", "Каждый шаг переезда — уже чей-то пройденный опыт", "كل خطوة في القدوم إلى الصين، سبق أن تعثر بها أحدهم", "Chaque étape du séjour, quelqu'un l'a déjà vécue", "Cada paso de venir a China, alguien ya tropezó antes"],
+    ["painStuTag", "留学生最怕", "What students fear", "Чего боятся студенты", "ما يخافه الطلاب", "Ce que craignent les étudiants", "Lo que temen los estudiantes"],
+    ["painStfTag", "老师最累", "What staff tire of", "Что утомляет сотрудников", "ما الذي يُرهق الموظفين", "Ce qui épuise le personnel", "Lo que cansa al personal"],
+    ["painS1", "不知道下一步办什么：签证、体检、居留、报到，先后顺序没人讲", "No one explains the order: visa, medical check, residence, enrolment", "Никто не объясняет порядок: виза, медосмотр, ВНЖ, зачисление", "لا أحد يشرح الترتيب: التأشيرة والفحص والإقامة والتسجيل", "Personne n'explique l'ordre : visa, visite médicale, séjour, inscription", "Nadie explica el orden: visado, examen, permiso, matrícula"],
+    ["painS2", "怕错过时间点：材料要提前办、注册有截止、居留要延期，错过就是麻烦", "Missing deadlines means real trouble: documents, registration, extension", "Просрочить срок — значит попасть в неприятности", "تفويت الموعد يعني مشاكل حقيقية", "Rater une échéance, c'est des ennuis", "Perder un plazo es meterse en líos"],
+    ["painS3", "语言文化落差：全中文的流程、陌生的生活规则，没人用你的语言讲清楚", "All-Chinese processes and unfamiliar rules, explained in no language you speak", "Процессы на китайском и чужие правила — без объяснения на вашем языке", "عمليات بالصينية وقواعد غير مألوفة دون شرح بلغتك", "Des démarches en chinois, des règles inconnues, sans explication dans votre langue", "Trámites en chino y reglas ajenas, sin explicación en tu idioma"],
+    ["painF1", "同一批问题反复答：每年对新一批学生，把同样的流程讲一遍又一遍", "The same questions every year: explaining the same steps to each new cohort", "Одни и те же вопросы каждый год — объяснять одно и то же", "نفس الأسئلة كل عام: شرح الخطوات نفسها لكل دفعة جديدة", "Les mêmes questions chaque année : réexpliquer les mêmes étapes", "Las mismas preguntas cada año: repetir los mismos pasos"],
+    ["painF2", "人工催办占时间：催签证、催登记、催报到，电话邮件来回跑", "Manual chasing eats the day: chasing visas, registrations, enrolment", "Ручные напоминания съедают время", "المتابعة اليدوية تستهلك الوقت", "Le suivi manuel mange la journée", "El seguimiento manual consume el día"],
+    ["opcEyebrow", "我们是怎么做的 · OPC 创业实践", "How we built it · OPC practice", "Как мы это сделали · OPC-практика", "كيف بنيناه · ممارسة OPC", "Comment nous l'avons fait · pratique OPC", "Cómo lo construimos · práctica OPC"],
+    ["opcTitle", "一个小团队，怎么做出一个双端产品？", "A small team — how did a two-sided product come to life?", "Маленькая команда — как появился двусторонний продукт?", "فريق صغير — كيف وُلد منتج بوجهين؟", "Une petite équipe — comment est né un produit double face ?", "Un equipo pequeño: ¿cómo nació un producto de dos caras?"],
+    ["opcLead", "这个作品本身就是一次实践：AI Agent 支撑小团队，把创意变成能用的产品。", "This product is itself the practice: an AI Agent helping a small team turn an idea into a working product.", "Этот продукт и есть практика: AI-агент помогает малой команде превратить идею в работающий продукт.", "هذا المنتج هو الممارسة نفسها: مساعد ذكاء اصطناعي يساعد فريقاً صغيراً على تحويل فكرة إلى منتج يعمل.", "Ce produit est lui-même la pratique : un agent IA aide une petite équipe à transformer une idée en produit fonctionnel.", "Este producto es la práctica en sí: un agente de IA ayuda a un equipo pequeño a convertir una idea en producto usable."],
+    ["opcS1T", "低成本启动", "Low-cost launch", "Низкозатратный старт", "انطلاق بتكلفة منخفضة", "Démarrage à faible coût", "Arranque de bajo coste"],
+    ["opcS1D", "不买服务器、不雇外包。一个静态站点 + 本地知识库，跑通全流程。", "No servers, no outsourcing. A static site plus a local knowledge base runs the whole flow.", "Без серверов и подрядчиков: статический сайт и локальная база знаний.", "لا خوادم ولا استعانة خارجية: موقع ثابت وقاعدة معرفة محلية.", "Pas de serveurs ni d'externalisation : un site statique et une base locale.", "Sin servidores ni subcontratas: un sitio estático y una base local."],
+    ["opcS2T", "AI 辅助执行", "AI-assisted execution", "Исполнение с помощью ИИ", "تنفيذ بمساعدة الذكاء الاصطناعي", "Exécution assistée par IA", "Ejecución asistida por IA"],
+    ["opcS2D", "内容生成、多语种翻译、校对复核——Agent 顶半个运营团队。", "Content generation, multilingual translation, review — the Agent does half an ops team's work.", "Генерация контента, перевод, проверка — агент за полкоманды.", "توليد المحتوى والترجمة والمراجعة — المساعد يعادل نصف فريق.", "Génération, traduction, relecture — l'agent fait le travail de demi-équipe.", "Generación, traducción, revisión: el agente hace media plantilla."],
+    ["opcS3T", "快速验证迭代", "Fast validation & iteration", "Быстрая проверка и итерации", "تحقق سريع وتكرار", "Validation rapide et itérations", "Validación rápida e iteración"],
+    ["opcS3D", "原型两周上线，中山大学国际学生事务参与试点，边用边改。", "Prototype live in two weeks, piloted with Sun Yat-sen University international student services.", "Прототип за две недели, пилот с отделом иностранных студентов СУН.", "نموذج أولي خلال أسبوعين وتجربة مع جامعة صن يات سين.", "Prototype en deux semaines, pilote avec l'office des étudiants internationaux de SYSU.", "Prototipo en dos semanas, piloto con la oficina de estudiantes internacionales de SYSU."],
+    ["gatePilot", "中山大学试点", "Piloting at Sun Yat-sen University", "Пилот в университете Сунь Ятсена", "تجربة في جامعة صن يات سين", "Pilote à l'Université Sun Yat-sen", "Piloto en la Universidad Sun Yat-sen"],
     ["boardOptional", "内部复盘 · 可选", "Internal dashboard · optional", "Внутренняя панель · опционально", "لوحة داخلية · اختيارية", "Tableau interne · facultatif", "Panel interno · opcional"],
     ["boardDemoNote", "以下图表为演示数据，展示机构端可获得的知识库与咨询复盘视角；试点后可替换为真实运营数据。", "Charts below are demo data showing the knowledge-base and enquiry review perspective; replace with real operating data after a pilot.", "Графики ниже — демонстрационные данные для наглядности панели; после пилота будут заменены реальными.", "الرسوم أدناه بيانات تجريبية لعرض المنظور التحليلي؛ تُستبدل ببيانات حقيقية بعد التجربة.", "Les graphiques ci-dessous sont des données de démonstration ; à remplacer par de vraies données après le pilote.", "Los gráficos son datos de demostración; se sustituyen por datos reales tras el piloto."],
     ["sbPh", "问任何来华问题：签证、住宿登记、就医、支付…", "Ask anything about coming to China: visas, accommodation registration, health care, payments…", "Спросите о приезде в Китай: визы, регистрация, медицина, платежи…", "اسأل عن القدوم إلى الصين: التأشيرات، تسجيل السكن، الرعاية الصحية، المدفوعات…", "Posez vos questions sur la Chine : visas, enregistrement, soins, paiements…", "Pregunta sobre venir a China: visados, registro, salud, pagos…"],
