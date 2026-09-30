@@ -896,7 +896,10 @@ h1,h2,h3{font-family:var(--font-serif)}
   <section class="section-sm" id="studio" style="background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-5)">
-        <h2 style="font-size:var(--fs-h2);margin:0" data-i18n="genContent"></h2>
+        <div>
+          <div class="eyebrow">01 · 内容工作台 / CONTENT STUDIO</div>
+          <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="genContent"></h2>
+        </div>
         <span class="chip chip-jade" data-i18n="genFast"></span>
       </div>
       <div class="grid g2" style="grid-template-columns:.85fr 1.15fr;align-items:start">
@@ -975,48 +978,16 @@ h1,h2,h3{font-family:var(--font-serif)}
     </div>
   </section>
 
-  <!-- ============ 效率测算 ============ -->
-  <section class="section-sm" id="measure">
-    <div class="wrap">
-      <h2 style="font-size:var(--fs-h2);margin-bottom:var(--sp-5)" data-i18n="measureTitle"></h2>
-      <div class="grid g2" style="grid-template-columns:.95fr 1.05fr;align-items:start">
-        <div class="card card-pad-lg reveal">
-          <div class="field">
-            <label class="label" for="mA"><span data-i18n="planA"></span>：<span class="strong num" id="mAVal"></span></label>
-            <input type="range" id="mA" min="4" max="40" step="1" style="width:100%">
-          </div>
-          <div class="field">
-            <label class="label" for="mB"><span data-i18n="planB"></span>：<span class="strong num" id="mBVal"></span></label>
-            <input type="range" id="mB" min="20" max="1200" step="10" style="width:100%">
-          </div>
-          <div class="field">
-            <label class="label" for="mC"><span data-i18n="planC"></span>：<span class="strong num" id="mCVal"></span></label>
-            <input type="range" id="mC" min="10" max="85" step="5" style="width:100%">
-          </div>
-          <div class="callout callout-warn">
-            <span class="ico note-ico" id="ioWarn2"></span>
-            <p class="small" style="margin:0" data-i18n="measureNote"></p>
-          </div>
-        </div>
-        <div class="stack">
-          <div class="grid g3">
-            <div class="kpi"><div class="kpi-v num" id="mNow">—</div><div class="kpi-l" data-i18n="calcNow"></div><div class="kpi-n">人工工时（小时）</div></div>
-            <div class="kpi"><div class="kpi-v num" id="mWith">—</div><div class="kpi-l" data-i18n="calcWith"></div><div class="kpi-n">剩余人工 + 复核抽检</div></div>
-            <div class="kpi" style="border-color:var(--jade-200);background:var(--jade-100)"><div class="kpi-v num" id="mSaved" style="color:var(--jade-700)">—</div><div class="kpi-l" data-i18n="calcSaved"></div><div class="kpi-n">按 60 元/小时综合成本折算</div></div>
-          </div>
-          <div class="card reveal">
-            <div class="chart" id="chEff" style="height:250px"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
 
   <!-- ============ 知识库维护 ============ -->
   <section class="section-sm" id="kb" style="background:var(--bg-alt);border-top:1px solid var(--line)">
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-5)">
-        <h2 style="font-size:var(--fs-h2)" data-i18n="kbManage"></h2>
+        <div>
+          <div class="eyebrow">02 · 知识库 / KNOWLEDGE BASE</div>
+          <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="kbManage"></h2>
+        </div>
         <div class="wrapflex">
           <span class="chip chip-line" id="kbMeta"></span>
           <button class="btn btn-sm" id="btnAddKb"><span class="ico" id="ioPlus"></span><span data-i18n="kbAdd"></span></button>
@@ -1045,21 +1016,34 @@ h1,h2,h3{font-family:var(--font-serif)}
     </div>
   </section>
 
-  <!-- ============ 服务看板（内部复盘 · 可选） ============ -->
+  <!-- ============ 成效与看板（效率测算 + 咨询分析） ============ -->
   <section class="section-sm" id="board" style="border-top:1px solid var(--line);background:var(--bg-alt)">
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-2)">
-        <h2 style="font-size:var(--fs-h2);margin:0" data-i18n="dashboard"></h2>
+        <div>
+          <div class="eyebrow">03 · 成效与看板 / IMPACT</div>
+          <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="dashboard"></h2>
+        </div>
         <span class="chip chip-line" data-i18n="boardOptional"></span>
       </div>
       <p class="tiny muted" style="margin:0 0 var(--sp-5);max-width:72ch" data-i18n="boardDemoNote"></p>
       <div class="grid g4" style="margin-bottom:var(--sp-6)">
         <div class="kpi reveal"><div class="kpi-v num" id="b1">—</div><div class="kpi-l" data-i18n="kbTotal"></div><div class="kpi-n">知识库条目（事项 + 问答）</div></div>
         <div class="kpi reveal"><div class="kpi-v num" id="b2">—</div><div class="kpi-l" data-i18n="kbS3"></div><div class="kpi-n">需向属地或本校口径复核</div></div>
-        <div class="kpi reveal"><div class="kpi-v num" id="b3">—</div><div class="kpi-l" data-i18n="boardLang"></div><div class="kpi-n">六语界面 · 结构多语种</div></div>
+        <div class="kpi reveal"><div class="kpi-v num" id="b3">—</div><div class="kpi-l" data-i18n="boardLang"></div><div class="kpi-n">界面语言 · 材料多语种</div></div>
         <div class="kpi reveal"><div class="kpi-v num" id="b4">—</div><div class="kpi-l" data-i18n="boardEfficiency"></div><div class="kpi-n" id="b4n"></div></div>
       </div>
       <div class="grid g2">
+        <div class="card card-pad-lg reveal">
+          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="measureTitle"></div><div class="card-sub tiny muted">可核查口径 · 拖动滑杆即算</div></div><span class="chip chip-line tiny">DEMO</span></div>
+          <div class="grid g3" style="gap:var(--sp-4);margin:var(--sp-4) 0">
+            <div class="field"><label class="label" for="mA"><span data-i18n="planA"></span>：<span class="strong num" id="mAVal"></span></label><input type="range" id="mA" min="4" max="40" step="1" style="width:100%"></div>
+            <div class="field"><label class="label" for="mB"><span data-i18n="planB"></span>：<span class="strong num" id="mBVal"></span></label><input type="range" id="mB" min="20" max="1200" step="10" style="width:100%"></div>
+            <div class="field"><label class="label" for="mC"><span data-i18n="planC"></span>：<span class="strong num" id="mCVal"></span></label><input type="range" id="mC" min="10" max="85" step="5" style="width:100%"></div>
+          </div>
+          <div class="chart" id="chEff" style="height:220px"></div>
+          <p class="tiny muted" style="margin:var(--sp-3) 0 0" data-i18n="measureNote"></p>
+        </div>
         <div class="card reveal">
           <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardConsult"></div><div class="card-sub">近 30 天 · 学生端咨询与检索命中统计（演示数据）</div></div><span class="chip chip-line tiny">DEMO</span></div>
           <div class="chart" id="chConsult" style="height:300px"></div>
@@ -1071,10 +1055,6 @@ h1,h2,h3{font-family:var(--font-serif)}
         <div class="card reveal">
           <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardCoverage"></div><div class="card-sub">按阶段 × 证据等级</div></div></div>
           <div class="chart" id="chCoverage" style="height:300px"></div>
-        </div>
-        <div class="card reveal">
-          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardLang"></div><div class="card-sub">各语种材料生成量（演示数据）</div></div></div>
-          <div class="chart" id="chLang" style="height:300px"></div>
         </div>
       </div>
     </div>
@@ -1740,7 +1720,7 @@ window.I18N = {
     appName: "来华交流全程助手",
     appSub: "EXCHANGE AI AGENT FOR CHINA",
     tagline: "来华交流全程助手：学生照着办，老师一键出内容",
-    navHome: "首页", navStudent: "学生端", navOrg: "机构端", navFlow: "Agent 工作流", navData: "数据底座", navAbout: "关于",
+    navHome: "首页", navStudent: "学生端", navOrg: "机构端", navFlow: "工作台", navData: "知识库", navAbout: "关于",
     enterStudent: "进入学生端", enterOrg: "进入机构端", backHome: "返回首页",
     language: "语言", theme: "主题", themeLight: "浅色", themeDark: "深色", print: "打印 / 导出 PDF",
     student: "学生端", org: "机构端",
@@ -1818,7 +1798,7 @@ window.I18N = {
     appName: "Exchange AI Agent for China",
     appSub: "来华交流全程助手",
     tagline: "Full-cycle exchange assistant — students get things done, staff produce content in one click",
-    navHome: "Home", navStudent: "Student", navOrg: "Institution", navFlow: "Agent workflow", navData: "Evidence base", navAbout: "About",
+    navHome: "Home", navStudent: "Student", navOrg: "Institution", navFlow: "Studio", navData: "Knowledge base", navAbout: "About",
     enterStudent: "Open student portal", enterOrg: "Open institution console", backHome: "Back to home",
     language: "Language", theme: "Theme", themeLight: "Light", themeDark: "Dark", print: "Print / Export PDF",
     student: "Student", org: "Institution",
@@ -1896,7 +1876,7 @@ window.I18N = {
     appName: "Помощник по обмену с Китаем",
     appSub: "Exchange AI Agent for China",
     tagline: "Помощник на весь период пребывания: студенты решают дела, сотрудники создают контент",
-    navHome: "Главная", navStudent: "Студенту", navOrg: "Вузу", navFlow: "Работа агента", navData: "База фактов", navAbout: "О проекте",
+    navHome: "Главная", navStudent: "Студенту", navOrg: "Вузу", navFlow: "Студия", navData: "База знаний", navAbout: "О проекте",
     enterStudent: "Кабинет студента", enterOrg: "Кабинет вуза", backHome: "На главную",
     language: "Язык", theme: "Тема", themeLight: "Светлая", themeDark: "Тёмная", print: "Печать / PDF",
     student: "Студент", org: "Вуз",
@@ -1974,7 +1954,7 @@ window.I18N = {
     appName: "المساعد الذكي للتبادل مع الصين",
     appSub: "Exchange AI Agent for China",
     tagline: "مساعد طوال فترة التبادل في الصين: الطلاب ينجزون، والموظفون ينتجون المحتوى",
-    navHome: "الرئيسية", navStudent: "بوابة الطالب", navOrg: "بوابة المؤسسة", navFlow: "سير عمل الوكيل", navData: "قاعدة الأدلة", navAbout: "حول",
+    navHome: "الرئيسية", navStudent: "بوابة الطالب", navOrg: "بوابة المؤسسة", navFlow: "الاستوديو", navData: "قاعدة المعرفة", navAbout: "حول",
     enterStudent: "بوابة الطالب", enterOrg: "بوابة المؤسسة", backHome: "الرئيسية",
     language: "اللغة", theme: "المظهر", themeLight: "فاتح", themeDark: "داكن", print: "طباعة / PDF",
     student: "طالب", org: "مؤسسة",
@@ -2052,7 +2032,7 @@ window.I18N = {
     appName: "Assistant d'échange avec la Chine",
     appSub: "Exchange AI Agent for China",
     tagline: "Assistant sur tout le séjour d'échange en Chine — les étudiants avancent, le personnel produit",
-    navHome: "Accueil", navStudent: "Étudiant", navOrg: "Institution", navFlow: "Flux de l'agent", navData: "Base de preuves", navAbout: "À propos",
+    navHome: "Accueil", navStudent: "Étudiant", navOrg: "Institution", navFlow: "Studio", navData: "Base de connaissances", navAbout: "À propos",
     enterStudent: "Portail étudiant", enterOrg: "Console institution", backHome: "Accueil",
     language: "Langue", theme: "Thème", themeLight: "Clair", themeDark: "Sombre", print: "Imprimer / PDF",
     student: "Étudiant", org: "Institution",
@@ -2130,7 +2110,7 @@ window.I18N = {
     appName: "Asistente de intercambio con China",
     appSub: "Exchange AI Agent for China",
     tagline: "Asistente para todo el ciclo de intercambio en China: los estudiantes avanzan, el personal produce",
-    navHome: "Inicio", navStudent: "Estudiante", navOrg: "Institución", navFlow: "Flujo del agente", navData: "Base de evidencia", navAbout: "Acerca de",
+    navHome: "Inicio", navStudent: "Estudiante", navOrg: "Institución", navFlow: "Studio", navData: "Base de conocimientos", navAbout: "Acerca de",
     enterStudent: "Portal del estudiante", enterOrg: "Consola institucional", backHome: "Inicio",
     language: "Idioma", theme: "Tema", themeLight: "Claro", themeDark: "Oscuro", print: "Imprimir / PDF",
     student: "Estudiante", org: "Institución",
@@ -2208,8 +2188,8 @@ window.I18N = {
     navHome: "trang đầu",
     navStudent: "Phía học sinh",
     navOrg: "Mục đích thể chế",
-    navFlow: "Quy trình làm việc của nhân viên chăm",
-    navData: "Cơ sở dữ liệu",
+    navFlow: "Studio",
+    navData: "Cơ sở tri thức",
     enterStudent: "Nhập kết thúc của học sinh",
     enterOrg: "Nhập đầu cơ chế",
     backHome: "Quay lại trang chủ",
@@ -2233,8 +2213,8 @@ window.I18N = {
     navHome: "หน้าแรก",
     navStudent: "ฝ่ายนักศึกษา",
     navOrg: "สิ้นสุดสถาบัน",
-    navFlow: "ขั้นตอนการทำงานของเจ้าหน้าที่",
-    navData: "ฐานข้อมูล",
+    navFlow: "สตูดิโอ",
+    navData: "ฐานความรู้",
     enterStudent: "เข้าสู่จุดสิ้นสุดของนักเรียน",
     enterOrg: "เข้าสู่ปลายกลไก",
     backHome: "กลับไปที่หน้าแรก",
@@ -2258,8 +2238,8 @@ window.I18N = {
     navHome: "ပင်မစာမျက်နှာ",
     navStudent: "ကျောင်းသားဘက်",
     navOrg: "အဖွဲ့အစည်းဆိုင်ရာ နိဂုံး",
-    navFlow: "အေးဂျင့် အလုပ်အသွားအလာ",
-    navData: "ဒေတာအခြေခံ",
+    navFlow: "စတူဒီယို",
+    navData: "အသိပညာ ဒေတာဘေ့စ်",
     enterStudent: "ကျောင်းသားအဆုံးတွင် ထည့်သွင်းပါ",
     enterOrg: "ယန္တရားအဆုံးတွင် ထည့်သွင်းပါ",
     backHome: "ပင်မစာမျက်နှာသို့ ပြန်သွားရန်",
@@ -3260,7 +3240,7 @@ window.UI = (function () {
     '<nav class="nav" aria-label="主导航">' +
       '<a href="institution.html" aria-current="page" data-i18n="navOrg">' + t("navOrg") + "</a>" +
       '<a href="institution.html#studio" data-i18n="navFlow">' + t("navFlow") + "</a>" +
-      '<a href="institution.html#measure" data-i18n="navData">' + t("navData") + "</a>" +
+      '<a href="institution.html#kb" data-i18n="navData">' + t("navData") + "</a>" +
       '<a href="student.html" data-i18n="navStudent">' + t("navStudent") + "</a>" +
       '<a href="index.html" data-i18n="navHome">' + t("navHome") + "</a></nav>"
   );
@@ -3347,24 +3327,6 @@ window.UI = (function () {
         { name: "S1/S2", type: "bar", stack: "y", barWidth: 26, itemStyle: { color: PAL[1] }, data: s1 },
         { name: "含 S3", type: "bar", stack: "y", barWidth: 26, itemStyle: { color: PAL[3], borderRadius: [4, 4, 0, 0] }, data: s3 }
       ]
-    }));
-
-    chart("chLang", Object.assign({}, base, {
-      tooltip: { trigger: "item", formatter: "{b}: {c} 份（{d}%）" },
-      legend: { bottom: 0, itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
-      series: [{
-        type: "pie", radius: ["46%", "70%"], center: ["50%", "42%"],
-        itemStyle: { borderColor: "#fff", borderWidth: 2, borderRadius: 4 },
-        label: { formatter: "{b}\n{c}", fontSize: 11, color: "#26374F" },
-        data: [
-          { name: "中文", value: 46, itemStyle: { color: PAL[0] } },
-          { name: "English", value: 28, itemStyle: { color: PAL[1] } },
-          { name: "Русский", value: 9, itemStyle: { color: PAL[2] } },
-          { name: "العربية", value: 8, itemStyle: { color: PAL[3] } },
-          { name: "Français", value: 5, itemStyle: { color: PAL[4] } },
-          { name: "Español", value: 4, itemStyle: { color: PAL[5] } }
-        ]
-      }]
     }));
   }
   drawBoard();
@@ -3468,23 +3430,23 @@ window.UI = (function () {
     $("mBVal").textContent = M.cases + " 次";
     $("mCVal").textContent = M.cut + "%";
     var r = A.efficiencyModel({ minPerCase: M.minPerCase, cases: M.cases, cut: M.cut / 100, hourly: 60 });
-    $("mNow").textContent = r.manualHours.toFixed(1) + " h";
-    $("mWith").textContent = r.agentHours.toFixed(1) + " h";
-    $("mSaved").textContent = r.savedHours.toFixed(1) + " h ｜ ¥" + Math.round(r.savedCost);
+    $("b4").textContent = Math.round(r.cut * 100) + "%";
     var el = $("chEff");
     if (!el || !window.echarts) return;
     var old = window.echarts.getInstanceByDom(el);
     if (old) old.dispose();
     var c = window.echarts.init(el, null, { renderer: "svg" });
     c.setOption(Object.assign({}, base, {
-      tooltip: { trigger: "axis" },
-      legend: { bottom: 0, itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, formatter: function (ps) { return ps[0].axisValue + "：" + ps[0].value + " h"; } },
       grid: { left: 52, right: 24, top: 18, bottom: 44 },
       xAxis: { type: "category", data: [t("calcNow"), t("calcWith")], axisLine: { lineStyle: { color: "#D8E0EA" } }, axisLabel: { fontSize: 11 } },
-      yAxis: { type: "value", name: "小时 / 月", nameTextStyle: { fontSize: 10 }, splitLine: { lineStyle: { color: "#EBF0F6" } }, axisLabel: { fontSize: 11 } },
+      yAxis: [
+        { type: "value", name: "小时 / 月", nameTextStyle: { fontSize: 10 }, max: function (v) { return Math.ceil(v.max / 20) * 20; }, splitLine: { lineStyle: { color: "#EBF0F6" } }, axisLabel: { fontSize: 11 } },
+        { type: "value", show: false, max: function (v) { return Math.ceil(v.max / 1000) * 1000; } }
+      ],
       series: [
-        { name: "人工工时", type: "bar", barWidth: 40, itemStyle: { color: PAL[0], borderRadius: [6, 6, 0, 0] }, label: { show: true, position: "top", fontSize: 11, formatter: "{c} h" }, data: [r.manualHours.toFixed(1), r.agentHours.toFixed(1)] },
-        { name: "折算成本（元）", type: "line", yAxisIndex: 0, symbolSize: 0, lineStyle: { width: 0 }, itemStyle: { color: PAL[1] }, label: { show: true, position: "bottom", fontSize: 10, formatter: "¥{c}" }, data: [r.manualCost.toFixed(0), r.agentCost.toFixed(0)] }
+        { name: "人工工时", type: "bar", barWidth: 44, itemStyle: { color: PAL[0], borderRadius: [6, 6, 0, 0] }, label: { show: true, position: "top", fontSize: 11, formatter: "{c} h" }, data: [r.manualHours.toFixed(1), r.agentHours.toFixed(1)] },
+        { name: "折算成本（元）", type: "line", yAxisIndex: 1, symbolSize: 0, lineStyle: { width: 0 }, itemStyle: { color: PAL[1] }, label: { show: true, position: "top", fontSize: 10, formatter: "¥{c}" }, data: [r.manualCost.toFixed(0), r.agentCost.toFixed(0)] }
       ]
     }));
   }
