@@ -3123,6 +3123,9 @@ window.UI = (function () {
   }
   renderTags();
   document.addEventListener("langchange", renderTags);
+  document.addEventListener("langchange", function () {
+    document.getElementById("chrome-bottom").innerHTML = UI.footer("");
+  });
 
   var J = ["stagePre", "stageArrival", "stageStudy", "stageExit"];
   var JD = ["stagePreDesc", "stageArrivalDesc", "stageStudyDesc", "stageExitDesc"];
