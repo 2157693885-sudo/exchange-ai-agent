@@ -714,6 +714,16 @@ body{background:var(--bg);color:var(--ink-800)}
 .appbar .nav a{color:rgba(244,240,230,.86)}
 .appbar .nav a[aria-current="page"]{color:#fff;border-bottom-color:var(--coral-400)}
 .appbar-tools button{color:rgba(244,240,230,.9)}
+/* 深色 appbar 文字对比度：白字 + 半透明米白辅助文字（三端通用） */
+.appbar{background:rgba(9,36,30,.82);box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+.appbar .brand-name{color:#fff}
+.appbar .brand-sub{color:rgba(244,240,230,.72)}
+.appbar .seg{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12)}
+.appbar .seg button{color:rgba(244,240,230,.88)}
+.appbar .seg button:hover{color:#fff}
+.appbar .seg button[aria-pressed="true"]{background:rgba(255,255,255,.2);color:#fff;box-shadow:none}
+.appbar .btn-ghost{background:transparent;border-color:rgba(244,240,230,.38);color:rgba(244,240,230,.9)}
+.appbar .btn-ghost:hover{border-color:rgba(244,240,230,.72);color:#fff}
 .eyebrow{color:var(--coral-600);font-weight:750;letter-spacing:.16em}
 h1,h2,h3{font-family:var(--font-serif)}
 .btn{border-radius:var(--r-full);font-weight:650}
