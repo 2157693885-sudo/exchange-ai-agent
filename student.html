@@ -318,6 +318,10 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
   transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   min-height: 36px;
 }
+@media (max-width: 768px) {
+  .seg { padding: 3px 6px; }
+  .seg button { padding: 7px 10px; min-height: 34px; }
+}
 .seg button:hover { color: var(--brand-700); }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--brand-700); box-shadow: var(--sh-1); }
 .check { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; cursor: pointer; }
@@ -1049,8 +1053,10 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 @media(min-width:900px){
   .tabbar{inset-inline:auto;left:50%;transform:translateX(-50%);width:620px;bottom:14px;border:1px solid var(--line);border-radius:99px;box-shadow:0 14px 34px -16px rgba(10,26,24,.35)}
   .tabbar-in{height:58px}
+  .tab{margin:5px 4px;border-radius:99px}
   .tab[aria-selected="true"]::before{display:none}
-  .tab[aria-selected="true"]{font-weight:700}
+  .tab[aria-selected="true"]{font-weight:700;background:var(--brand-100);color:var(--brand-700)}
+  .tab:hover{background:var(--brand-050);color:var(--brand-600)}
   .fab{inset-inline-end:calc(50% - 320px);bottom:calc(58px + 30px)}
   body{padding-bottom:110px}
   .appbar .wrap,main .wrap,.foot .wrap{max-width:620px}
