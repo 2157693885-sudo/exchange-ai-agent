@@ -969,6 +969,12 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
   box-shadow:0 12px 30px -10px rgba(15,60,55,.55);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
 .fab:hover{transform:translateY(-3px);box-shadow:0 18px 38px -12px rgba(15,60,55,.6)}
 .fab svg{width:19px;height:19px}
+@media(max-width:899px){
+  .fab{width:54px;height:54px;padding:0;gap:0;justify-content:center}
+  .fab .fl{display:none}
+  .appbar .nav{display:none}
+  .brand-sub{display:none}
+}
 
 .sheet{position:fixed;inset:0;z-index:80;display:none}
 .sheet.open{display:block}
@@ -1032,6 +1038,7 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
   .tab[aria-selected="true"]{font-weight:700}
   .fab{inset-inline-end:calc(50% - 320px);bottom:calc(58px + 30px)}
   body{padding-bottom:110px}
+  .appbar .wrap,main .wrap,.foot .wrap{max-width:620px}
 }
 </style>
 </head>
@@ -3476,6 +3483,8 @@ window.UI = (function () {
       '<nav class="nav" aria-label="主导航"><a href="index.html" data-i18n="backHome">' + T("backHome") + "</a></nav>"
     );
     document.getElementById("chrome-bottom").innerHTML = window.UI.footer("");
+    /* header/footer 模板为中文占位，渲染后按当前语言即时翻译 */
+    window.L10N.apply(window.L10N.current);
 
     document.getElementById("iFab").innerHTML = I.sparkle;
     document.getElementById("iX").innerHTML = I.close;
