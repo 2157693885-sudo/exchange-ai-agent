@@ -558,7 +558,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 [dir="rtl"] .gate-hero-rule { background: linear-gradient(270deg, #FFFFFF, rgba(255, 255, 255, 0)); }
 
 /* ---- 精制入口卡：去掉顶部色条，改左侧细线 + 更多留白 ---- */
-.door { border-radius: var(--r-lg); border-color: var(--line); padding: var(--sp-8) var(--sp-7); }
+.door { border-radius: var(--r-lg); border-color: var(--line); padding: var(--sp-8) var(--sp-6); }
 .door::before { width: 3px; height: 34px; left: 0; top: var(--sp-8); right: auto; inset: auto; position: absolute; border-radius: 0 3px 3px 0; }
 .door-ico { width: 50px; height: 50px; flex-basis: 50px; border-radius: 15px; box-shadow: var(--sh-1); }
 .door .role { letter-spacing: .16em; font-size: .72rem; }
@@ -642,12 +642,12 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .tpl-card{display:flex;align-items:flex-start;gap:var(--sp-3);text-align:left;padding:var(--sp-3) var(--sp-4);
   background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);cursor:pointer;
   transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
-.tpl-card:hover{border-color:var(--brand-300);box-shadow:var(--shadow-sm)}
-.tpl-card.on{border-color:var(--brand-600);box-shadow:0 0 0 1px var(--brand-600) inset,var(--shadow-sm)}
+.tpl-card:hover{border-color:var(--brand-400);box-shadow:var(--sh-2)}
+.tpl-card.on{border-color:var(--brand-600);box-shadow:0 0 0 1px var(--brand-600) inset,var(--sh-2)}
 .tpl-card .tpl-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;
-  border-radius:10px;background:var(--brand-50);color:var(--brand-700)}
+  border-radius:10px;background:var(--brand-050);color:var(--brand-700)}
 .tpl-card.on .tpl-ic{background:var(--brand-600);color:#fff}
-.tpl-card .tpl-n{font-size:var(--fs-s);font-weight:700;color:var(--ink-900);line-height:1.35}
+.tpl-card .tpl-n{font-size:var(--fs-sm);font-weight:700;color:var(--ink-900);line-height:1.35}
 .tpl-card .tpl-e{font-weight:400;font-size:.86em;color:var(--ink-500)}
 .tpl-card .tpl-p{font-size:var(--fs-xs);color:var(--ink-500);margin-top:2px}
 
@@ -669,7 +669,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 
 
 /* ---------- v3.0 门户：痛点区 + OPC 创业实践区 ---------- */
-.gate-pilot{display:inline-flex;align-items:center;gap:5px;margin-left:14px;padding:4px 12px;border:1px solid var(--brand-300);border-radius:var(--r-full);color:var(--brand-700);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-050) 70%,transparent)}
+.gate-pilot{display:inline-flex;align-items:center;gap:5px;margin-left:14px;padding:4px 12px;border:1px solid var(--brand-400);border-radius:var(--r-full);color:var(--brand-700);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-050) 70%,transparent)}
 .pain{margin-top:var(--sp-12)}
 .pain .sec-h{font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin:0 0 var(--sp-6);letter-spacing:-.01em}
 .pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)}
@@ -681,7 +681,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .pno{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:800;color:var(--surface);background:var(--brand-600);margin-top:2px}
 .pain-col:nth-child(2) .pno{background:var(--cinnabar-600)}
 @media(max-width:720px){.pain-grid{grid-template-columns:1fr}}
-.opc{margin-top:var(--sp-12);background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-7)}
+.opc{margin-top:var(--sp-12);background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-6)}
 .opc-inner{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:var(--sp-8);align-items:start}
 .opc-intro .sec-h{font-family:var(--font-serif);font-size:clamp(1.45rem,2.5vw,2rem);margin:0 0 var(--sp-4);letter-spacing:-.01em}
 .opc-intro p{font-size:.95rem;color:var(--ink-600);line-height:1.7;margin:0}
@@ -703,7 +703,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .gate-cta .btn .ico{width:18px;height:18px}
 .doors{margin-top:var(--sp-10)}
 .door-list li{gap:11px;padding:2px 0}
-.journey{margin-top:var(--sp-10);padding:var(--sp-6) var(--sp-7);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-lg)}
+.journey{margin-top:var(--sp-10);padding:var(--sp-6) var(--sp-8);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-lg)}
 .gate-kpis{margin-top:var(--sp-8)}
 
 /* ===== v4 覆盖层：三色系统下组件精修 ===== */
@@ -2155,7 +2155,7 @@ window.L10N = {
   /* 表结构：[key, zh, en, ru, ar, fr, es] */
   var T = [
     /* ---- 入口页 ---- */
-    ["gateEyebrow", "给来华学生 · 给高校老师", "For students · For university staff", "Студентам · Сотрудникам вузов", "للطلاب · لموظفي الجامعات", "Pour les étudiants · Pour le personnel universitaire", "Para estudiantes · Para el personal universitario"],
+    ["gateEyebrow", "服务来华交流的全周期智能助手", "Your all-in-one companion for studying in China", "Ваш помощник на весь период пребывания в Китае", "مساعدك الذكي طوال رحلتك إلى الصين", "Votre assistant pour toute votre période en Chine", "Tu asistente integral para tu estancia en China"],
     ["gateTitle", "来华那些事，跟着做就行", "Your China stay, step by step", "Всё о жизни в Китае — по шагам", "إقامتك في الصين، خطوة بخطوة", "Votre séjour en Chine, étape par étape", "Tu estancia en China, paso a paso"],
     ["gateLead", "签证、居留、报到、保险、就医、支付——按顺序排好，该办什么、什么时候办，到点提醒。", "Visa, residence, registration, insurance, health care, payments — in order, with reminders before each deadline.", "Виза, проживание, регистрация, страховка, медицина, платежи — по порядку, с напоминаниями к срокам.", "التأشيرة والإقامة والتسجيل والتأمين والعلاج والدفع — بالترتيب، مع تذكير قبل كل موعد.", "Visa, résidence, inscription, assurance, santé, paiements — dans l'ordre, avec rappels avant chaque échéance.", "Visado, residencia, registro, seguro, salud, pagos: en orden, con recordatorios antes de cada plazo."],
     ["gateStudentRole", "面向学生", "For Students", "Для студентов", "للطلاب", "Pour les étudiants", "Para estudiantes"],
