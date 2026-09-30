@@ -208,7 +208,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
   backdrop-filter: saturate(160%) blur(16px);
   border-bottom: 1px solid var(--line);
 }
-[data-theme="dark"] .appbar { background: rgba(11, 23, 48, .86); }
+[data-theme="dark"] .appbar { background: rgba(8, 17, 38, .96); }
 .appbar-inner { display: flex; align-items: center; gap: var(--sp-5); min-height: 66px; }
 .brand { display: flex; align-items: center; gap: var(--sp-3); font-weight: 800; color: var(--ink-900); }
 .brand:hover { text-decoration: none; }
@@ -219,7 +219,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), var(--sh-2);
   display: grid; place-items: center; color: #fff;
 }
-.brand-mark svg { width: 21px; height: 21px; }
+.brand-mark svg { width: 22px; height: 22px; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-name { font-size: .98rem; letter-spacing: -.01em; }
 .brand-sub { font-size: .68rem; color: var(--ink-500); font-weight: 600; letter-spacing: .04em; }
@@ -711,18 +711,18 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 body{background:var(--bg);color:var(--ink-800)}
 .appbar{background:rgba(10,42,35,.92);backdrop-filter:blur(10px)}
 .appbar .brand-name{font-family:var(--font-serif);letter-spacing:.02em}
-.appbar .nav a{color:rgba(244,240,230,.86)}
-.appbar .nav a[aria-current="page"]{color:#fff;border-bottom-color:var(--coral-400)}
+.appbar .nav a{color:rgba(244,240,230,.94)}
+.appbar .nav a[aria-current="page"]{background:rgba(255,255,255,.16);color:#fff;border-bottom:none}
 .appbar-tools button{color:rgba(244,240,230,.9)}
 /* 深色 appbar 文字对比度：白字 + 半透明米白辅助文字（三端通用） */
-.appbar{background:rgba(9,36,30,.82);box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
-.appbar .brand-name{color:#fff}
-.appbar .brand-sub{color:rgba(244,240,230,.72)}
+.appbar{background:rgba(7,25,21,.95);box-shadow:0 1px 0 rgba(255,255,255,.08) inset}
+.appbar .brand-name{color:#fff;font-size:1.08rem;font-weight:750}
+.appbar .brand-sub{color:rgba(244,240,230,.94);font-size:.72rem;font-weight:600}
 .appbar .seg{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12)}
-.appbar .seg button{color:rgba(244,240,230,.88)}
+.appbar .seg button{color:rgba(244,240,230,.95)}
 .appbar .seg button:hover{color:#fff}
-.appbar .seg button[aria-pressed="true"]{background:rgba(255,255,255,.2);color:#fff;box-shadow:none}
-.appbar .btn-ghost{background:transparent;border-color:rgba(244,240,230,.38);color:rgba(244,240,230,.9)}
+.appbar .seg button[aria-pressed="true"]{background:rgba(255,255,255,.26);color:#fff;box-shadow:none}
+.appbar .btn-ghost{background:transparent;border-color:rgba(244,240,230,.5);color:rgba(244,240,230,.95)}
 .appbar .btn-ghost:hover{border-color:rgba(244,240,230,.72);color:#fff}
 .eyebrow{color:var(--coral-600);font-weight:750;letter-spacing:.16em}
 h1,h2,h3{font-family:var(--font-serif)}
