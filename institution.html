@@ -3255,7 +3255,15 @@ window.UI = (function () {
   var t = function (k) { return U.L10N.t(k); };
   var $ = function (id) { return document.getElementById(id); };
 
-  document.getElementById("chrome-top").innerHTML = U.header("org");
+  document.getElementById("chrome-top").innerHTML = U.header("org").replace(
+    /<nav class="nav"[\s\S]*?<\/nav>/,
+    '<nav class="nav" aria-label="主导航">' +
+      '<a href="institution.html" aria-current="page" data-i18n="navOrg">' + t("navOrg") + "</a>" +
+      '<a href="institution.html#studio" data-i18n="navFlow">' + t("navFlow") + "</a>" +
+      '<a href="institution.html#measure" data-i18n="navData">' + t("navData") + "</a>" +
+      '<a href="student.html" data-i18n="navStudent">' + t("navStudent") + "</a>" +
+      '<a href="index.html" data-i18n="navHome">' + t("navHome") + "</a></nav>"
+  );
   document.getElementById("chrome-bottom").innerHTML = U.footer("");
   U.initTheme(); U.initLang(); U.bindChrome();
 
