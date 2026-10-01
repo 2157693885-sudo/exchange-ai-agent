@@ -890,7 +890,7 @@ h1,h2,h3{font-family:var(--font-serif)}
 .showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(var(--sp-8),5vw,var(--sp-12));align-items:center}
 .showcase-shot{display:flex;justify-content:center;align-items:center;position:relative;min-height:440px;border-radius:var(--r-xl);border:1px solid var(--line);background:linear-gradient(160deg,var(--brand-050),var(--bg) 78%);padding:clamp(24px,3vw,42px)}
 .showcase-shot::before{content:"";position:absolute;width:76%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(46,125,91,.10),transparent 70%)}
-.phone{position:relative;z-index:1;width:296px;border-radius:44px;padding:9px;background:linear-gradient(180deg,#0f2b24,#081f1a);box-shadow:0 30px 60px -34px rgba(8,30,26,.55),0 3px 10px -4px rgba(8,30,26,.28),inset 0 0 0 1px rgba(255,255,255,.08)}
+.phone{position:relative;z-index:1;width:296px;border-radius:44px;padding:9px;background:linear-gradient(180deg,#0f2b24,#081f1a);box-shadow:0 30px 60px -34px rgba(8,30,26,.55),0 3px 10px -4px rgba(8,30,26,.28),inset 0 0 0 1px rgba(255,255,255,.08);zoom:.82}
 .phone-screen{position:relative;display:block;width:100%;border-radius:34px;background:#f6f3ee;overflow:hidden;color:#1c2b26;text-align:left}
 .pm-notch{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:70px;height:15px;border-radius:0 0 12px 12px;background:#081f1a;z-index:3}
 .pm-status{display:flex;justify-content:space-between;align-items:center;padding:10px 15px 4px;font-size:8px;font-weight:700;color:rgba(255,255,255,.94);letter-spacing:.02em;background:linear-gradient(180deg,#123a30,#0d2e26)}
@@ -938,7 +938,7 @@ h1,h2,h3{font-family:var(--font-serif)}
 .showcase-more{display:inline-flex;align-items:center;gap:8px;color:var(--brand-700);font-weight:650;text-decoration:none}
 .showcase-more svg{width:18px;height:18px;transition:transform .3s var(--ease)}
 .showcase-more:hover svg{transform:translateX(4px)}
-@media(max-width:880px){.showcase-grid{grid-template-columns:1fr;gap:var(--sp-6)}.showcase{padding:var(--sp-10) 0}.phone{width:min(74vw,300px)}}
+@media(max-width:880px){.showcase-grid{grid-template-columns:1fr;gap:var(--sp-6)}.showcase{padding:var(--sp-10) 0}.phone{zoom:1;width:min(74vw,300px)}}
 
 /* 四阶段 */
 .journey{padding:var(--sp-12) 0;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
