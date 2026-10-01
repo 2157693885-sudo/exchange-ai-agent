@@ -983,8 +983,8 @@ h1,h2,h3{font-family:var(--font-serif)}
       <div class="gate-action-inner">
         <p data-i18n="gateLead">签证、居留、报到、保险、就医、支付——按顺序排好，该办什么、什么时候办，到点提醒。</p>
         <div class="gate-cta">
-          <a class="btn btn-primary" href="student.html"><span data-i18n="gateCtaStu">进入学生端</span><span class="ico" id="cIcoStu"></span></a>
-          <a class="btn btn-ghost" href="institution.html"><span data-i18n="gateCtaOrg">机构端 · 内容工作台</span></a>
+          <a class="btn btn-primary" href="student.html"><span data-i18n="enterStudent">进入学生端</span><span class="ico" id="cIcoStu"></span></a>
+          <a class="btn btn-ghost" href="institution.html"><span data-i18n="enterOrg">进入机构端</span><span class="ico" id="cIcoOrg"></span></a>
         </div>
       </div>
     </div>
@@ -2102,8 +2102,7 @@ window.I18N = {
     navOrg: "Mục đích thể chế",
     navFlow: "Studio",
     navData: "Cơ sở tri thức",
-    enterStudent: "Nhập kết thúc của học sinh",
-    enterOrg: "Nhập đầu cơ chế",
+    enterStudent: "Cổng sinh viên", enterOrg: "Cổng cơ quan",
     backHome: "Quay lại trang chủ",
     language: "Ngôn ngữ",
     theme: "Sắc thái",
@@ -2127,8 +2126,7 @@ window.I18N = {
     navOrg: "สิ้นสุดสถาบัน",
     navFlow: "สตูดิโอ",
     navData: "ฐานความรู้",
-    enterStudent: "เข้าสู่จุดสิ้นสุดของนักเรียน",
-    enterOrg: "เข้าสู่ปลายกลไก",
+    enterStudent: "เข้าสู่ฝ่ายนักศึกษา", enterOrg: "เข้าสู่ฝ่ายสถาบัน",
     backHome: "กลับไปที่หน้าแรก",
     language: "ภาษา",
     theme: "หัวข้อ",
@@ -2152,8 +2150,7 @@ window.I18N = {
     navOrg: "အဖွဲ့အစည်းဆိုင်ရာ နိဂုံး",
     navFlow: "စတူဒီယို",
     navData: "အသိပညာ ဒေတာဘေ့စ်",
-    enterStudent: "ကျောင်းသားအဆုံးတွင် ထည့်သွင်းပါ",
-    enterOrg: "ယန္တရားအဆုံးတွင် ထည့်သွင်းပါ",
+    enterStudent: "ကျောင်းသားဝင်ရောက်ရန်", enterOrg: "အဖွဲ့အစည်းဝင်ရောက်ရန်",
     backHome: "ပင်မစာမျက်နှာသို့ ပြန်သွားရန်",
     language: "ဘာသာစကား",
     theme: "ဘာသာရပ်",
@@ -2177,8 +2174,7 @@ window.I18N = {
     navOrg: "Tamat institusi",
     navFlow: "Aliran Kerja Ejen",
     navData: "Pangkalan data",
-    enterStudent: "Masukkan hujung pelajar",
-    enterOrg: "Masukkan penghujung mekanisme",
+    enterStudent: "Portal pelajar", enterOrg: "Konsol institusi",
     backHome: "Kembali ke laman utama",
     language: "Bahasa",
     theme: "Penghayatan",
@@ -3152,6 +3148,7 @@ window.UI = (function () {
   document.getElementById("chrome-bottom").innerHTML = UI.footer("");
 
   document.getElementById("cIcoStu").innerHTML = I.right;
+  document.getElementById("cIcoOrg").innerHTML = I.right;
   document.getElementById("cIcoMore").innerHTML = I.right;
   document.getElementById("tIco1").innerHTML = I.globe;
   document.getElementById("tIco2").innerHTML = I.shield;
