@@ -947,7 +947,8 @@ h1,h2,h3{font-family:var(--font-serif)}
 .j-track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-5)}
 .j-step{position:relative;padding:var(--sp-5);background:#fdfcf9;border:1px solid var(--line);border-radius:16px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
 .j-step:hover{border-color:var(--brand-400);box-shadow:0 14px 30px -20px rgba(20,80,63,.25);transform:translateY(-2px)}
-.j-dot{display:block;width:10px;height:10px;border-radius:50%;margin:0 0 12px}
+.j-dot{display:none}
+.j-num{display:block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--brand-500);margin:0 0 8px}
 .j-step h4{font-size:1.02rem;margin:0 0 5px;color:var(--ink-900)}
 .j-step p{font-size:.84rem;color:var(--ink-500);margin:0;line-height:1.5;min-height:3em}
 @media(max-width:720px){.j-track{grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}.j-step{padding:var(--sp-4)}.j-step p{min-height:0}}
@@ -3220,7 +3221,7 @@ window.UI = (function () {
     document.getElementById("journey").innerHTML =
       '<div class="j-head">' + UI.esc(t("stages")) + "</div>" +
       '<div class="j-track">' + J.map(function (k, i) {
-        return '<div class="j-step"><span class="j-dot" style="background:' + JC[i] + '"></span>' +
+        return '<div class="j-step"><span class="j-num">0' + (i + 1) + "</span>" +
           "<h4>" + UI.esc(t(k)) + "</h4><p>" + UI.esc(t(JD[i])) + "</p></div>";
       }).join("") + "</div>";
   }
