@@ -460,7 +460,7 @@
       ic(isDone ? "check" : "list") + "</button>" +
       '<div style="flex:1"><div class="tx">' + esc(mt.title) + "</div>" +
       '<div class="mt">' + dtag + ' <span class="badge ' + u + '">' + esc(m.pri) + "</span> " +
-      esc(m.stage ? T("stage" + cap(m.stage)) : "") + "</div></div></div>";
+      esc(m.stage ? T("stage" + cap(m.stage)) : "") + (item.local ? ' <span class="chip chip-jade tiny">' + esc(T("schoolLocal")) + "</span>" : "") + "</div></div></div>";
   }
 
   function bindProfile() {

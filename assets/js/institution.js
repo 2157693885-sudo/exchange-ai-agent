@@ -23,8 +23,16 @@
     var el = $(p[0]); if (el) el.innerHTML = U.ICONS[p[1]];
   });
 
-  /* ================= 看板 ================= */
-  var LOCAL_KB = U.load("localKb", []);
+  /* ================= 看板 =================
+     校本库优先取用户自建数据；无自建时自动预置试点示例库（中山大学）并落盘，
+     机构端可统一查看、修改、删除。 */
+  var LOCAL_KB = (function () {
+    if (window.Agent && window.Agent.localKbItems) {
+      var primed = window.Agent.localKbItems();
+      if (primed && primed.length) return primed;
+    }
+    return U.load("localKb", []);
+  })();
   function allMatters() { return KB.MATTERS.concat(LOCAL_KB); }
 
   var charts = [];

@@ -128,6 +128,36 @@ window.Agent = (function () {
     var norm = Math.sqrt(qb.length * db.length) || 1;
     return hit / norm;
   }
+  /* ================= 1.5 校本库（机构端「AI 提炼导入」维护，localStorage ea2_localKb） =================
+     学生端检索时并入校本条目并加权优先：机构上传的本校口径优先于内置通用口径，
+     回答带「校本」标识与机构来源，满足"机构传了就从机构数据取"的优先级链路。 */
+  function localKbItems() {
+    /* 归一化：校本条目统一补 S3 哨兵来源（school），供统计/渲染复用；
+       无 source 的旧条目与预置条目均由此补齐。 */
+    function ensure(arr) {
+      return arr.map(function (x) {
+        if (!x || x.source) return x;
+        var c = {};
+        for (var k in x) c[k] = x[k];
+        c.source = ["school"];
+        return c;
+      });
+    }
+    try {
+      var v = localStorage.getItem("ea2_localKb");
+      var arr = v ? JSON.parse(v) : [];
+      if (Array.isArray(arr) && arr.length) return ensure(arr);
+    } catch (e) {}
+    /* 未自建校本库时：预置试点示例库（中山大学，S3 待复核）并落盘，供机构端统一管理；
+       机构端一旦通过「AI 提炼导入」保存自有数据，localStorage 有值即自动让位。 */
+    if (window.SYSU_PRESET_KB && window.SYSU_PRESET_KB.length) {
+      var presets = ensure(window.SYSU_PRESET_KB);
+      try { localStorage.setItem("ea2_localKb", JSON.stringify(presets)); } catch (e2) {}
+      return presets;
+    }
+    return [];
+  }
+
   /* 意图门控检索：命中明确意图时给对应事项加权；过境免签条目只在用户明确询问时召回，
      避免"学习签证"类问题被"240小时过境免签"等高相似文本干扰。 */
   function retrieve(query, topK, intent) {
@@ -157,6 +187,16 @@ window.Agent = (function () {
       if (isTransitFaq && !qHasTransit) s = 0;                    /* 过境类问答不主动混入 */
       if (s > 0 && f.level === "S3" && !qHasTransit) s -= 0.05;   /* S3 待复核条目轻微降权 */
       pool.push({ type: "faq", id: "faq" + i, item: f, s: s });
+    });
+    /* 校本条目并入候选池：机构端维护的本校口径加权优先（+0.5），意图命中再强化 */
+    localKbItems().forEach(function (lm) {
+      var doc = [lm.title, lm.title_en, lm.summary, lm.summary_en, lm.channel, lm.risk].filter(function (x) { return x; }).join(" ");
+      if (!doc) return;
+      var s = score(query, doc);
+      if (s <= 0) return;
+      s += 0.5;
+      if (intentMatter) s += 0.25;
+      pool.push({ type: "local", id: lm.id, item: lm, s: s });
     });
     pool.sort(function (a, b) { return b.s - a.s; });
     return pool.filter(function (p) { return p.s > 0.055; }).slice(0, topK);
@@ -217,10 +257,26 @@ window.Agent = (function () {
     if (p.country) ids.push("stu_diet");
     /* 去重保序 */
     var seen = {}, list = [];
-    ids.forEach(function (id) { if (!seen[id]) { seen[id] = 1; var m = window.KB.matter(id); if (m) list.push(m); } });
+    ids.forEach(function (id) {
+      if (seen[id]) return;
+      seen[id] = 1;
+      var m = window.KB.matter(id);
+      if (m) list.push({ matter: m, deadline: computeDeadline(m, p), done: false, local: false });
+    });
+    /* 校本条目按阶段并入并置顶（机构端维护的本校口径优先展示，标注 local） */
+    var stageRank = { pre: 0, arrival: 1, study: 2, exit: 3 };
+    var localSeen = {};
+    localKbItems().slice().sort(function (a, b) {
+      return (stageRank[a.stage] || 1) - (stageRank[b.stage] || 1);
+    }).forEach(function (lm) {
+      if (localSeen[lm.id]) return;
+      localSeen[lm.id] = 1;
+      list.unshift({ matter: lm, deadline: computeDeadline(lm, p), done: false, local: true });
+    });
     return list.map(function (m) {
-      return { matter: m, deadline: computeDeadline(m, p), done: false };
+      return { matter: m.matter, deadline: m.deadline, done: m.done, local: !!m.local };
     }).sort(function (a, b) {
+      if (a.local !== b.local) return a.local ? -1 : 1;
       var rank = { P0: 0, P1: 1, P2: 2 };
       var ra = rank[a.matter.pri], rb = rank[b.matter.pri];
       if (ra !== rb) return ra - rb;
@@ -490,7 +546,18 @@ window.Agent = (function () {
     } else {
       hits.slice(0, 3).forEach(function (h) {
         var it = h.item;
-        if (h.type === "matter") {
+        if (h.type === "local") {
+          /* 校本条目：机构端导入的本校口径，置顶展示并标注校本徽标 */
+          blocks.push(
+            '<div style="margin-bottom:14px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
+            "<div><strong>" + (lang === "zh" ? it.title : (it.title_en || it.title)) + "</strong></div>" +
+            '<span class="badge-src src-S3">' + t("schoolLocal") + "</span></div>" +
+            '<p class="small" style="margin:6px 0 0">' + (lang === "zh" ? it.summary : (it.summary_en || it.summary)) + "</p>" +
+            (it.channel ? '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + it.channel + "</p>" : "") +
+            "</div>"
+          );
+          needReview = true;
+        } else if (h.type === "matter") {
           var mt = matterText(it, lang);
           var dl = computeDeadline(it, p);
           var badge = it.source.indexOf("school") >= 0 || it.source.some(function (k) { return window.KB.SRC[k] && window.KB.SRC[k].level === "S3"; }) ? '<span class="badge-src src-S3">' + t("needReview") + "</span>" : '<span class="badge-src src-S1">S1</span>';
@@ -556,11 +623,17 @@ window.Agent = (function () {
       var hits = retrieve(query, 4, cls);
       var ctx = [], srcKeys = [];
       hits.slice(0, 4).forEach(function (h) {
-        var it = h.item;
-        var label, text, keys;
-        if (h.type === "matter") { label = window.KB.L(it, "title"); text = window.KB.L(it, "summary"); keys = it.source; }
-        else { label = window.KB.L(it, "q"); text = window.KB.L(it, "a"); keys = it.src; }
-        ctx.push({ title: label, text: text, src: window.KB.sources(keys).map(function (s) { return window.KB.L(s, "name"); }).join("；") });
+        var it = h.item, label, text, keys, srcText;
+        if (h.type === "local") {
+          label = it.title; text = it.summary || ""; keys = []; srcText = it.channel || it.sourceNote || "校本口径";
+        } else if (h.type === "matter") {
+          label = window.KB.L(it, "title"); text = window.KB.L(it, "summary"); keys = it.source;
+          srcText = window.KB.sources(keys).map(function (s) { return window.KB.L(s, "name"); }).join("；");
+        } else {
+          label = window.KB.L(it, "q"); text = window.KB.L(it, "a"); keys = it.src;
+          srcText = window.KB.sources(keys).map(function (s) { return window.KB.L(s, "name"); }).join("；");
+        }
+        ctx.push({ title: label, text: text, src: srcText });
         keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
       });
       push(3, t("flow3"), ctx.length ? ctx.map(function (x) { return x.title.slice(0, 20); }).join("；") : "无知识条目命中，提示以官方渠道为准");
@@ -616,10 +689,11 @@ window.Agent = (function () {
       var ctx = [], srcKeys = [];
       hits.slice(0, 5).forEach(function (h) {
         var it = h.item;
-        var label, text, keys;
-        if (h.type === "matter") { label = it.title; text = it.summary; keys = it.source; }
-        else { label = it.q; text = it.a; keys = it.src; }
-        ctx.push({ title: label, text: text, src: window.KB.sources(keys).map(function (s) { return s.name; }).join("；") });
+        var label, text, keys, srcText;
+        if (h.type === "local") { label = it.title; text = it.summary || ""; keys = []; srcText = it.channel || it.sourceNote || "校本口径"; }
+        else if (h.type === "matter") { label = it.title; text = it.summary; keys = it.source; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
+        else { label = it.q; text = it.a; keys = it.src; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
+        ctx.push({ title: label, text: text, src: srcText });
         keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
       });
       push(3, "知识检索（RAG）", ctx.length ? ctx.map(function (x) { return x.title.slice(0, 18); }).join("；") : "无命中，提示以官方为准");
@@ -708,7 +782,7 @@ window.Agent = (function () {
   }
 
   return {
-    classify: classify, retrieve: retrieve, decidePath: decidePath,
+    classify: classify, retrieve: retrieve, decidePath: decidePath, localKbItems: localKbItems,
     computeDeadline: computeDeadline, buildChecklist: buildChecklist,
     renderMaterial: renderMaterial, askAsync: askAsync, buildAnswer: buildAnswer,
     glossaryTranslate: glossaryTranslate, efficiencyModel: efficiencyModel,
