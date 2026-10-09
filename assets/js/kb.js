@@ -31,16 +31,16 @@ window.KB = (function () {
 
   /* ---------- 证据来源 ---------- */
   var SRC = {
-    law_exit: { name: "《中华人民共和国出境入境管理法》", name_en: "Exit and Entry Administration Law of the PRC", org: "全国人大常委会", url: "http://www.npc.gov.cn/", level: "S1", checked: "2026-09-26" },
-    nia_platform: { name: "国家移民管理局政务服务平台 · 外国人服务", name_en: "NIA Service Platform - Foreigner Services", org: "国家移民管理局", url: "https://s.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
-    nia_12367: { name: "国家移民管理局 12367 服务平台", name_en: "NIA 12367 Service Platform", org: "国家移民管理局", url: "https://www.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
-    nia_visa: { name: "外国人签证证件办理指南", name_en: "Guidance on Foreigner Visa and Stay Documents", org: "国家移民管理局", url: "https://s.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
-    nia_240: { name: "240 小时过境免签政策", name_en: "240-hour visa-free transit policy", org: "国家移民管理局", url: "https://www.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
-    csc: { name: "国家留学网 · 来华留学", name_en: "China Scholarship Council - Study in China", org: "国家留学基金管理委员会", url: "https://www.csc.edu.cn/", level: "S1", checked: "2026-09-26" },
-    moe: { name: "教育部 · 来华留学相关规范", name_en: "Ministry of Education - study-in-China regulations", org: "教育部", url: "http://www.moe.gov.cn/", level: "S1", checked: "2026-09-26" },
-    school: { name: "所在高校国际学生办公室办事指引", name_en: "Your host university's International Student Office procedures", org: "所在高校", url: "", level: "S3", checked: "2026-09-26", note: "由机构端在「知识库维护」中录入本校口径" },
-    custom: { name: "海关总署 · 进出境旅客通关指南", name_en: "General Administration of Customs - traveller clearance guide", org: "海关总署", url: "https://www.customs.gov.cn/", level: "S1", checked: "2026-09-26" },
-    bank: { name: "中国人民银行 · 境外来华人员支付服务指引", name_en: "People's Bank of China - payment guide for foreign visitors", org: "中国人民银行", url: "https://www.pbc.gov.cn/", level: "S1", checked: "2026-09-26" }
+    law_exit: { name: "《中华人民共和国出境入境管理法》", name_en: "Exit and Entry Administration Law of the PRC", org: "全国人大常委会", org_en: "Standing Committee of the National People's Congress", url: "http://www.npc.gov.cn/", level: "S1", checked: "2026-09-26" },
+    nia_platform: { name: "国家移民管理局政务服务平台 · 外国人服务", name_en: "NIA Service Platform - Foreigner Services", org: "国家移民管理局", org_en: "National Immigration Administration", url: "https://s.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
+    nia_12367: { name: "国家移民管理局 12367 服务平台", name_en: "NIA 12367 Service Platform", org: "国家移民管理局", org_en: "National Immigration Administration", url: "https://www.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
+    nia_visa: { name: "外国人签证证件办理指南", name_en: "Guidance on Foreigner Visa and Stay Documents", org: "国家移民管理局", org_en: "National Immigration Administration", url: "https://s.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
+    nia_240: { name: "240 小时过境免签政策", name_en: "240-hour visa-free transit policy", org: "国家移民管理局", org_en: "National Immigration Administration", url: "https://www.nia.gov.cn/", level: "S1", checked: "2026-09-26" },
+    csc: { name: "国家留学网 · 来华留学", name_en: "China Scholarship Council - Study in China", org: "国家留学基金管理委员会", org_en: "China Scholarship Council", url: "https://www.csc.edu.cn/", level: "S1", checked: "2026-09-26" },
+    moe: { name: "教育部 · 来华留学相关规范", name_en: "Ministry of Education - study-in-China regulations", org: "教育部", org_en: "Ministry of Education", url: "http://www.moe.gov.cn/", level: "S1", checked: "2026-09-26" },
+    school: { name: "所在高校国际学生办公室办事指引", name_en: "Your host university's International Student Office procedures", org: "所在高校", org_en: "Your university", url: "", level: "S3", checked: "2026-09-26", note: "由机构端在「知识库维护」中录入本校口径" },
+    custom: { name: "海关总署 · 进出境旅客通关指南", name_en: "General Administration of Customs - traveller clearance guide", org: "海关总署", org_en: "General Administration of Customs", url: "https://www.customs.gov.cn/", level: "S1", checked: "2026-09-26" },
+    bank: { name: "中国人民银行 · 境外来华人员支付服务指引", name_en: "People's Bank of China - payment guide for foreign visitors", org: "中国人民银行", org_en: "People's Bank of China", url: "https://www.pbc.gov.cn/", level: "S1", checked: "2026-09-26" }
   };
 
   /* ---------- 办理事项（全周期） ---------- */
@@ -576,6 +576,32 @@ window.KB = (function () {
   return {
     META: META, SRC: SRC, MATTERS: MATTERS, PATHS: PATHS, FAQ: FAQ,
     COUNTRY: COUNTRY, NEWS: NEWS, TEMPLATES: TEMPLATES, LANGS: LANGS,
+
+    /* =====================================================================
+       内容层多语取值器（v11 新增）
+       用法：KB.L(matter, "title")  →  当前语种 title_ru / title_ar …
+       回退链：当前语种 → 英文 → 中文
+       设计目标：内容层缺某语种译文时，宁可显示英文，也绝不把中文暴露给非中文语种。
+       数组字段（fest/tips/docs/sections）原样返回。
+       ===================================================================== */
+    L: function (o, f, forceLang) {
+      if (!o) return "";
+      /* 语种优先级：显式入参 → 材料语种覆盖（机构端生成材料时） → 界面语种 */
+      var c = forceLang || window.KB_LANG_OVERRIDE || (window.L10N && window.L10N.current) || "zh";
+      c = String(c).slice(0, 2);
+      var zhMode = c === "zh";
+      var v = zhMode ? o[f] : (o[f + "_" + c] !== undefined ? o[f + "_" + c] : o[f + "_en"]);
+      if (v === undefined || v === null || v === "") v = zhMode ? o[f + "_en"] : o[f];
+      return v === undefined || v === null ? "" : v;
+    },
+    /* 当前语种代码（两位） */
+    lang: function () { return String((window.L10N && window.L10N.current) || "zh").slice(0, 2); },
+
+    /* 国别名称（多语）：zh/en 原生 + name_xx 译文 */
+    countryName: function (c) {
+      if (!c) return "";
+      return this.L(c, "name") || c.zh || "";
+    },
     /* 便捷索引 */
     mattersByStage: function (stage) {
       return MATTERS.filter(function (m) { return m.stage === stage; })

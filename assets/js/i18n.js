@@ -574,8 +574,11 @@ window.I18N = {
 /* 语言工具 */
 window.L10N = {
   current: "zh",
-  t: function (key) {
-    var pack = window.I18N[window.L10N.current] || window.I18N.zh;
+  /* t(key) 取界面语种；t(key, lang) 取指定语种（机构端生成材料时须跟随「材料语种」，
+     否则界面为中文时会往俄文/阿文材料里塞中文句子）。回退链：目标语 → en → zh → key。 */
+  t: function (key, lang) {
+    var lg = lang ? String(lang).slice(0, 2) : window.L10N.current;
+    var pack = window.I18N[lg] || window.I18N.zh;
     if (pack[key] !== undefined) return pack[key];
     if (window.I18N.en && window.I18N.en[key] !== undefined) return window.I18N.en[key];
     return window.I18N.zh[key] !== undefined ? window.I18N.zh[key] : key;

@@ -7,7 +7,7 @@
 
   document.getElementById("chrome-top").innerHTML = U.header("org").replace(
     /<nav class="nav"[\s\S]*?<\/nav>/,
-    '<nav class="nav" aria-label="主导航">' +
+    '<nav class="nav" data-i18n-aria="navAria" aria-label="主导航">' +
       '<a href="institution.html" aria-current="page" data-i18n="navOrg">' + t("navOrg") + "</a>" +
       '<a href="institution.html#studio" data-i18n="navFlow">' + t("navFlow") + "</a>" +
       '<a href="institution.html#kb" data-i18n="navData">' + t("navData") + "</a>" +
@@ -50,7 +50,7 @@
     /* 咨询热点 Top 6 —— 由知识库条目 + 演示命中权重推导，可解释 */
     var hot = allMatters().slice(0).map(function (m, i) {
       var baseW = { P0: 120, P1: 70, P2: 34 }[m.pri] || 40;
-      return { name: m.title, w: baseW + ((i * 37) % 40) };
+      return { name: KB.L(m, "title"), w: baseW + ((i * 37) % 40) };
     }).sort(function (a, b) { return b.w - a.w; }).slice(0, 6);
     chart("chConsult", Object.assign({}, base, {
       tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
@@ -100,18 +100,55 @@
   drawBoard();
 
   /* ================= 内容工作台 ================= */
-  $("gTpl").innerHTML = KB.TEMPLATES.map(function (x, i) { return '<option value="' + x.id + '"' + (i === 0 ? " selected" : "") + ">" + x.name + " · " + x.name_en + "</option>"; }).join("");
-  /* 模板卡片（参考模板画廊的直观选择） */
+  /* 生成器三个选择器：
+     注意：早期版本这三行是「裸初始化」，没挂进 langchange 重绘列表，
+     导致切到俄/阿/法…后仍显示中文态文案（已修）。现抽成函数并纳入重绘。 */
+  function renderGenSelectors() {
+    var keepC = $("gCountry").value, keepL = $("gLang").value, keepT = $("gTpl").value;
+    $("gTpl").innerHTML = KB.TEMPLATES.map(function (x) {
+      var lab = isZh() ? (x.name + " · " + x.name_en) : KB.L(x, "name");
+      return '<option value="' + x.id + '">' + U.esc(lab) + "</option>";
+    }).join("");
+    $("gCountry").innerHTML = Object.keys(KB.COUNTRY).map(function (k) {
+      return '<option value="' + k + '">' + U.esc(countryName(k)) + "</option>";
+    }).join("");
+    $("gLang").innerHTML = KB.LANGS.map(function (l) {
+      return '<option value="' + l.code + '">' + U.esc(l.name) + ((isZh() && l.en && l.en !== l.name) ? " · " + U.esc(l.en) : "") + "</option>";
+    }).join("");
+    if (keepT) $("gTpl").value = keepT;
+    if (keepC) $("gCountry").value = keepC; else $("gCountry").value = "PK";
+    if (keepL) $("gLang").value = keepL; else $("gLang").value = "zh";
+  }
+  renderGenSelectors();
   var TPL_ICONS = { t_guide: "book", t_checklist: "list", t_notice: "bell", t_faq: "chat", t_brief: "clock", t_emergency: "alert" };
   var TPL_PICK = { t_guide: "tplPickGuide", t_checklist: "tplPickChecklist", t_notice: "tplPickNotice", t_faq: "tplPickFaq", t_brief: "tplPickBrief", t_emergency: "tplPickEmergency" };
   function isZh() { return String(window.L10N.current || "zh").slice(0, 2) === "zh"; }
+  /* 导出件与来源行的连接符须跟随「材料语种」而非界面语种，否则外文材料里会夹中文标点 */
+  function mIsZh() { return String(($("gLang") && $("gLang").value) || "zh").slice(0, 2) === "zh"; }
+  function mSep() { return mIsZh() ? "：" : ": "; }
+  function mJoin() { return mIsZh() ? "；" : "; "; }
+  /* 国名取值：中文态双语并示，非中文态取本语种译文（缺失回退英文）—— 供界面控件使用 */
+  function countryName(k) {
+    var c = KB.COUNTRY[k];
+    if (!c) return "";
+    if (isZh()) return c.zh + (c.en && c.en !== c.zh ? " · " + c.en : "");
+    return c["name_" + KB.lang()] || c.en || c.zh || "";
+  }
+  /* 国名取值（跟随「材料语种」）—— 材料预览 meta 专用，避免中文界面生成外文材料时夹中文国名 */
+  function mCountryName(k) {
+    var c = KB.COUNTRY[k];
+    if (!c) return "";
+    if (mIsZh()) return c.zh + (c.en && c.en !== c.zh ? " · " + c.en : "");
+    var ml = String(($("gLang") && $("gLang").value) || "zh").slice(0, 2);
+    return c["name_" + ml] || c.en || c.zh || "";
+  }
   function renderTplCards() {
     var sel = $("gTpl").value;
     var zh = isZh();
     $("tplCards").innerHTML = KB.TEMPLATES.map(function (x) {
       var ic = U.icon(TPL_ICONS[x.id] || "doc");
       var pick = t(TPL_PICK[x.id] || "genTemplate");
-      var nm = zh ? (U.esc(x.name) + ' <span class="tpl-e">' + U.esc(x.name_en) + "</span>") : U.esc(x.name_en || x.name);
+      var nm = zh ? (U.esc(x.name) + ' <span class="tpl-e">' + U.esc(x.name_en) + "</span>") : U.esc(KB.L(x, "name"));
       return '<button type="button" class="tpl-card' + (x.id === sel ? " on" : "") + '" data-tpl="' + x.id + '">' +
         '<span class="tpl-ic">' + ic + "</span>" +
         '<div><div class="tpl-n">' + nm + "</div>" +
@@ -127,20 +164,15 @@
     });
   }
   renderTplCards();
-  $("gCountry").innerHTML = Object.keys(KB.COUNTRY).map(function (k) {
-    var c = KB.COUNTRY[k];
-    var lab = isZh() ? (c.zh + (c.en !== c.zh ? " · " + c.en : "")) : (c.en || c.zh);
-    return '<option value="' + k + '"' + (k === "PK" ? " selected" : "") + ">" + U.esc(lab) + "</option>";
-  }).join("");
-  $("gLang").innerHTML = KB.LANGS.map(function (l) { return '<option value="' + l.code + '"' + (l.code === "zh" ? " selected" : "") + ">" + U.esc(l.name) + ((isZh() && l.en && l.en !== l.name) ? " · " + U.esc(l.en) : "") + "</option>"; }).join("");
+  /* 旧版此处还有两处裸初始化（gCountry / gLang），已合并进 renderGenSelectors() */
 
   function tplDesc() {
     var id = $("gTpl").value;
     var zh = isZh();
     KB.TEMPLATES.forEach(function (x) {
       if (x.id !== id) return;
-      var d = zh ? x.desc : (x.desc_en || x.desc);
-      var sec = (zh ? x.sections : (x.sections_en || x.sections)).join(" / ");
+      var d = window.KB.L(x, "desc");
+      var sec = (window.KB.L(x, "sections") || []).join(" / ");
       $("gTplDesc").textContent = d + t("tplDescChapter") + sec;
     });
   }
@@ -154,10 +186,11 @@
       extra: $("gExtra").value, audience: "国际学生"
     };
     LAST = A.renderMaterial(cfg);
-    $("pvMeta").textContent = LAST.template + " ｜ " + (KB.COUNTRY[cfg.country] ? KB.COUNTRY[cfg.country].zh : "") + " ｜ " + cfg.lang.toUpperCase() + " ｜ " + new Date().toLocaleString();
+    var _bar = mIsZh() ? " ｜ " : " | ";
+    $("pvMeta").textContent = LAST.template + _bar + mCountryName(cfg.country) + _bar + cfg.lang.toUpperCase() + _bar + new Date().toLocaleString();
     $("pvAI").textContent = LAST.aiLabel;
     $("pvBody").innerHTML = U.mdToHtml(LAST.markdown);
-    $("pvSrc").innerHTML = '<div class="small strong" style="margin-bottom:6px">' + t("sourceLabel") + "</div>" +
+    $("pvSrc").innerHTML = '<div class="small strong" style="margin-bottom:6px">' + U.L10N.t("sourceLabel", cfg.lang) + "</div>" +
       '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + LAST.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>";
     U.toast(t("genPreview") + " ✓");
   }
@@ -171,11 +204,13 @@
     $("aiTrace").innerHTML = '<div class="ai-working">' + U.esc(t("agentRunning")) + '</div>';
     A.genMaterialLLM(task, $("gLang").value).then(function (r) {
       LAST = r;
-      $("pvMeta").textContent = "AI Agent · " + task.slice(0, 34) + " ｜ " + new Date().toLocaleString();
-      $("pvAI").textContent = t("aiGenerated");
+      var _mBar = mIsZh() ? " ｜ " : " | ";
+      var _mLang = $("gLang").value;
+      $("pvMeta").textContent = "AI Agent · " + task.slice(0, 34) + _mBar + new Date().toLocaleString();
+      $("pvAI").textContent = U.L10N.t("aiGenerated", _mLang);
       $("pvBody").innerHTML = U.mdToHtml(r.markdown);
-      $("pvSrc").innerHTML = '<div class="small strong" style="margin-bottom:6px">' + t("sourceLabel") + "</div>" +
-        '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + (r.sources.length ? r.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") : "<li>" + U.esc(t("aiReviewPublish")) + "</li>") + "</ul>";
+      $("pvSrc").innerHTML = '<div class="small strong" style="margin-bottom:6px">' + U.L10N.t("sourceLabel", _mLang) + "</div>" +
+        '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + (r.sources.length ? r.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") : "<li>" + U.esc(U.L10N.t("aiReviewPublish", _mLang)) + "</li>") + "</ul>";
       if (r.steps && r.steps.length) {
         $("aiTrace").innerHTML = "<div class='trace-card'><div class='trace-head' role='button' tabindex='0'>" + U.esc(t("agentTraceSteps").replace("{n}", r.steps.length)) + " <span class='trace-arrow'>▾</span></div><div class='trace-body'>" +
           r.steps.map(function (s) { return "<div class='trace-step'><span class='n'>" + s.n + "</span><div><b>" + U.esc(s.title) + "</b><p class='tiny muted'>" + U.esc(s.detail) + "</p></div></div>"; }).join("") + "</div></div>";
@@ -192,11 +227,54 @@
 
   $("btnGenContent").addEventListener("click", genContent);
   $("gTpl").addEventListener("change", function () { tplDesc(); genContent(); });
-  ["gCountry", "gLang"].forEach(function (id) { $(id).addEventListener("change", genContent); });
+  ["gCountry", "gLang"].forEach(function (id) {
+    $(id).addEventListener("change", function () { applyGenDefaults(false); genContent(); });
+  });
+
+  /* 生成器表单默认值（十语）：默认值会写进生成材料，必须随「材料语种」切换，
+     否则俄文/阿文材料里会残留中文默认值。用户手改过的字段不再覆盖。 */
+  var GEN_DEFAULTS = {
+    topic: {
+      zh: "秋季学期居留许可集中办理", en: "Fall-semester residence permit processing",
+      ru: "Оформление вида на жительство на осенний семестр", ar: "إنجاز تصريح الإقامة للفصل الخريفي",
+      fr: "Traitement des permis de séjour du semestre d'automne", es: "Tramitación del permiso de residencia del semestre de otoño",
+      vi: "Xử lý giấy phép cư trú học kỳ thu", th: "การดำเนินการใบอนุญาตพำนักภาคเรียนฤดูใบไม้ร่วง",
+      my: "ဆောင်းဦးစာသင်နှစ် နေထိုင်ခွင့်လက်မှတ် စုပေါင်းဆောင်ရွက်ခြင်း", ms: "Pemprosesan permit kediaman semester luruh"
+    },
+    deadline: {
+      zh: "2026-10-15 前", en: "by 2026-10-15", ru: "до 2026-10-15", ar: "قبل 2026-10-15",
+      fr: "avant le 2026-10-15", es: "antes del 2026-10-15", vi: "trước 2026-10-15",
+      th: "ภายใน 2026-10-15", my: "2026-10-15 မတိုင်မီ", ms: "sebelum 2026-10-15"
+    },
+    contact: {
+      zh: "国际学生办公室 · 电话 0000-0000000", en: "International Student Office · Tel 0000-0000000",
+      ru: "Офис иностранных студентов · тел. 0000-0000000", ar: "مكتب الطلاب الدوليين · هاتف 0000-0000000",
+      fr: "Bureau des étudiants internationaux · tél. 0000-0000000", es: "Oficina de Estudiantes Internacionales · tel. 0000-0000000",
+      vi: "Văn phòng sinh viên quốc tế · ĐT 0000-0000000", th: "สำนักงานนักศึกษานานาชาติ · โทร 0000-0000000",
+      my: "နိုင်ငံတကာ ကျောင်းသား ရုံး · ဖုန်း 0000-0000000", ms: "Pejabat Pelajar Antarabangsa · Tel 0000-0000000"
+    }
+  };
+  var GEN_FIELDS = [["gTopic", "topic"], ["gDeadline", "deadline"], ["gContact", "contact"]];
+  /* 字段仍是任一语种的默认值（= 用户未改动）时才覆盖 */
+  function genDefaultUntouched(el, key) {
+    var v = el.value, d = GEN_DEFAULTS[key];
+    if (v === "") return true;
+    for (var k in d) { if (d[k] === v) return true; }
+    return false;
+  }
+  /* force=true 无条件重置为默认值（重置按钮）；否则只覆盖未被改动的字段 */
+  function applyGenDefaults(force) {
+    var sel = $("gLang");
+    var lang = String((sel && sel.value) || (window.L10N && window.L10N.current) || "zh").slice(0, 2);
+    GEN_FIELDS.forEach(function (p) {
+      var el = $(p[0]); if (!el) return;
+      if (!force && !genDefaultUntouched(el, p[1])) return;
+      el.value = GEN_DEFAULTS[p[1]][lang] || GEN_DEFAULTS[p[1]].en;
+    });
+  }
+
   $("btnTplReset").addEventListener("click", function () {
-    $("gTopic").value = "秋季学期居留许可集中办理";
-    $("gDeadline").value = "2026-10-15 前";
-    $("gContact").value = "国际学生办公室 · 电话 0000-0000000";
+    applyGenDefaults(true);
     $("gExtra").value = ""; genContent();
   });
 
@@ -219,7 +297,7 @@
       "h2{color:#0E2B52}h3{color:#123A6B;margin-top:1.6em}blockquote{border-left:3px solid #174E8C;margin:0;padding:8px 14px;background:#F2F7FD;color:#45566E;font-size:.92em}" +
       "li{margin:.3em 0}.meta{color:#64748B;font-size:.85em;border-top:1px solid #E1E8F1;padding-top:12px;margin-top:24px}</style></head><body>" +
       U.mdToHtml(LAST.markdown) +
-      '<div class="meta">' + LAST.aiLabel + " ｜ " + t("sourceLabel") + "：" + LAST.sources.join("；") + " ｜ " + KB.META.updated + "</div></body></html>";
+      '<div class="meta">' + LAST.aiLabel + (mIsZh() ? " ｜ " : " | ") + U.L10N.t("sourceLabel", $("gLang").value) + mSep() + LAST.sources.join(mJoin()) + (mIsZh() ? " ｜ " : " | ") + KB.META.updated + "</div></body></html>";
     U.download(t("fileNamePrefix") + $("gTpl").value + "_" + $("gLang").value + "_" + new Date().toISOString().slice(0, 10) + ".html", html, "text/html;charset=utf-8");
     U.toast(t("genExport") + " ✓");
   });
@@ -270,10 +348,10 @@
     var rows = allMatters().map(function (m) {
       var lv = levelOf(m);
       return "<tr><td>" + (stName[m.stage] || m.stage) + "</td><td><span class=\"chip " + (m.pri === "P0" ? "chip-cin" : (m.pri === "P1" ? "chip-amber" : "chip-line")) + '">' + m.pri + "</span></td>" +
-        "<td>" + m.title + (m._local ? ' <span class="chip chip-jade tiny">' + U.esc(t("schoolLocal")) + '</span>' : "") + "</td>" +
-        "<td class=\"small muted\">" + m.deadline.label + "</td>" +
+        "<td>" + U.esc(KB.L(m, "title")) + (m._local ? ' <span class="chip chip-jade tiny">' + U.esc(t("schoolLocal")) + '</span>' : "") + "</td>" +
+        "<td class=\"small muted\">" + U.esc(KB.L(m.deadline, "label")) + "</td>" +
         '<td><span class="badge-src src-' + lv + '">' + (lv === "S3" ? U.esc(t("s3Review")) : lv) + "</span></td>" +
-        '<td class="small muted">' + KB.sources(m.source).map(function (s) { return s.name; }).join("；") + "</td></tr>";
+        '<td class="small muted">' + KB.sources(m.source).map(function (s) { return KB.L(s, "name"); }).join(isZh() ? "；" : "; ") + "</td></tr>";
     }).join("");
     $("kbTable").querySelector("tbody").innerHTML = rows;
     $("kbMeta").textContent = t("kbTotal") + " " + allMatters().length + " ｜ " + t("kbLastUpdate") + " " + KB.META.updated + t("metaLocalItems") + LOCAL_KB.length;
@@ -331,6 +409,7 @@
   $("btnPrintOrg").addEventListener("click", function () { window.print(); });
 
   U.initReveal();
+  applyGenDefaults(false);
   genContent();
 
   /* 预探测本地 LLM 代理（AI Agent 双模式：LLM 在线 / 离线兜底） */
@@ -344,7 +423,11 @@
   }, 400);
 
   document.addEventListener("langchange", function () {
-    renderTplCards(); drawBoard(); renderEff(); renderKbTable(); tplDesc(); genContent();
+    renderGenSelectors();
+    /* 页脚渠道名由 KB.META.channels 生成，不带 data-i18n，必须重绘；
+       旧版漏了这一步，导致本页页脚在非中文语种下仍是中文。 */
+    document.getElementById("chrome-bottom").innerHTML = U.footer("");
+    renderTplCards(); drawBoard(); renderEff(); renderKbTable(); tplDesc(); applyGenDefaults(false); genContent();
   });
   window.addEventListener("resize", function () { charts.forEach(function (c) { try { c.resize(); } catch (e) { } }); });
 })();

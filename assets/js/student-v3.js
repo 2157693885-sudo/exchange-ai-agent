@@ -62,12 +62,12 @@
   function matterText(m) {
     var zh = isZh();
     var rk = REC_KEY[m.title];
-    return { title: kbText(zh ? m.title : (rk ? T(rk) : (m.title_en || m.title))),
-             desc: kbText(zh ? m.summary : (m.summary_en || m.summary)),
-             label: zh ? (m.deadline ? m.deadline.label : "") : (m.deadline ? (m.deadline.label_en || m.deadline.label) : ""),
-             docs: zh ? (m.docs || []) : (m.docs_en || m.docs || []),
-             channel: zh ? m.channel : (m.channel_en || m.channel),
-             risk: zh ? m.risk : (m.risk_en || m.risk) };
+    return { title: (!zh && rk) ? T(rk) : window.KB.L(m, "title"),
+             desc: window.KB.L(m, "summary"),
+             label: m.deadline ? window.KB.L(m.deadline, "label") : "",
+             docs: window.KB.L(m, "docs") || [],
+             channel: window.KB.L(m, "channel"),
+             risk: window.KB.L(m, "risk") };
   }
   /* 知识内容以中文为权威源。非中英语种：有 _en 用 _en，
      无 _en 的字段走术语表翻译，并在卡片上标注「待人工复核」。 */
@@ -84,11 +84,10 @@
   function srcPill(srcKey) {
     var s = window.KBM.src(srcKey);
     if (!s) return "";
-    var L = window.KBM.L;
+    var L = window.KB.L;
     var cls = s.level === "S3" ? "src s3" : "src";
     /* KB.SRC 与 KBM.SRC 均以中文为权威源；非中英语种走术语表翻译并标待复核 */
-    var nmTxt = esc(L(s, "name")), orgTxt = esc(L(s, "org"));
-    if (!isZh()) { nmTxt = esc(kbText(s.name_en || s.name)); orgTxt = esc(kbText(s.org_en || s.org)); }
+    var nmTxt = esc(window.KB.L(s, "name")), orgTxt = esc(window.KB.L(s, "org"));
     var nm = s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + nmTxt + "</a>" : nmTxt;
     var note = isZh() ? "" : " · " + T("stNeedReview");
     return '<span class="' + cls + '">' + I.shield + "<span>" + nm + " · " + orgTxt +
@@ -96,7 +95,7 @@
   }
   function linksRow(links) {
     if (!links || !links.length) return "";
-    var L = window.KBM.L;
+    var L = window.KB.L;
     return '<div class="row">' + links.map(function (l) {
       var nm = esc(L(l, "name"));
       if (l.url) return '<a class="link" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + I.external + nm + "</a>";
@@ -111,7 +110,7 @@
     /* 学生端已独立成应用：页头不再挂机构端/工作流/数据等入口，只留返回入口页 */
     document.getElementById("chrome-top").innerHTML = window.UI.header("student").replace(
       /<nav class="nav"[\s\S]*?<\/nav>/,
-      '<nav class="nav" aria-label="主导航"><a href="index.html" data-i18n="backHome">' + T("backHome") + "</a></nav>"
+      '<nav class="nav" data-i18n-aria="navAria" aria-label="主导航"><a href="index.html" data-i18n="backHome">' + T("backHome") + "</a></nav>"
     );
     document.getElementById("chrome-bottom").innerHTML = window.UI.footer("");
     /* header/footer 模板为中文占位，渲染后按当前语言即时翻译 */
@@ -235,7 +234,7 @@
     document.getElementById("recBox").innerHTML = ms.map(function (m) { return accCard(m); }).join("");
 
     /* 紧急联系 */
-    var LE = window.KBM.L;
+    var LE = window.KB.L;
     document.getElementById("emgBox").innerHTML = window.KBM.EMERGENCY.map(function (e) {
       var isNum = /^\d+$/.test(e.num);
       var inner = '<span class="num">' + esc(e.num) + '</span><span><span class="lb">' + esc(LE(e, "label")) +
@@ -295,7 +294,7 @@
   }
 
   function renderGuide() {
-    var L = window.KBM.L;
+    var L = window.KB.L;
     document.getElementById("guideBox").innerHTML = window.KBM.GUIDE_GROUPS.map(function (g) {
       var ms = g.matters.map(matterById).filter(Boolean);
       return '<div class="sec-title"><span class="ico">' + ic(g.icon) + "</span><span>" + esc(L(g, "title")) +
@@ -310,7 +309,7 @@
      4. 校园学习
      ===================================================================== */
   function renderCampus() {
-    var L = window.KBM.L;
+    var L = window.KB.L;
     document.getElementById("tierBox").innerHTML = window.KBM.CAMPUS_TIERS.map(function (x) {
       var cur = x.level === 1;
       return '<div class="t' + (cur ? " cur" : "") + '"><div class="lv">' + esc(T("campusTier")) + " " + x.level + "</div>" +
@@ -336,7 +335,7 @@
      5. 日常生活
      ===================================================================== */
   function renderDaily() {
-    var L = window.KBM.L;
+    var L = window.KB.L;
     document.getElementById("dailyBox").innerHTML = window.KBM.DAILY.map(function (d) {
       var open = !!S.open["d_" + d.id];
       var refs = (d.refs || []).map(matterById).filter(Boolean);
@@ -381,7 +380,7 @@
       "</div>";
 
     /* 设置项 */
-    var LM = window.KBM.L;
+    var LM = window.KB.L;
     document.getElementById("mineBox").innerHTML = window.KBM.MINE.actions.map(function (a) {
       return '<button class="mine-item" data-act="' + esc(a.id) + '">' +
         '<span class="mi">' + ic(a.icon) + "</span>" +
@@ -406,7 +405,7 @@
     document.getElementById("privCard").innerHTML =
       '<div class="kv"><span class="k">' + esc(T("mineStorage")) + '</span><span class="v">' + esc(T("mineStorageVal")) + "</span></div>" +
       '<div class="kv"><span class="k">' + esc(T("mineAiNotice")) + '</span><span class="v">' + esc(T("mineAiNoticeVal")) + "</span></div>" +
-      '<div class="kv"><span class="k">' + esc(T("disclaimer")) + '</span><span class="v" style="max-width:60%;font-weight:400;color:var(--ink-600)">' + esc(isZh() ? window.KB.META.disclaimer : (window.KB.META.disclaimer_en || window.KB.META.disclaimer)) + "</span></div>" +
+      '<div class="kv"><span class="k">' + esc(T("disclaimer")) + '</span><span class="v" style="max-width:60%;font-weight:400;color:var(--ink-600)">' + esc(window.KB.L(window.KB.META, "disclaimer")) + "</span></div>" +
       '<div class="wrapflex" style="margin-top:var(--sp-5)">' +
       '<button class="btn btn-ghost btn-sm" id="btnExportData">' + ic("save") + esc(T("mineExport")) + "</button>" +
       '<button class="btn btn-ghost btn-sm" id="btnClear">' + ic("alert") + esc(T("mineClearData")) + "</button></div>";
@@ -591,7 +590,7 @@
       var s = document.createElement("div");
       s.className = "srcs";
       s.innerHTML = "<b>" + esc(T("agentSources")) + "</b><br>" + sources.map(function (x) {
-        return esc(x.name) + " · " + esc(x.org) + (x.url ? ' · <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.url) + "</a>" : "") + " · " + esc(x.level);
+        return esc(window.KB.L(x, "name")) + " · " + esc(window.KB.L(x, "org")) + (x.url ? ' · <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.url) + "</a>" : "") + " · " + esc(x.level);
       }).join("<br>");
       d.appendChild(s);
     }

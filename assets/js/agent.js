@@ -136,7 +136,13 @@ window.Agent = (function () {
     var intentMatter = intent && intent.matter;
     var qHasTransit = TRANSIT_RE.test(query);
     window.KB.MATTERS.forEach(function (m) {
-      var doc = [m.title, m.title_en, m.summary, m.summary_en, (m.docs || []).join(" "), (m.docs_en || []).join(" "), m.risk, m.risk_en, m.channel, m.channel_en].join(" ");
+      var doc = [];
+      Object.keys(m).forEach(function (k) {
+        if (!/^(title|summary|docs|risk|channel)(_|$)/.test(k)) return;
+        var v = m[k];
+        if (v) doc.push(Array.isArray(v) ? v.join(" ") : v);
+      });
+      doc = doc.join(" ");
       var s = score(query, doc);
       if (intentMatter && m.id === intentMatter) s += 0.35;      /* 意图对应事项加权 */
       if (intentMatter && m.applies && (m.applies.purposes || []).indexOf("transit") >= 0 && !qHasTransit) s -= 0.5;
@@ -144,7 +150,9 @@ window.Agent = (function () {
       pool.push({ type: "matter", id: m.id, item: m, s: s });
     });
     window.KB.FAQ.forEach(function (f, i) {
-      var s = score(query, (f.q + " " + f.a + " " + (f.q_en || "") + " " + (f.a_en || "")));
+      var fdoc = [];
+      Object.keys(f).forEach(function (k) { if (/^(q|a)(_|$)/.test(k) && f[k]) fdoc.push(f[k]); });
+      var s = score(query, fdoc.join(" "));
       var isTransitFaq = TRANSIT_RE.test(f.q) || TRANSIT_RE.test(f.a);
       if (isTransitFaq && !qHasTransit) s = 0;                    /* 过境类问答不主动混入 */
       if (s > 0 && f.level === "S3" && !qHasTransit) s -= 0.05;   /* S3 待复核条目轻微降权 */
@@ -195,7 +203,7 @@ window.Agent = (function () {
       urgency = "later"; /* 相对到期日的提醒，需用户提供到期日才能计算 */
     }
     var zh = !window.L10N || String(window.L10N.current).slice(0, 2) === "zh";
-    return { date: d, dateStr: d ? fmt(d) : "", urgency: urgency, days: days, label: zh ? m.deadline.label : (m.deadline.label_en || m.deadline.label) };
+    return { date: d, dateStr: d ? fmt(d) : "", urgency: urgency, days: days, label: window.KB.L(m.deadline, "label") };
   }
 
   function buildChecklist(p) {
@@ -226,19 +234,21 @@ window.Agent = (function () {
   function matterText(m, lang) {
     var zh = lang === "zh";
     return {
-      title: zh ? m.title : (m.title_en || m.title),
-      summary: zh ? m.summary : (m.summary_en || m.summary),
-      docs: zh ? (m.docs || []) : (m.docs_en || m.docs || []),
-      channel: zh ? m.channel : (m.channel_en || m.channel),
-      risk: zh ? m.risk : (m.risk_en || m.risk),
-      label: zh ? (m.deadline ? m.deadline.label : "") : (m.deadline ? (m.deadline.label_en || m.deadline.label) : "")
+      title: window.KB.L(m, "title", lang),
+      summary: window.KB.L(m, "summary", lang),
+      docs: window.KB.L(m, "docs", lang) || [],
+      channel: window.KB.L(m, "channel", lang),
+      risk: window.KB.L(m, "risk", lang),
+      label: m.deadline ? window.KB.L(m.deadline, "label", lang) : ""
     };
   }
 
-  function srcLine(keys) {
-    var zh = !window.L10N || String(window.L10N.current).slice(0, 2) === "zh";
+  /* lang 省略时取界面语种；机构端生成材料时传入材料语种，保证来源行随材料语言 */
+  function srcLine(keys, lang) {
+    var lg = String(lang || (window.L10N && window.L10N.current) || "zh").slice(0, 2);
+    var zh = lg === "zh";
     return window.KB.sources(keys).map(function (s) {
-      return (zh ? s.name : (s.name_en || s.name)) + " · " + (zh ? s.org : (s.org_en || s.org)) + (s.url ? (zh ? "（" + s.url + "）" : " (" + s.url + ")") : "") + " · " + t("checkedAt") + " " + s.checked + " · " + s.level;
+      return window.KB.L(s, "name", lg) + " · " + window.KB.L(s, "org", lg) + (s.url ? (zh ? "（" + s.url + "）" : " (" + s.url + ")") : "") + " · " + window.L10N.t("checkedAt", lg) + " " + s.checked + " · " + s.level;
     });
   }
 
@@ -283,6 +293,9 @@ window.Agent = (function () {
   function renderMaterial(cfg) {
     var lang = cfg.lang || "zh";
     var isZh = lang === "zh";
+    /* 材料取值跟随「材料语种」而非界面语种：
+       否则中文骨架会填进俄文/阿文取值，形成混排。 */
+    window.KB_LANG_OVERRIDE = lang;
     var tpl = null;
     window.KB.TEMPLATES.forEach(function (x) { if (x.id === cfg.template) tpl = x; });
     if (!tpl) tpl = window.KB.TEMPLATES[0];
@@ -300,9 +313,31 @@ window.Agent = (function () {
       ms: { head: "Tajuk", sec: "Bahagian", src: "Sumber", note: "Dijana oleh studio kandungan. Output AI perlu disemak manusia sebelum diterbitkan.", country: "Penyesuaian negara", deadline: "Tarikh akhir", contact: "Hubungan", topic: "Topik", cf: "Latar belakang agama", cd: "Nota pemakanan", cfe: "Perayaan utama", cl: "Bahasa lazim", ct: "Komunikasi & adab", docs: "Dokumen diperlukan", channel: "Cara memohon", extra: "Keperluan tambahan" },
     }[lang] || null;
     if (!L) L = { head: "Title", sec: "Sections", src: "Sources", note: "", country: "Country adaptation", deadline: "Deadline", contact: "Contact", topic: "Topic", cf: "Religious background", cd: "Dietary notes", cfe: "Main festivals", cl: "Common languages", ct: "Communication & etiquette", docs: "Required documents", channel: "How to apply", extra: "Additional requirements" };
-    var secs = isZh ? tpl.sections : (tpl.sections_en || tpl.sections);
+    /* 段落级文案（十语）：L 表只覆盖字段标签，此处覆盖成句模板与标点，杜绝英文兜底 */
+    var S = {
+      zh: { steps: "办理要点", aud: "国际学生", sep: "：", intro: "本材料面向{c}籍{a}，就「{t}」事项提供办理指引。所有信息来源于官方渠道，标注证据等级与核对日期，发布前请按本校口径复核。", empty: "请按本校与主管部门最新要求办理（可由机构端补充具体步骤）。", disc: "国别适配为跨文化沟通提示，不构成宗教或法律依据，请尊重个体差异。" },
+      en: { steps: "Key steps", aud: "international students", sep: ": ", intro: "This material provides procedural guidance on \u201c{t}\u201d for students from {c}. All information is drawn from official channels with evidence levels and verification dates; please review against your institution's requirements before release.", empty: "Follow your institution's and the competent authority's latest requirements (specific steps may be added by the institution).", disc: "Country adaptation is a cross-cultural communication aid, not a religious or legal reference. Respect individual differences." },
+      ru: { steps: "Ключевые шаги", aud: "иностранные студенты", sep: ": ", intro: "В материале изложен порядок действий по теме «{t}» для студентов из страны: {c}. Все сведения взяты из официальных источников с указанием уровня достоверности и даты проверки; перед публикацией сверьтесь с требованиями вашего вуза.", empty: "Действуйте по последним требованиям вашего вуза и компетентного органа (конкретные шаги может добавить вуз).", disc: "Адаптация по стране — подсказка для межкультурного общения, а не религиозная или правовая норма. Уважайте индивидуальные различия." },
+      ar: { steps: "الخطوات الأساسية", aud: "الطلاب الدوليون", sep: ": ", intro: "يقدّم هذا المستند إرشادات إجرائية بشأن «{t}» للطلاب القادمين من {c}. جميع المعلومات مأخوذة من مصادر رسمية مع بيان درجة الموثوقية وتاريخ التحقق؛ يُرجى مراجعتها وفق متطلبات مؤسستكم قبل النشر.", empty: "اتبع أحدث متطلبات مؤسستكم والجهة المختصة (يمكن للمؤسسة إضافة الخطوات التفصيلية).", disc: "التوافق الثقافي إرشاد للتواصل بين الثقافات، وليس مرجعًا دينيًا أو قانونيًا. يُرجى احترام الفروق الفردية." },
+      fr: { steps: "Étapes clés", aud: "étudiants internationaux", sep: " : ", intro: "Ce document fournit des indications de procédure sur « {t} » aux étudiants originaires de {c}. Toutes les informations proviennent de sources officielles, avec niveau de preuve et date de vérification ; veuillez les valider selon les règles de votre établissement avant publication.", empty: "Suivez les prescriptions les plus récentes de votre établissement et de l'autorité compétente (les étapes précises peuvent être ajoutées par l'établissement).", disc: "L'adaptation pays est une aide à la communication interculturelle, et non une référence religieuse ou juridique. Respectez les différences individuelles." },
+      es: { steps: "Pasos clave", aud: "estudiantes internacionales", sep: ": ", intro: "Este documento ofrece orientación procedimental sobre «{t}» para estudiantes procedentes de {c}. Toda la información procede de fuentes oficiales, con nivel de evidencia y fecha de verificación; revísela según los criterios de su institución antes de publicarla.", empty: "Siga los requisitos más recientes de su institución y de la autoridad competente (la institución puede añadir los pasos concretos).", disc: "La adaptación por país es una ayuda para la comunicación intercultural, no una referencia religiosa ni jurídica. Respete las diferencias individuales." },
+      vi: { steps: "Các bước chính", aud: "sinh viên quốc tế", sep: ": ", intro: "Tài liệu này hướng dẫn quy trình về «{t}» cho sinh viên đến từ {c}. Mọi thông tin đều lấy từ nguồn chính thức, có ghi mức độ tin cậy và ngày kiểm tra; vui lòng đối chiếu với quy định của nhà trường trước khi phát hành.", empty: "Thực hiện theo yêu cầu mới nhất của nhà trường và cơ quan có thẩm quyền (nhà trường có thể bổ sung các bước cụ thể).", disc: "Phần thích ứng quốc gia chỉ là gợi ý giao tiếp đa văn hóa, không phải căn cứ tôn giáo hay pháp lý. Hãy tôn trọng sự khác biệt của mỗi cá nhân." },
+      th: { steps: "ขั้นตอนสำคัญ", aud: "นักศึกษานานาชาติ", sep: ": ", intro: "เอกสารนี้ให้แนวทางขั้นตอนเรื่อง «{t}» สำหรับนักศึกษาจาก{c} ข้อมูลทั้งหมดมาจากแหล่งทางการ พร้อมระบุระดับความน่าเชื่อถือและวันที่ตรวจสอบ โปรดทบทวนตามข้อกำหนดของสถาบันก่อนเผยแพร่", empty: "โปรดดำเนินการตามข้อกำหนดล่าสุดของสถาบันและหน่วยงานที่มีอำนาจ (สถาบันสามารถเพิ่มขั้นตอนเฉพาะได้)", disc: "การปรับตามประเทศเป็นเพียงคำแนะนำด้านการสื่อสารข้ามวัฒนธรรม ไม่ใช่ข้ออ้างอิงทางศาสนาหรือกฎหมาย โปรดเคารพความแตกต่างของแต่ละบุคคล" },
+      my: { steps: "အဓိက အဆင့်များ", aud: "နိုင်ငံတကာ ကျောင်းသားများ", sep: ": ", intro: "ဤစာရွက်စာတမ်းသည် {c} မှ ကျောင်းသားများအတွက် «{t}» နှင့်ပတ်သက်သော လုပ်ငန်းစဉ် လမ်းညွှန်ချက် ဖြစ်သည်။ အချက်အလက်အားလုံးကို တရားဝင် ရင်းမြစ်များမှ ရယူထားပြီး သက်သေအဆင့်နှင့် စစ်ဆေးသည့်ရက်စွဲ တွဲဖက်ဖော်ပြထားသည်။ ထုတ်ပြန်မီ ကျောင်း၏ သတ်မှတ်ချက်များနှင့် ပြန်လည်စစ်ဆေးပါ။", empty: "သင့်ကျောင်းနှင့် သက်ဆိုင်ရာ အာဏာပိုင်၏ နောက်ဆုံး သတ်မှတ်ချက်များအတိုင်း ဆောင်ရွက်ပါ (အဆင့်အသေးစိတ်ကို ကျောင်းမှ ဖြည့်စွက်နိုင်သည်)။", disc: "နိုင်ငံအလိုက် ကိုက်ညီမှုသည် ယဉ်ကျေးမှုဖြတ်ကျော် ဆက်သွယ်ရေး အကြံပြုချက်သာ ဖြစ်ပြီး ဘာသာရေး သို့မဟုတ် ဥပဒေဆိုင်ရာ အထောက်အထား မဟုတ်ပါ။ တစ်ဦးချင်း ကွဲပြားမှုကို လေးစားပါ။" },
+      ms: { steps: "Langkah utama", aud: "pelajar antarabangsa", sep: ": ", intro: "Bahan ini memberi panduan prosedur tentang «{t}» untuk pelajar dari {c}. Semua maklumat diambil daripada sumber rasmi bersama tahap bukti dan tarikh semakan; sila semak semula mengikut keperluan institusi anda sebelum diterbitkan.", empty: "Ikut keperluan terkini institusi anda dan pihak berkuasa (langkah khusus boleh ditambah oleh institusi).", disc: "Penyesuaian negara hanyalah panduan komunikasi antara budaya, bukan rujukan agama atau undang-undang. Hormati perbezaan individu." }
+    }[lang] || { steps: "Key steps", aud: "international students", sep: ": ", intro: "This material provides procedural guidance on \u201c{t}\u201d for students from {c}. All information is drawn from official channels with evidence levels and verification dates; please review against your institution's requirements before release.", empty: "Follow your institution's and the competent authority's latest requirements.", disc: "Country adaptation is a cross-cultural communication aid, not a religious or legal reference. Respect individual differences." };
+    /* 模板占位符填充：{c} 国别 / {a} 受众 / {t} 事项 */
+    var fill = function (s, o) {
+      return String(s || "").replace(/\{(\w+)\}/g, function (_, k) {
+        return (o && o[k] !== undefined && o[k] !== null) ? o[k] : "";
+      });
+    };
+    /* 材料内取词一律跟随「材料语种」：页脚免责声明、来源核对日期、AI 标识
+       都走界面 t() 曾导致中文界面下生成俄文材料时夹中文。 */
+    var mt = function (k) { return window.L10N.t(k, lang); };
+    var secs = window.KB.L(tpl, "sections") || [];
 
-    var title = (cfg.topic || tpl.name) + (cfg.country && cfg.country !== "OTHER" ? " · " + (isZh ? c.zh : c.en) : "");
+    var title = (cfg.topic || window.KB.L(tpl, "name")) + (cfg.country && cfg.country !== "OTHER" ? " · " + KB.countryName(c) : "");
 
     /* 收集模板映射到的知识库事项，用于填充真实要点、材料与渠道 */
     var usedMatters = [], usedSrc = [];
@@ -317,14 +352,16 @@ window.Agent = (function () {
 
     var body = [];
     body.push("## " + title);
-    if (cfg.deadline) body.push("**" + L.deadline + "**：" + cfg.deadline);
+    if (cfg.deadline) body.push("**" + L.deadline + "**" + S.sep + cfg.deadline);
     body.push("");
     body.push("### " + (isZh ? "一、事项说明" : "1. " + L.topic));
-    body.push(isZh
-      ? "本材料面向" + c.zh + "籍" + (cfg.audience || "国际学生") + "，就「" + (cfg.topic || tpl.name) + "」事项提供办理指引。所有信息来源于官方渠道，标注证据等级与核对日期，发布前请按本校口径复核。"
-      : "This material provides procedural guidance on \"" + (cfg.topic || tpl.name) + "\" for students from " + c.en + ". All information is drawn from official channels with evidence levels and verification dates; please review against your institution's requirements before release.");
+    body.push(fill(S.intro, {
+      c: window.KB.countryName(c) || c.en || "",
+      a: cfg.audience || S.aud,
+      t: cfg.topic || window.KB.L(tpl, "name")
+    }));
     body.push("");
-    body.push("### " + (isZh ? "二、办理要点" : "2. Key steps"));
+    body.push("### " + (isZh ? "二、办理要点" : "2. " + S.steps));
     secs.forEach(function (s, i) {
       body.push("**" + (i + 1) + ". " + s + "**");
       var mapped = [];
@@ -335,7 +372,7 @@ window.Agent = (function () {
           body.push("- **" + mt.title + "**" + (isZh ? "：" : ": ") + mt.summary + (mt.label ? (isZh ? "（" + mt.label + "）" : " (" + mt.label + ")") : ""));
         });
       } else {
-        body.push(isZh ? "- 请按本校与主管部门最新要求办理（可由机构端补充具体步骤）。" : "- Follow your institution's and the competent authority's latest requirements (specific steps may be added by the institution).");
+        body.push("- " + S.empty);
       }
     });
 
@@ -343,19 +380,19 @@ window.Agent = (function () {
     if (c.diet || c.fest) {
       body.push("");
       body.push("### " + (isZh ? "三、" : "3. ") + L.country);
-      body.push("- " + L.cf + "：" + (isZh ? c.faith : c.faith_en || c.faith));
-      body.push("- " + L.cd + "：" + (isZh ? c.diet : c.diet_en || c.diet));
-      if (c.fest && c.fest.length) body.push("- " + L.cfe + "：" + (isZh ? c.fest.join("、") : (c.fest_en || c.fest).join(", ")));
-      if (c.lang) body.push("- " + L.cl + "：" + cLang(c, isZh));
-      (c.tips_en && !isZh ? c.tips_en : (c.tips || [])).forEach(function (x) { body.push("- " + x); });
+      body.push("- " + L.cf + S.sep + window.KB.L(c, "faith"));
+      body.push("- " + L.cd + S.sep + window.KB.L(c, "diet"));
+      if (c.fest && c.fest.length) body.push("- " + L.cfe + S.sep + (window.KB.L(c, "fest") || []).join(isZh ? "、" : ", "));
+      if (c.lang) body.push("- " + L.cl + S.sep + window.KB.L(c, "lang"));
+      (window.KB.L(c, "tips") || []).forEach(function (x) { body.push("- " + x); });
       body.push("");
-      body.push("> " + (isZh ? "国别适配为跨文化沟通提示，不构成宗教或法律依据，请尊重个体差异。" : "Country adaptation is a cross-cultural communication aid, not a religious or legal reference. Respect individual differences."));
+      body.push("> " + S.disc);
     }
 
     /* 所需材料 */
     var docs = [];
     usedMatters.forEach(function (m) {
-      var _ds = isZh ? (m.docs || []) : (m.docs_en || m.docs || []);
+      var _ds = window.KB.L(m, "docs") || [];
       _ds.forEach(function (d) { if (docs.indexOf(d) < 0) docs.push(d); });
     });
     if (docs.length) {
@@ -367,7 +404,7 @@ window.Agent = (function () {
     /* 办理渠道 */
     var channels = [];
     usedMatters.forEach(function (m) {
-      var _ch = isZh ? m.channel : (m.channel_en || m.channel);
+      var _ch = window.KB.L(m, "channel");
       if (_ch && channels.indexOf(_ch) < 0) channels.push(_ch);
     });
     if (channels.length) {
@@ -378,18 +415,20 @@ window.Agent = (function () {
 
     /* 补充要求与联系方式 */
     if (cfg.extra) { body.push(""); body.push("### " + (isZh ? "六、" : "6. ") + L.extra); body.push(cfg.extra); }
-    if (cfg.contact) { body.push(""); body.push("**" + L.contact + "**：" + cfg.contact); }
+    if (cfg.contact) { body.push(""); body.push("**" + L.contact + "**" + S.sep + cfg.contact); }
     body.push("");
     body.push("---");
     body.push("> " + L.note);
-    body.push("> " + t("footerNote"));
+    body.push("> " + mt("footerNote"));
 
-    return {
+    var _res = {
       title: title, markdown: body.join("\n"),
-      sources: srcLine(usedSrc),
-      aiLabel: lang === "zh" || lang === "en" ? t("aiGenerated") : t("aiGenerated") + " / machine-translated",
-      needsHuman: true, lang: lang, template: tpl.name
+      sources: srcLine(usedSrc, lang),
+      aiLabel: lang === "zh" || lang === "en" ? mt("aiGenerated") : mt("aiGenerated") + " / machine-translated",
+      needsHuman: true, lang: lang, template: window.KB.L(tpl, "name") || tpl.name
     };
+    window.KB_LANG_OVERRIDE = null;
+    return _res;
   }
 
   /* 多语种术语表（用于"一键多语种"的演示：结构多语种 + 关键术语映射） */
@@ -431,13 +470,13 @@ window.Agent = (function () {
 
     /* 步骤 3 知识检索 */
     var hits = retrieve(query, 4, cls);
-    push(3, t("flow3"), hits.length ? hits.map(function (h) { return (h.type === "matter" ? (lang === "zh" ? h.item.title : (h.item.title_en || h.item.title)) : (lang === "zh" ? h.item.q : (h.item.q_en || h.item.q))).slice(0, 22) + "(" + h.s.toFixed(3) + ")"; }).join("；") : "无命中条目");
+    push(3, t("flow3"), hits.length ? hits.map(function (h) { return (h.type === "matter" ? window.KB.L(h.item, "title") : window.KB.L(h.item, "q")).slice(0, 22) + "(" + h.s.toFixed(3) + ")"; }).join("；") : "无命中条目");
 
     /* 步骤 4 规则判定 */
     var ruleNote = "—";
     if (hits.length && hits[0].type === "matter") {
       var dl = computeDeadline(hits[0].item, p);
-      ruleNote = (lang === "zh" ? hits[0].item.deadline.label : (hits[0].item.deadline.label_en || hits[0].item.deadline.label)) + (dl.dateStr ? (lang === "zh" ? "（按你的抵达日推算：" : " (estimated from your arrival date: ") + dl.dateStr + ")" : "");
+      ruleNote = window.KB.L(hits[0].item.deadline, "label") + (dl.dateStr ? (lang === "zh" ? "（按你的抵达日推算：" : " (estimated from your arrival date: ") + dl.dateStr + ")" : "");
     } else if (hits.length) {
       ruleNote = "按 FAQ 条目直接答复，未触发时限规则";
     }
@@ -459,8 +498,8 @@ window.Agent = (function () {
             '<div style="margin-bottom:14px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
             "<div><strong>" + mt.title + "</strong></div>" + badge + "</div>" +
             '<p class="small" style="margin:6px 0 0">' + mt.summary + "</p>" +
-            (dl.dateStr ? '<p class="small muted" style="margin:6px 0 0">' + t("keyDeadline") + (lang === "zh" ? "：" : ": ") + dl.dateStr + (lang === "zh" ? "（" : " (") + (lang === "zh" ? it.deadline.label : (it.deadline.label_en || it.deadline.label)) + ")</p>" : '<p class="small muted" style="margin:6px 0 0">' + t("deadline") + (lang === "zh" ? "：" : ": ") + (lang === "zh" ? it.deadline.label : (it.deadline.label_en || it.deadline.label)) + "</p>") +
-            '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + window.KB.sources(it.source).map(function (s) { return lang === "zh" ? s.name : (s.name_en || s.name); }).join(lang === "zh" ? "；" : "; ") + "</p>" +
+            (dl.dateStr ? '<p class="small muted" style="margin:6px 0 0">' + t("keyDeadline") + (lang === "zh" ? "：" : ": ") + dl.dateStr + (lang === "zh" ? "（" : " (") + window.KB.L(it.deadline, "label") + ")</p>" : '<p class="small muted" style="margin:6px 0 0">' + t("deadline") + (lang === "zh" ? "：" : ": ") + window.KB.L(it.deadline, "label") + "</p>") +
+            '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + window.KB.sources(it.source).map(function (s) { return window.KB.L(s, "name"); }).join(lang === "zh" ? "；" : "; ") + "</p>" +
             "</div>"
           );
           it.source.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
@@ -519,9 +558,9 @@ window.Agent = (function () {
       hits.slice(0, 4).forEach(function (h) {
         var it = h.item;
         var label, text, keys;
-        if (h.type === "matter") { label = lang === "zh" ? it.title : (it.title_en || it.title); text = lang === "zh" ? it.summary : (it.summary_en || it.summary); keys = it.source; }
-        else { label = lang === "zh" ? it.q : (it.q_en || it.q); text = lang === "zh" ? it.a : (it.a_en || it.a); keys = it.src; }
-        ctx.push({ title: label, text: text, src: window.KB.sources(keys).map(function (s) { return lang === "zh" ? s.name : (s.name_en || s.name); }).join("；") });
+        if (h.type === "matter") { label = window.KB.L(it, "title"); text = window.KB.L(it, "summary"); keys = it.source; }
+        else { label = window.KB.L(it, "q"); text = window.KB.L(it, "a"); keys = it.src; }
+        ctx.push({ title: label, text: text, src: window.KB.sources(keys).map(function (s) { return window.KB.L(s, "name"); }).join("；") });
         keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
       });
       push(3, t("flow3"), ctx.length ? ctx.map(function (x) { return x.title.slice(0, 20); }).join("；") : "无知识条目命中，提示以官方渠道为准");
@@ -540,7 +579,7 @@ window.Agent = (function () {
         var html = '<div class="ai-md">' + (window.UI && window.UI.mdToHtml ? window.UI.mdToHtml(reply) : "<p>" + esc(reply) + "</p>") + "</div>";
         if (srcKeys.length) {
           html += '<div class="trace"><div class="trace-line"><span class="k">' + t("sourceLabel") + '</span><span>' +
-            window.KB.sources(srcKeys).map(function (s) { return lang === "zh" ? s.name : (s.name_en || s.name); }).join(lang === "zh" ? "；" : "; ") + "</span></div></div>";
+            window.KB.sources(srcKeys).map(function (s) { return window.KB.L(s, "name"); }).join(lang === "zh" ? "；" : "; ") + "</span></div></div>";
         }
         resolve({ steps: steps, html: html, sources: window.KB.sources(srcKeys), needReview: true, confidence: 0.85, llm: true, reply: reply });
       }).catch(function (e) { reject(e); });

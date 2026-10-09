@@ -178,6 +178,15 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 <script src="assets/js/kb.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/i18n-v3.js"></script>
+<script src="assets/js/kb-i18n.js"></script>
+<script src="assets/js/kb-i18n-ru.js"></script>
+<script src="assets/js/kb-i18n-ar.js"></script>
+<script src="assets/js/kb-i18n-fr.js"></script>
+<script src="assets/js/kb-i18n-es.js"></script>
+<script src="assets/js/kb-i18n-vi.js"></script>
+<script src="assets/js/kb-i18n-th.js"></script>
+<script src="assets/js/kb-i18n-my.js"></script>
+<script src="assets/js/kb-i18n-ms.js"></script>
 <script src="assets/js/agent.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
@@ -188,7 +197,7 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 
   document.getElementById("chrome-top").innerHTML = UI.header("home").replace(
     /<nav class="nav"[\s\S]*?<\/nav>/,
-    '<nav class="nav" aria-label="主导航"><a href="index.html" aria-current="page" data-i18n="navHome">' + t("navHome") + "</a></nav>"
+    '<nav class="nav" data-i18n-aria="navAria" aria-label="主导航"><a href="index.html" aria-current="page" data-i18n="navHome">' + t("navHome") + "</a></nav>"
   );
   document.getElementById("chrome-bottom").innerHTML = UI.footer("");
 
@@ -223,8 +232,8 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
     } catch (e) {}
     var tasks = list.map(function (x) {
       var m = x.matter;
-      return '<div class="pm-task"><div class="pm-t">' + UI.esc(zh ? m.title : (m.title_en || m.title)) + "</div>" +
-        '<div class="pm-d">' + UI.esc(zh ? m.deadline.label : (m.deadline.label_en || m.deadline.label)) + "</div></div>";
+      return '<div class="pm-task"><div class="pm-t">' + UI.esc(window.KB.L(m, "title")) + "</div>" +
+        '<div class="pm-d">' + UI.esc(window.KB.L(m.deadline, "label")) + "</div></div>";
     }).join("");
     var dock = [["home", "mHome"], ["plane", "mGuide"], ["book", "mCampus"], ["heart", "mDaily"], ["users", "mMine"]].map(function (d, i) {
       return '<div class="pm-di' + (i === 0 ? " on" : "") + '">' + (I[d[0]] || "") + "<span>" + UI.esc(t(d[1])) + "</span></div>";

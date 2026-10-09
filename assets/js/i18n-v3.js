@@ -14,6 +14,7 @@
   var D = {
     "zh": {
       "_label": "中文",
+      "navAria": "主导航",
       "agentReview": "内容由系统生成，待人工复核",
       "agentRunning": "AI Agent 正在执行任务：任务解析 → 知识检索 → 大模型生成 → 合规复核",
       "agentSources": "依据来源",
@@ -391,6 +392,7 @@
     },
     "en": {
       "_label": "English",
+      "navAria": "Main navigation",
       "agentReview": "Generated content, pending human review",
       "agentRunning": "AI Agent working: plan → knowledge retrieval → model generation → compliance review",
       "agentSources": "Sources",
@@ -768,6 +770,7 @@
     },
     "ru": {
       "_label": "Русский",
+      "navAria": "Основная навигация",
       "agentReview": "Сгенерировано, ожидает проверки",
       "agentRunning": "AI-агент выполняет задачу: разбор задачи → поиск по базе знаний → генерация моделью → проверка на соответствие",
       "agentSources": "Источники",
@@ -1145,6 +1148,7 @@
     },
     "ar": {
       "_label": "العربية",
+      "navAria": "التنقل الرئيسي",
       "agentReview": "محتوى مولَّد، بانتظار مراجعة بشرية",
       "agentRunning": "الوكيل الذكي ينفّذ المهمة: تحليل المهمة ← البحث في قاعدة المعرفة ← التوليد بالنموذج ← مراجعة الامتثال",
       "agentSources": "المصادر",
@@ -1522,6 +1526,7 @@
     },
     "fr": {
       "_label": "Français",
+      "navAria": "Navigation principale",
       "agentReview": "Contenu généré, en attente de révision",
       "agentRunning": "L'agent IA travaille : analyse de la tâche → recherche documentaire → génération par le modèle → contrôle de conformité",
       "agentSources": "Sources",
@@ -1899,6 +1904,7 @@
     },
     "es": {
       "_label": "Español",
+      "navAria": "Navegación principal",
       "agentReview": "Contenido generado, pendiente de revisión",
       "agentRunning": "El agente de IA está trabajando: análisis de la tarea → búsqueda en la base → generación con el modelo → revisión de cumplimiento",
       "agentSources": "Fuentes",
@@ -2276,6 +2282,7 @@
     },
     "vi": {
       "_label": "Tiếng Việt",
+      "navAria": "Điều hướng chính",
       "agentReview": "Nội dung do hệ thống tạo, chờ người duyệt",
       "agentRunning": "AI Agent đang thực hiện: phân tích nhiệm vụ → tra cứu tri thức → mô hình tạo nội dung → rà soát tuân thủ",
       "agentSources": "Nguồn căn cứ",
@@ -2653,6 +2660,7 @@
     },
     "th": {
       "_label": "ไทย",
+      "navAria": "การนำทางหลัก",
       "agentReview": "เนื้อหาที่ระบบสร้าง รอการตรวจทานโดยเจ้าหน้าที่",
       "agentRunning": "AI Agent กำลังทำงาน: วิเคราะห์งาน → ค้นฐานความรู้ → โมเดลสร้างเนื้อหา → ตรวจสอบความสอดคล้อง",
       "agentSources": "แหล่งอ้างอิง",
@@ -3030,6 +3038,7 @@
     },
     "my": {
       "_label": "မြန်မာ",
+      "navAria": "အဓိကလမ်းညွှန်",
       "agentReview": "စနစ်မှ ဖန်တီးထားသော အကြောင်းအရာ၊ လူဖြင့် ပြန်စစ်ရန် စောင့်ဆိုင်းနေသည်",
       "agentRunning": "AI Agent လုပ်ဆောင်နေသည် — လုပ်ငန်းခွဲခြမ်းခြင်း → ဗဟုသုတရှာဖွေခြင်း → မော်ဒယ်ဖြင့် ဖန်တီးခြင်း → လိုက်နာမှု စစ်ဆေးခြင်း",
       "agentSources": "ရင်းမြစ်များ",
@@ -3407,6 +3416,7 @@
     },
     "ms": {
       "_label": "Bahasa Melayu",
+      "navAria": "Navigasi utama",
       "agentReview": "Kandungan dijana sistem, menunggu semakan manusia",
       "agentRunning": "AI Agent sedang bertindak: huraian tugas → carian pengetahuan → penjanaan model → semakan pematuhan",
       "agentSources": "Sumber rujukan",

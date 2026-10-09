@@ -230,7 +230,7 @@ window.KBM = (function () {
   ];
 
   /* 语种清单（与 KB.LANGS 对齐，此处只列出机构端可发布语种） */
-  var PUBLISH_LANGS = ["zh", "en", "ru", "ar", "fr", "es"];
+  var PUBLISH_LANGS = ["zh", "en", "ru", "ar", "fr", "es", "vi", "th", "my", "ms"];
 
   /* 本地化取值：中文取原字段，其余语种取 _en（无则回退中文） */
   function L(obj, field) {

@@ -134,11 +134,11 @@ window.UI = (function () {
       '<a class="brand" href="index.html"><span class="brand-mark">' + ICONS.logo + "</span>" +
       '<span class="brand-text"><span class="brand-name" data-i18n="appName">来华交流全程助手</span>' +
       '<span class="brand-sub">EXCHANGE AI AGENT FOR CHINA</span></span></a>' +
-      '<nav class="nav" aria-label="主导航">' + nav.map(function (n) {
+      '<nav class="nav" data-i18n-aria="navAria" aria-label="主导航">' + nav.map(function (n) {
         return '<a href="' + n.href + '"' + (n.k === active ? ' aria-current="page"' : "") + ' data-i18n="' + n.label + '">' + window.L10N.t(n.label) + "</a>";
       }).join("") + "</nav>" +
       '<div class="appbar-tools">' +
-      '<div class="seg" id="langSeg" role="group" aria-label="' + window.L10N.t("language") + '">' +
+      '<div class="seg" id="langSeg" role="group" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
       window.KB.LANGS.map(function (l) { return '<button type="button" data-lang="' + l.code + '" aria-pressed="false">' + l.flag + "</button>"; }).join("") +
       "</div>" +
       '<button class="btn btn-ghost btn-sm" id="themeBtn" type="button" data-i18n-aria="theme" aria-label="' + window.L10N.t("theme") + '">' + ICONS.moon + "</button>" +
@@ -153,7 +153,7 @@ window.UI = (function () {
       '<p class="small muted" style="max-width:44ch" data-i18n="tagline"></p>' +
       '<p class="tiny muted ai-note" style="margin-top:10px"><span class="ai-note-ico">' + ICONS.shield + '</span><span data-i18n="aiLabelNote">' + window.L10N.t("aiLabelNote") + '</span></p></div>' +
       '<div><h4 data-i18n="sourceLabel">' + window.L10N.t("sourceLabel") + '</h4><ul>' +
-      window.KB.META.channels.slice(0, 5).map(function (c) { return '<li><a href="' + c.url + '" target="_blank" rel="noopener">' + ((window.L10N && String(window.L10N.current).slice(0, 2) !== "zh") ? (c.name_en || c.name) : c.name) + "</a></li>"; }).join("") +
+      window.KB.META.channels.slice(0, 5).map(function (c) { return '<li><a href="' + c.url + '" target="_blank" rel="noopener">' + window.KB.L(c, "name") + "</a></li>"; }).join("") +
       "</ul></div>" +
       '<div><h4 data-i18n="toolSource">' + window.L10N.t("toolSource") + '</h4><ul>' +
       '<li data-i18n="footTool1">' + window.L10N.t("footTool1") + '</li>' +
