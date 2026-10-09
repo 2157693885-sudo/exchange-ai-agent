@@ -16,6 +16,8 @@ window.Agent = (function () {
   "use strict";
 
   var LLM_ADAPTER = null; /* 预留：接入大模型时注入 { complete: function(prompt){ return Promise } } */
+  /* HTML 转义（本模块内统一使用；UI.esc 亦可用但此处保持模块自足） */
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]; }); }
 
   /* ================= 0. LLM 桥（本地代理 · 真模型问答） =================
      说明：线上静态版默认走下方规则引擎；本机运行 agent-bridge 代理时自动
@@ -508,12 +510,63 @@ window.Agent = (function () {
   }
 
   /* ================= 6. 问答（含推理轨迹） ================= */
+  /* 会话类问题离线兜底（打招呼/身份/能力介绍）：任何引擎（含离线规则引擎）都能答 */
+  var CHAT = {
+    zh: { title: "你好，我是来华交流全程助手", body: "我按你来华交流的四个阶段——行前准备、抵达初期、在学日常、离境——帮你理清签证、住宿登记、居留、就医、保险这些事：该办什么、什么时候办、去哪儿办，答案都带官方来源。下面这些问题可以直接问我。", chips: ["拿到学习签证后先做什么", "住宿登记要多久内办", "居留许可到期怎么办"],
+      greet: "你好！有什么可以帮你？", welcome: "不客气，很高兴帮到你。还有其他来华问题随时问我。" },
+    en: { title: "Hi, I'm your Exchange AI Agent for China", body: "I guide you through the four stages of your exchange — before arrival, first weeks, daily life and departure — covering visas, accommodation registration, residence permits, medical care and insurance: what to do, when and where, with official sources attached. Try one of the questions below.", chips: ["What should I do after getting my study visa?", "How soon must I register my accommodation?", "My residence permit is expiring — what now?"],
+      greet: "Hello! How can I help you?", welcome: "You're welcome — glad to help. Ask me anytime about your stay in China." },
+    ru: { title: "Здравствуйте, я ваш помощник по поездке в Китай", body: "Я провожу вас через четыре этапа — подготовка, первые недели, учёба и отъезд — и помогаю с визой, регистрацией проживания, видом на жительство, медициной и страховкой: что делать, когда и куда идти, со ссылками на официальные источники.", chips: ["Что делать после получения учебной визы?", "В какой срок зарегистрировать проживание?", "Заканчивается вид на жительство — что делать?"],
+      greet: "Здравствуйте! Чем могу помочь?", welcome: "Пожалуйста, рад помочь. Спрашивайте в любое время." },
+    ar: { title: "مرحبًا، أنا مساعدك طوال فترة إقامتك في الصين", body: "أرشدك خلال المراحل الأربع — التحضير، الوصول، الدراسة والمغادرة — لترتيب التأشيرة، تسجيل الإقامة، تصريح الإقامة، العلاج والتأمين: ماذا تفعل ومتى وأين، مع مصادر رسمية.", chips: ["ماذا أفعل بعد الحصول على تأشيرة الدراسة؟", "خلال كم يوم يجب تسجيل محل الإقامة؟", "تصريح الإقامة ينتهي — ماذا أفعل؟"],
+      greet: "مرحبًا! كيف يمكنني مساعدتك؟", welcome: "على الرحب والسعة، يسعدني مساعدتك." },
+    fr: { title: "Bonjour, je suis votre assistant pour votre séjour en Chine", body: "Je vous accompagne sur les quatre étapes — avant l'arrivée, à l'arrivée, pendant les études et au départ — pour gérer visa, enregistrement du logement, titre de séjour, soins et assurance : quoi faire, quand et où, avec sources officielles.", chips: ["Que faire après l'obtention du visa d'études ?", "Sous combien de jours enregistrer mon logement ?", "Mon titre de séjour expire — que faire ?"],
+      greet: "Bonjour ! Comment puis-je vous aider ?", welcome: "Avec plaisir, ravi de vous aider." },
+    es: { title: "Hola, soy tu asistente para tu estancia en China", body: "Te acompaño en las cuatro etapas — antes de llegar, a la llegada, durante los estudios y al salir — con visado, registro de alojamiento, permiso de residencia, atención médica y seguro: qué hacer, cuándo y dónde, con fuentes oficiales.", chips: ["¿Qué hago tras obtener el visado de estudios?", "¿En cuántos días debo registrar mi alojamiento?", "Mi permiso de residencia vence — ¿qué hago?"],
+      greet: "¡Hola! ¿Cómo puedo ayudarte?", welcome: "De nada, encantado de ayudar." },
+    vi: { title: "Chào bạn, mình là trợ lý hành trình đến Trung Quốc của bạn", body: "Mình đồng hành qua bốn giai đoạn — chuẩn bị, mới đến, học tập và khởi hành — giúp bạn xử lý thị thực, đăng ký lưu trú, giấy phép cư trú, khám chữa bệnh và bảo hiểm: làm gì, khi nào, ở đâu, kèm nguồn chính thức.", chips: ["Sau khi có visa học thì làm gì trước?", "Đăng ký lưu trú cần làm trong bao lâu?", "Giấy phép cư trú sắp hết hạn thì sao?"],
+      greet: "Chào bạn! Mình có thể giúp gì?", welcome: "Không có gì, rất vui được giúp bạn." },
+    th: { title: "สวัสดี ฉันคือผู้ช่วยตลอดการเดินทางของคุณในจีน", body: "ฉันพาคุณผ่านสี่ช่วง — เตรียมตัว, ถึงจีน, เรียน และกลับประเทศ — จัดการเรื่องวีซ่า, ลงทะเบียนที่พัก, ใบอนุญาตพำนัก, การรักษาพยาบาล และประกัน: ต้องทำอะไร เมื่อไร ที่ไหน พร้อมแหล่งอ้างอิงทางการ", chips: ["หลังได้วีซ่านักเรียน ต้องทำอะไรก่อน", "ต้องลงทะเบียนที่พักภายในกี่วัน", "ใบอนุญาตพำนักใกล้หมดอายุ ทำอย่างไร"],
+      greet: "สวัสดี! มีอะไรให้ฉันช่วยไหม?", welcome: "ด้วยความยินดี ยินดีช่วยเหลือเสมอ" },
+    my: { title: "မင်္ဂလာပါ၊ ကျွန်ုပ်သည် သင့်တရုတ်ပြည်ခရီးအတွက် အကူအညီပေးသူ ဖြစ်ပါသည်", body: "ကျွန်ုပ်သည် အဆင့်လေးဆင့် — ပြင်ဆင်ချိန်၊ ရောက်ချိန်၊ ကျောင်းတက်ချိန်နှင့် ထွက်ခွာချိန် — တစ်လျှောက် ဗီဇာ၊ နေထိုင်မှုမှတ်ပုံတင်၊ နေထိုင်ခွင့်၊ ကုသမှုနှင့် အာမခံကိစ္စများကို ဘာလုပ်ရမည်၊ မည်သည့်အချိန်၊ မည်သည့်နေရာတွင် လမ်းညွှန်ပေးပြီး တရားဝင် ရင်းမြစ်များ ပူးတွဲဖော်ပြပါသည်။", chips: ["ကျောင်းသားဗီဇာ ရပြီးနောက် ဘာဦးစားပေးလုပ်ရမလဲ", "နေထိုင်မှုမှတ်ပုံတင်ကို ရက်မည်မျှအတွင်း ပြုလုပ်ရမလဲ", "နေထိုင်ခွင့် သက်တမ်းကုန်ခါနီး ဖြစ်နေလျှင်"],
+      greet: "မင်္ဂလာပါ! ဘာကူညီပေးရမလဲ?", welcome: "ရပါတယ်၊ ကူညီပေးရတာ ဝမ်းသာပါတယ်။" },
+    ms: { title: "Hai, saya pembantu perjalanan anda ke China", body: "Saya membimbing anda melalui empat fasa — persediaan, ketibaan, pengajian dan pemergian — untuk visa, pendaftaran penginapan, permit kediaman, rawatan perubatan dan insurans: apa yang perlu dibuat, bila dan di mana, dengan sumber rasmi.", chips: ["Apa yang perlu dilakukan selepas mendapat visa pelajar?", "Berapa lama masa untuk mendaftar penginapan?", "Permit kediaman hampir tamat — apa yang perlu dibuat?"],
+      greet: "Hai! Apa yang saya boleh bantu?", welcome: "Sama-sama, gembira dapat membantu." }
+  };
+  function matchChatIntent(q) {
+    q = (q || "").trim();
+    if (!q) return null;
+    var greet = /^(hi|hello|hey|你好|您好|哈喽|嗨|привет|здравствуйте|مرحبا|اهلا|salut|bonjour|hola|buenos días|chào|xin chào|สวัสดี|မင်္ဂလာပါ|halo|selamat|안녕)[\s!?。！？.…]*$/i;
+    var who = /你是谁|你是什么|你是哪位|介绍一下你自己|你是谁的助手|what are you|who are you|tell me about yourself|кто ты|من أنت|ما أنت|qui es-tu|qué eres|quién eres|bạn là ai|bạn là gì|คุณคือใคร|မင်းက ဘယ်သူလဲ|awak siapa|kamu siapa/i;
+    var cap = /你能做什么|能帮我什么|你会什么|what can you do|what do you do|can you help|что ты умеешь|ماذا يمكنك أن تفعل|que peux-tu faire|qué puedes hacer|bạn có thể làm gì|giúp được gì|คุณช่วยอะไรได้บ้าง|မင်း ဘာတွေ လုပ်ပေးနိုင်လဲ|awak boleh buat apa/i;
+    var thx = /^(谢谢|感谢|thanks|thank you|danke|спасибо|شكرا|merci|gracias|cảm ơn|ขอบคุณ|ကျေးဇူးတင်ပါတယ်|terima kasih)[\s!?。！？.…]*$/i;
+    if (greet.test(q)) return "greet";
+    if (who.test(q)) return "who";
+    if (cap.test(q)) return "cap";
+    if (thx.test(q)) return "thx";
+    return null;
+  }
   function buildAnswer(query, profile, lang, onStep) {
     var steps = [];
     var push = function (n, title, detail) {
       steps.push({ n: n, title: title, detail: detail });
       if (typeof onStep === "function") onStep(steps.length - 1, steps[steps.length - 1]);
     };
+    /* 0. 会话类问题（打招呼/身份/能力）：规则引擎与 LLM 均可答 */
+    var chatKind = matchChatIntent(query);
+    if (chatKind) {
+      var R = CHAT[lang] || CHAT.en;
+      var intro;
+      if (chatKind === "who" || chatKind === "cap") {
+        intro = '<div class="chat-intro"><h4 style="margin-top:0">' + esc(R.title) + "</h4><p>" + esc(R.body) + "</p>" +
+          '<div class="chips" style="margin-top:10px">' + R.chips.map(function (c) { return '<button class="chip-q" data-q="' + esc(c) + '">' + esc(c) + "</button>"; }).join("") + "</div></div>";
+      } else if (chatKind === "greet") {
+        intro = '<div class="chat-intro"><p style="margin:0">' + esc(R.greet) + "</p></div>";
+      } else {
+        intro = '<div class="chat-intro"><p style="margin:0">' + esc(R.welcome) + "</p></div>";
+      }
+      return { steps: [], html: intro, sources: [], needReview: false, confidence: 1, llm: false, chat: true };
+    }
     var p = profile || DEFAULT_PROFILE;
 
     /* 步骤 1 意图识别 */
@@ -549,7 +602,7 @@ window.Agent = (function () {
         if (h.type === "local") {
           /* 校本条目：机构端导入的本校口径，置顶展示并标注校本徽标 */
           blocks.push(
-            '<div style="margin-bottom:14px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
+            '<div style="margin-bottom:10px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
             "<div><strong>" + (lang === "zh" ? it.title : (it.title_en || it.title)) + "</strong></div>" +
             '<span class="badge-src src-S3">' + t("schoolLocal") + "</span></div>" +
             '<p class="small" style="margin:6px 0 0">' + (lang === "zh" ? it.summary : (it.summary_en || it.summary)) + "</p>" +
@@ -562,18 +615,16 @@ window.Agent = (function () {
           var dl = computeDeadline(it, p);
           var badge = it.source.indexOf("school") >= 0 || it.source.some(function (k) { return window.KB.SRC[k] && window.KB.SRC[k].level === "S3"; }) ? '<span class="badge-src src-S3">' + t("needReview") + "</span>" : '<span class="badge-src src-S1">S1</span>';
           blocks.push(
-            '<div style="margin-bottom:14px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
+            '<div style="margin-bottom:10px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
             "<div><strong>" + mt.title + "</strong></div>" + badge + "</div>" +
             '<p class="small" style="margin:6px 0 0">' + mt.summary + "</p>" +
             (dl.dateStr ? '<p class="small muted" style="margin:6px 0 0">' + t("keyDeadline") + (lang === "zh" ? "：" : ": ") + dl.dateStr + (lang === "zh" ? "（" : " (") + window.KB.L(it.deadline, "label") + ")</p>" : '<p class="small muted" style="margin:6px 0 0">' + t("deadline") + (lang === "zh" ? "：" : ": ") + window.KB.L(it.deadline, "label") + "</p>") +
-            '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + window.KB.sources(it.source).map(function (s) { return window.KB.L(s, "name"); }).join(lang === "zh" ? "；" : "; ") + "</p>" +
             "</div>"
           );
           it.source.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
           if (it.source.some(function (k) { return window.KB.SRC[k] && window.KB.SRC[k].level === "S3"; })) needReview = true;
         } else {
-          blocks.push('<div style="margin-bottom:14px"><div><strong>' + it.q + "</strong></div><p class=\"small\" style=\"margin:6px 0 0\">" + it.a + "</p>" +
-            '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + "：" + window.KB.sources(it.src).map(function (s) { return s.name; }).join("；") + "</p></div>");
+          blocks.push('<div style="margin-bottom:10px"><div><strong>' + it.q + "</strong></div><p class=\"small\" style=\"margin:6px 0 0\">" + it.a + "</p></div>");
           it.src.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
           if (it.level === "S3") needReview = true;
         }

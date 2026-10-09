@@ -161,6 +161,10 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 .sheet-h .x{margin-inline-start:auto;border:0;background:transparent;cursor:pointer;color:var(--ink-500);padding:6px;border-radius:8px;line-height:0}
 .sheet-h .x:hover{background:var(--bg-alt)}
 .sheet-h .x svg{width:19px;height:19px}
+.sheet-h .ghost-btn{border:1px solid var(--line);background:transparent;color:var(--ink-500);font:inherit;font-size:.76rem;padding:4px 11px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.sheet-h .ghost-btn:hover{background:var(--bg-alt);color:var(--ink-700);border-color:var(--ink-300)}
+.sheet-h .ghost-btn.active{background:var(--brand-50);border-color:var(--brand-300);color:var(--brand-700)}
+@media(max-width:480px){.sheet-h .ghost-btn{padding:4px 8px;font-size:.7rem}}
 .sheet-b{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
 .msg{max-width:92%;font-size:.9rem;line-height:1.72;padding:12px 15px;border-radius:14px}
 .msg.me{align-self:flex-end;background:var(--brand-700);color:#fff;border-end-end-radius:4px}
@@ -170,9 +174,33 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 .msg.ai ol,.msg.ai ul{margin:6px 0;padding-inline-start:20px}
 .msg.ai li{margin:3px 0}
 .msg .srcs{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:.78rem;color:var(--ink-500)}
-.msg .srcs b{color:var(--ink-600);font-weight:650}
+.msg .srcs b{display:block;margin:0 0 5px;color:var(--ink-600);font-weight:650}
+.msg .srcs .src-item{display:block;padding:3px 0;line-height:1.55}
+.msg .srcs .src-item + .src-item{border-top:1px dashed var(--line-soft)}
+.msg .srcs a{color:var(--brand-600);word-break:break-all}
 .msg .rev{margin-top:8px;font-size:.75rem;color:var(--amber-700);display:flex;align-items:center;gap:5px}
 .msg .rev svg{width:13px;height:13px}
+.msg .trace{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
+.msg .trace-line{display:flex;gap:8px;align-items:baseline;font-size:.74rem;color:var(--ink-500);padding:2px 0;line-height:1.5}
+.msg .trace-line .k{color:var(--ink-600);font-weight:650;flex:0 0 auto;min-width:86px}
+.msg .ai-md{overflow-x:auto}
+.msg .ai-md h3{font-size:1rem;margin:12px 0 5px}
+.msg .ai-md h4{font-size:.93rem}
+.msg .tbl{overflow-x:auto;margin:8px 0}
+.msg .tbl table{border-collapse:collapse;width:100%;font-size:.8rem}
+.msg .tbl th,.msg .tbl td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+.msg .tbl th{background:var(--bg-alt);font-weight:650}
+.msg .tbl tr:nth-child(even) td{background:var(--bg-soft)}
+.sess-panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-1);padding:10px;margin-bottom:4px}
+.sess-head{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 8px;border-bottom:1px dashed var(--line)}
+.sess-head b{font-size:.84rem;color:var(--ink-700)}
+.sess-close{border:0;background:transparent;color:var(--ink-500);font-size:1rem;cursor:pointer;line-height:1;padding:2px 6px}
+.sess-close:hover{color:var(--ink-800)}
+.sess-item{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;background:transparent;padding:8px 4px;cursor:pointer;border-bottom:1px dashed var(--line-soft);font:inherit}
+.sess-item:last-child{border-bottom:0}
+.sess-item:hover{background:var(--bg-alt)}
+.sess-t{flex:0 0 auto;font-size:.72rem;color:var(--ink-400);font-variant-numeric:tabular-nums}
+.sess-q{font-size:.82rem;color:var(--ink-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip-q{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 13px;font:inherit;font-size:.83rem;cursor:pointer;color:var(--ink-700)}
 .chip-q:hover{border-color:var(--brand-600);color:var(--brand-700)}
@@ -314,6 +342,8 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
       <span class="dot"></span>
       <strong data-i18n="agentTitle">助手</strong>
       <span class="badge badge-warn" data-i18n="stNeedReview">待人工复核</span>
+      <button class="ghost-btn" id="btnNewChat" data-i18n="newChat">新对话</button>
+      <button class="ghost-btn" id="btnSessions" data-i18n="sessions">历史对话</button>
       <button class="x" id="sheetClose" aria-label="close"><span class="ico" id="iX"></span></button>
     </div>
     <div class="sheet-b" id="chatBody"></div>

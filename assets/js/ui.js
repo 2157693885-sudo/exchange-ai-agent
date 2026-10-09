@@ -200,6 +200,25 @@ window.UI = (function () {
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]; }); }
   function mdToHtml(md) {
     var h = esc(md);
+    /* 表格：把连续以 | 开头且 | 结尾的行聚成块 → <table>（分隔行 |---| 自动跳过） */
+    var parts = [], cur = [];
+    h.split("\n").forEach(function (line) {
+      if (/^\s*\|.*\|\s*$/.test(line)) { cur.push(line); }
+      else { if (cur.length) { parts.push({ t: true, rows: cur }); cur = []; } parts.push({ t: false, text: line }); }
+    });
+    if (cur.length) parts.push({ t: true, rows: cur });
+    h = parts.map(function (p) {
+      if (!p.t) return p.text;
+      var rows = [];
+      p.rows.forEach(function (r) {
+        var cells = r.replace(/^\s*\||\|\s*$/g, "").split("|").map(function (c) { return c.trim(); });
+        if (cells.length && !/^[\s:\-]+$/.test(cells.join(""))) rows.push(cells);
+      });
+      if (!rows.length) return p.rows.join("\n");
+      var html = '<div class="tbl"><table><thead><tr>' + rows[0].map(function (c) { return "<th>" + c + "</th>"; }).join("") + "</tr></thead><tbody>";
+      for (var i = 1; i < rows.length; i++) html += "<tr>" + rows[i].map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>";
+      return html + "</tbody></table></div>";
+    }).join("\n");
     h = h.replace(/^### (.*)$/gm, "<h4>$1</h4>").replace(/^## (.*)$/gm, "<h3>$1</h3>").replace(/^# (.*)$/gm, "<h2>$1</h2>");
     h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
     h = h.replace(/^&gt; (.*)$/gm, '<div class="callout callout-info" style="margin:8px 0"><p class="small" style="margin:0">$1</p></div>');
@@ -207,7 +226,7 @@ window.UI = (function () {
     h = h.replace(/^- (.*)$/gm, "<li>$1</li>").replace(/(<li>[\s\S]*?<\/li>)(?!\s*<li>)/g, "<ul>$1</ul>");
     h = h.replace(/^---$/gm, "<hr>");
     h = h.split(/\n{2,}/).map(function (p) {
-      if (/^\s*<(h\d|ol|ul|div|hr|li)/.test(p)) return p;
+      if (/^\s*<(h\d|ol|ul|div|hr|li|table|thead|tbody|tr|td|th|p|blockquote)/.test(p)) return p;
       return "<p>" + p.replace(/\n/g, "<br>") + "</p>";
     }).join("");
     return h;

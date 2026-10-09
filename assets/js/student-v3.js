@@ -17,7 +17,8 @@
     profile: window.UI.load("v3_profile", null),
     done: window.UI.load("v3_done", []),
     star: window.UI.load("v3_star", []),
-    open: {}
+    open: {},
+    sid: Date.now()
   };
   window.__S = S;     /* 便于验收脚本检查 */
 
@@ -542,6 +543,14 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
     document.getElementById("btnAsk").addEventListener("click", ask);
     document.getElementById("askInput").addEventListener("keydown", function (e) { if (e.key === "Enter") ask(); });
+    var bNew = document.getElementById("btnNewChat");
+    if (bNew) bNew.addEventListener("click", newChat);
+    var bSes = document.getElementById("btnSessions");
+    if (bSes) bSes.addEventListener("click", toggleSessions);
+    document.getElementById("chatBody").addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest(".chip-q[data-q]") : null;
+      if (b && b.getAttribute("data-q")) { document.getElementById("askInput").value = b.getAttribute("data-q"); ask(); }
+    });
   }
   function openSheet() {
     document.getElementById("sheet").classList.add("open");
@@ -555,6 +564,81 @@
     }, 300);
   }
   function closeSheet() { document.getElementById("sheet").classList.remove("open"); }
+
+  /* 会话持久化（localStorage ea2_chatSessions，最多保留 8 个） */
+  var SESS_KEY = "ea2_chatSessions";
+  function loadSessions() { try { return JSON.parse(localStorage.getItem(SESS_KEY)) || []; } catch (e) { return []; } }
+  function saveSessions(list) { try { localStorage.setItem(SESS_KEY, JSON.stringify(list.slice(0, 8))); } catch (e) { /* 隐私模式忽略 */ } }
+  function persistCurrent() {
+    if (!S.chatHist || !S.chatHist.length) return;
+    var list = loadSessions(), found = false;
+    list.forEach(function (s) {
+      if (s.id === S.sid) { s.msgs = S.chatHist.slice(); s.ts = Date.now(); s.lang = window.L10N.current; found = true; }
+    });
+    if (!found) list.unshift({ id: S.sid, ts: Date.now(), lang: window.L10N.current, msgs: S.chatHist.slice() });
+    saveSessions(list);
+  }
+  /* 新对话：清空当前会话，重新渲染欢迎引导 */
+  function newChat() {
+    S.chatHist = [];
+    S.sid = Date.now();
+    var body = document.getElementById("chatBody");
+    body.innerHTML = "";
+    delete body.dataset.init;
+    document.getElementById("sheet").classList.add("open");
+    aiMsg(esc(T("agentWelcome")), null, false);
+    quickChips();
+    setTimeout(function () { updateAiStatus(window.Agent.bridgeOk()); }, 300);
+  }
+  /* 历史对话：会话列表浮层，点击恢复 */
+  function toggleSessions() {
+    var body = document.getElementById("chatBody");
+    var old = body.querySelector(".sess-panel");
+    if (old) { old.remove(); return; }
+    var list = loadSessions();
+    var d = document.createElement("div");
+    d.className = "sess-panel";
+    var head = document.createElement("div");
+    head.className = "sess-head";
+    head.innerHTML = "<b>" + esc(T("sessions")) + "</b><button class='sess-close' aria-label='close'>×</button>";
+    d.appendChild(head);
+    var inner = document.createElement("div");
+    if (!list.length) {
+      inner.innerHTML = "<p class='small muted' style='margin:10px 4px 4px'>" + esc(T("sessionsEmpty")) + "</p>";
+    } else {
+      inner.innerHTML = list.map(function (s) {
+        var first = (s.msgs && s.msgs.length && s.msgs[0].content) ? s.msgs[0].content.slice(0, 28) : "";
+        var t = new Date(s.ts);
+        var ts = (t.getMonth() + 1) + "/" + t.getDate() + " " + (t.getHours() < 10 ? "0" : "") + t.getHours() + ":" + (t.getMinutes() < 10 ? "0" : "") + t.getMinutes();
+        return '<button class="sess-item" data-sid="' + s.id + '"><span class="sess-t">' + esc(ts) + '</span><span class="sess-q">' + esc(first) + "</span></button>";
+      }).join("");
+    }
+    d.appendChild(inner);
+    body.appendChild(d);
+    d.querySelectorAll(".sess-item").forEach(function (b) {
+      b.addEventListener("click", function () { loadSession(b.getAttribute("data-sid")); });
+    });
+    var x = d.querySelector(".sess-close");
+    if (x) x.addEventListener("click", function () { d.remove(); });
+    scrollBottom();
+  }
+  function loadSession(sid) {
+    var list = loadSessions(), s = null;
+    list.forEach(function (x) { if (String(x.id) === String(sid)) s = x; });
+    if (!s) return;
+    S.chatHist = (s.msgs || []).slice();
+    S.sid = s.id;
+    var body = document.getElementById("chatBody");
+    body.innerHTML = "";
+    delete body.dataset.init;
+    S.chatHist.forEach(function (m) {
+      if (m.role === "user") myMsg(m.content);
+      else if (m.role === "assistant") aiMsg("<p style='margin:0'>" + esc(m.content) + "</p>", null, false);
+    });
+    var p = body.querySelector(".sess-panel");
+    if (p) p.remove();
+    scrollBottom();
+  }
 
   function quickChips() {
     var body = document.getElementById("chatBody");
@@ -589,9 +673,9 @@
     if (sources && sources.length) {
       var s = document.createElement("div");
       s.className = "srcs";
-      s.innerHTML = "<b>" + esc(T("agentSources")) + "</b><br>" + sources.map(function (x) {
-        return esc(window.KB.L(x, "name")) + " · " + esc(window.KB.L(x, "org")) + (x.url ? ' · <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.url) + "</a>" : "") + " · " + esc(x.level);
-      }).join("<br>");
+      s.innerHTML = "<b>" + esc(T("agentSources")) + "</b>" + sources.map(function (x) {
+        return '<span class="src-item">' + esc(window.KB.L(x, "name")) + " · " + esc(window.KB.L(x, "org")) + (x.url ? ' · <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.url) + "</a>" : "") + " · " + esc(x.level) + "</span>";
+      }).join("");
       d.appendChild(s);
     }
     if (needReview !== false) {
@@ -640,6 +724,7 @@
       if (res.reply) S.chatHist.push({ role: "assistant", content: res.reply });
       if (res.steps && res.steps.length) traceMsg(res.steps, lang);
       updateAiStatus(res.llm);
+      persistCurrent();
     });
   }
 
