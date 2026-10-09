@@ -552,19 +552,19 @@ window.KB = (function () {
 
   /* ---------- 机构端内容模板 ---------- */
   var TEMPLATES = [
-    { id: "t_guide", name: "国别化来华指南", name_en: "Country-tailored arrival guide", desc: "按目标国别生成行前与抵达阶段指引，自动附加饮食、宗教与节日提示", sections: ["行前准备", "入境与登记", "报到注册", "在学提示", "紧急联系"], sections_en: ["Pre-departure preparation", "Entry and registration", "Enrolment", "During study", "Emergency contacts"] },
-    { id: "t_checklist", name: "行前清单", name_en: "Pre-departure checklist", desc: "按签证类别与停留时长生成材料与事项清单，可导出打印", sections: ["证件材料", "健康与保险", "支付与通信", "行李与合规"], sections_en: ["Documents", "Health and insurance", "Payment and connectivity", "Luggage and compliance"] },
-    { id: "t_notice", name: "通知公告", name_en: "Official notice", desc: "生成多语种通知公告，含事项、时限、地点与联系人", sections: ["事项", "时限", "办理方式", "联系方式"], sections_en: ["Subject", "Deadline", "How to apply", "Contact"] },
-    { id: "t_faq", name: "常见问答集", name_en: "FAQ set", desc: "从知识库高频问题生成多语种问答集，支持一键发布到学生端", sections: ["手续类", "生活类", "学业类"], sections_en: ["Procedures", "Daily life", "Academic"] },
-    { id: "t_brief", name: "迎新简报", name_en: "Orientation brief", desc: "面向新生的首月安排与关键时限提醒", sections: ["首周", "首月", "首学期"], sections_en: ["First week", "First month", "First semester"] },
-    { id: "t_emergency", name: "应急处置卡", name_en: "Emergency card", desc: "护照遗失、就医、纠纷等场景的一页式处置流程", sections: ["场景", "处置步骤", "联系方式"], sections_en: ["Scenario", "Steps", "Contacts"] }
+    { id: "t_guide", name: "国别化来华指南", name_en: "Country-tailored arrival guide", desc: "按目标国别生成行前与抵达阶段指引，自动附加饮食、宗教与节日提示", desc_en: "Pre-departure and arrival guidance for a target country, with automatic notes on diet, religion and festivals", sections: ["行前准备", "入境与登记", "报到注册", "在学提示", "紧急联系"], sections_en: ["Pre-departure preparation", "Entry and registration", "Enrolment", "During study", "Emergency contacts"] },
+    { id: "t_checklist", name: "行前清单", name_en: "Pre-departure checklist", desc: "按签证类别与停留时长生成材料与事项清单，可导出打印", desc_en: "Document and task checklist by visa type and length of stay; exportable and printable", sections: ["证件材料", "健康与保险", "支付与通信", "行李与合规"], sections_en: ["Documents", "Health and insurance", "Payment and connectivity", "Luggage and compliance"] },
+    { id: "t_notice", name: "通知公告", name_en: "Official notice", desc: "生成多语种通知公告，含事项、时限、地点与联系人", desc_en: "Multilingual notice covering subject, deadline, location and contact", sections: ["事项", "时限", "办理方式", "联系方式"], sections_en: ["Subject", "Deadline", "How to apply", "Contact"] },
+    { id: "t_faq", name: "常见问答集", name_en: "FAQ set", desc: "从知识库高频问题生成多语种问答集，支持一键发布到学生端", desc_en: "Multilingual FAQ set built from the most frequent knowledge-base questions; publish to students in one click", sections: ["手续类", "生活类", "学业类"], sections_en: ["Procedures", "Daily life", "Academic"] },
+    { id: "t_brief", name: "迎新简报", name_en: "Orientation brief", desc: "面向新生的首月安排与关键时限提醒", desc_en: "First-month schedule and key deadline reminders for new students", sections: ["首周", "首月", "首学期"], sections_en: ["First week", "First month", "First semester"] },
+    { id: "t_emergency", name: "应急处置卡", name_en: "Emergency card", desc: "护照遗失、就医、纠纷等场景的一页式处置流程", desc_en: "One-page response procedure for lost passports, medical care and disputes", sections: ["场景", "处置步骤", "联系方式"], sections_en: ["Scenario", "Steps", "Contacts"] }
   ];
 
   var LANGS = [
     { code: "zh", name: "中文", en: "Chinese", dir: "ltr", flag: "中" },
     { code: "en", name: "English", en: "English", dir: "ltr", flag: "EN" },
     { code: "ru", name: "Русский", en: "Russian", dir: "ltr", flag: "RU" },
-    { code: "ar", name: "العربية", en: "Arabic", dir: "ltr", flag: "AR" },
+    { code: "ar", name: "العربية", en: "Arabic", dir: "rtl", flag: "AR" },
     { code: "fr", name: "Français", en: "French", dir: "ltr", flag: "FR" },
     { code: "es", name: "Español", en: "Spanish", dir: "ltr", flag: "ES" },
     { code: "vi", name: "Tiếng Việt", en: "Vietnamese", dir: "ltr", flag: "VI" },

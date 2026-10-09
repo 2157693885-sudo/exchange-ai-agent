@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>/* 首屏方向与语种预置：在样式生效前定好 lang/dir，避免语言与排版闪烁 */
+(function(){try{var v=localStorage.getItem("ea2_lang");if(!v)return;var c=JSON.parse(v);
+if(c&&/^[a-z]{2}$/.test(c)){document.documentElement.lang=c;
+document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 <title>学生端 · 来华交流全程助手</title>
 <meta name="description" content="按阶段排好的办事清单、到期提醒、校园与生活指引，还有一个随时能问的多语种助手。">
 <link rel="stylesheet" href="assets/css/base.css">
@@ -144,13 +148,13 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 
 .sheet{position:fixed;inset:0;z-index:80;display:none}
 .sheet.open{display:block}
-.sheet-mask{position:absolute;inset:0;background:rgba(10,26,24,.42);backdrop-filter:blur(3px)}
-.sheet-panel{position:absolute;inset-inline-end:0;bottom:0;width:min(460px,100%);height:min(78vh,720px);
-  background:var(--bg);border-start-start-radius:var(--r-xl);border-inline-start:1px solid var(--line);border-top:1px solid var(--line);
-  display:flex;flex-direction:column;box-shadow:-20px 0 50px -20px rgba(10,26,24,.4);animation:sheetIn .32s var(--ease)}
-@keyframes sheetIn{from{transform:translateY(18px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-mask{position:absolute;inset:0;background:rgba(10,26,24,.46);backdrop-filter:blur(4px)}
+.sheet-panel{position:absolute;inset:0;margin:auto;width:min(680px,94%);height:min(80vh,760px);
+  background:var(--bg);border-radius:var(--r-xl);border:1px solid var(--line);
+  display:flex;flex-direction:column;box-shadow:0 36px 90px -28px rgba(10,26,24,.55);animation:sheetIn .32s var(--ease)}
+@keyframes sheetIn{from{transform:translateY(16px) scale(.985);opacity:.5}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce){.sheet-panel{animation:none}}
-@media(max-width:560px){.sheet-panel{width:100%;height:86vh;border-radius:var(--r-xl) var(--r-xl) 0 0;border-inline-start:0}}
+@media(max-width:680px){.sheet-panel{inset:0;margin:0;width:100%;height:100dvh;border-radius:0;border:0;box-shadow:none}}
 .sheet-h{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--line)}
 .sheet-h .dot{width:9px;height:9px;border-radius:99px;background:var(--jade-600);flex:0 0 9px;box-shadow:0 0 0 4px var(--jade-100)}
 .sheet-h strong{font-size:.98rem}

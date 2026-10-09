@@ -124,11 +124,12 @@ window.UI = (function () {
       { k: "home", href: "index.html", label: "navHome" },
       { k: "student", href: "student.html", label: "navStudent" },
       { k: "org", href: "institution.html", label: "navOrg" },
-      { k: "flow", href: "index.html#flow", label: "navFlow" },
-      { k: "data", href: "index.html#data", label: "navData" }
+      /* 工作台与知识库实际位于机构端；原先指向已不存在的 index.html#flow/#data，属死链 */
+      { k: "flow", href: "institution.html#studio", label: "navFlow" },
+      { k: "data", href: "institution.html#kb", label: "navData" }
     ];
     return '' +
-      '<a class="skip-link" href="#main">跳到主要内容</a>' +
+      '<a class="skip-link" href="#main" data-i18n="skipLink">跳到主要内容</a>' +
       '<header class="appbar"><div class="wrap appbar-inner">' +
       '<a class="brand" href="index.html"><span class="brand-mark">' + ICONS.logo + "</span>" +
       '<span class="brand-text"><span class="brand-name" data-i18n="appName">来华交流全程助手</span>' +

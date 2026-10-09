@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh" dir="ltr" data-theme="light">
 <head>
+<script>/* 首屏方向与语种预置：在样式生效前定好 lang/dir，避免语言与排版闪烁 */
+(function(){try{var v=localStorage.getItem("ea2_lang");if(!v)return;var c=JSON.parse(v);
+if(c&&/^[a-z]{2}$/.test(c)){document.documentElement.lang=c;
+document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>机构端 · 来华交流全程助手</title>
@@ -15,7 +19,7 @@
     <div class="wrap">
       <div class="row-between" style="align-items:flex-end;flex-wrap:wrap">
         <div>
-          <div class="eyebrow">INSTITUTION CONSOLE · 机构端</div>
+          <div class="eyebrow" data-i18n="instEyebrow">机构端 · INSTITUTION CONSOLE</div>
           <h1 style="font-size:var(--fs-h1)" data-i18n="orgTitle"></h1>
           <p class="lead" style="max-width:62ch;margin-top:var(--sp-2)" data-i18n="orgSub"></p>
         </div>
@@ -44,7 +48,7 @@
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-5)">
         <div>
-          <div class="eyebrow">01 · 内容工作台 / CONTENT STUDIO</div>
+          <div class="eyebrow" data-i18n="sec1Eyebrow">01 · 内容工作台 / CONTENT STUDIO</div>
           <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="genContent"></h2>
         </div>
         <span class="chip chip-jade" data-i18n="genFast"></span>
@@ -52,10 +56,10 @@
       <div class="grid g2" style="grid-template-columns:.85fr 1.15fr;align-items:start">
         <div class="card card-pad-lg reveal">
           <div class="ai-taskbar">
-            <div class="ai-taskbar-h"><span class="ai-tag">AI Agent</span><span>一句话下达任务，自动拆解 · 检索知识库 · 生成 · 待复核</span></div>
+            <div class="ai-taskbar-h"><span class="ai-tag">AI Agent</span><span data-i18n="aiTaskHint">一句话下达任务，自动拆解 · 检索知识库 · 生成 · 待复核</span></div>
             <div class="wrapflex" style="gap:var(--sp-3)">
-              <input class="input" id="aiTask" placeholder="例如：为哈萨克斯坦的研学团生成中俄双语行前手册，注明宗教饮食与外币兑换" />
-              <button class="btn btn-lg" id="btnAiGen"><span class="ico" id="ioWarn2"></span><span>AI 生成</span></button>
+              <input class="input" id="aiTask" data-i18n-ph="aiTaskPh" placeholder="例如：为哈萨克斯坦的研学团生成中俄双语行前手册，注明宗教饮食与外币兑换" />
+              <button class="btn btn-lg" id="btnAiGen"><span class="ico" id="ioWarn2"></span><span data-i18n="aiGenBtn">AI 生成</span></button>
             </div>
             <div id="aiTrace" class="ai-trace-org"></div>
           </div>
@@ -96,7 +100,7 @@
           </div>
           <div class="field">
             <label class="label" for="gExtra" data-i18n="genExtra"></label>
-            <textarea class="textarea" id="gExtra" placeholder="例如：请注明需携带住宿登记凭证原件；窗口开放时间为工作日 9:00—17:00。"></textarea>
+            <textarea class="textarea" id="gExtra" data-i18n-ph="genExtraPh" placeholder="例如：请注明需携带住宿登记凭证原件；窗口开放时间为工作日 9:00—17:00。"></textarea>
           </div>
           <div class="wrapflex">
             <button class="btn btn-lg" id="btnGenContent"><span class="ico" id="ioSpark"></span><span data-i18n="genRun"></span></button>
@@ -104,8 +108,8 @@
           </div>
           <div class="callout callout-warn" style="margin-top:var(--sp-5)">
             <span class="ico note-ico" id="ioWarn"></span>
-            <div><div class="ct">AI 生成内容需人工复核</div>
-            <p class="small" style="margin:0">生成结果将带「AI 生成 · 待人工复核」标识，发布前请核对校本口径、时限与联系人信息。</p></div>
+            <div><div class="ct" data-i18n="aiReviewTitle">AI 生成内容需人工复核</div>
+            <p class="small" style="margin:0" data-i18n="aiReviewNote">生成结果将带「AI 生成 · 待人工复核」标识，发布前请核对校本口径、时限与联系人信息。</p></div>
           </div>
         </div>
 
@@ -113,12 +117,12 @@
           <div class="card-head">
             <div><div class="card-title" style="font-size:1rem" data-i18n="orgStep4"></div><div class="card-sub" id="pvMeta"></div></div>
             <div class="wrapflex">
-              <span class="ai-tag" id="pvAI">AI 生成 · 待人工复核</span>
+              <span class="ai-tag" id="pvAI" data-i18n="aiGenerated">AI 生成 · 待人工复核</span>
             </div>
           </div>
           <p class="tiny muted" style="margin:var(--sp-2) 0 0" data-i18n="orgPvHint"></p>
           <div class="paper">
-            <div class="paper-head"><span class="paper-dots"><i></i><i></i><i></i></span><span class="paper-name" id="pvDocName">来华指南 · 预览</span></div>
+            <div class="paper-head"><span class="paper-dots"><i></i><i></i><i></i></span><span class="paper-name" id="pvDocName" data-i18n="pvLabel">来华指南 · 预览</span></div>
             <div class="paper-body"><div id="pvBody" style="max-height:460px;overflow-y:auto;padding-right:6px"></div></div>
           </div>
           <div id="pvSrc" style="margin-top:var(--sp-4)"></div>
@@ -140,7 +144,7 @@
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-5)">
         <div>
-          <div class="eyebrow">02 · 知识库 / KNOWLEDGE BASE</div>
+          <div class="eyebrow" data-i18n="sec2Eyebrow">02 · 知识库 / KNOWLEDGE BASE</div>
           <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="kbManage"></h2>
         </div>
         <div class="wrapflex">
@@ -149,25 +153,36 @@
         </div>
       </div>
       <div id="kbAddBox" class="card card-pad-lg hidden reveal" style="margin-bottom:var(--sp-5)">
-        <div class="grid g3" style="gap:var(--sp-4)">
-          <div class="field"><label class="label">事项标题</label><input class="input" id="kbT" placeholder="如：校内宿舍入住登记"></div>
-          <div class="field"><label class="label">所属阶段</label><select class="select" id="kbS">
-            <option value="pre">来华前</option><option value="arrival" selected>抵达初期</option><option value="study">在学日常</option><option value="exit">离境前后</option></select></div>
-          <div class="field"><label class="label">优先级</label><select class="select" id="kbP"><option>P0</option><option selected>P1</option><option>P2</option></select></div>
+        <div style="border:1px dashed var(--line);border-radius:var(--r-md);padding:var(--sp-4);margin-bottom:var(--sp-4);background:var(--bg-alt)">
+          <div class="wrapflex" style="margin-bottom:var(--sp-3)">
+            <b style="font-size:.92rem" data-i18n="kbAiTitle">AI 提炼导入</b>
+            <span class="chip chip-line" style="font-size:.72rem" data-i18n="kbAiHint">粘贴官方原文 → AI 自动结构化 → 核对后入库</span>
+          </div>
+          <textarea class="textarea" id="kbRaw" rows="4" data-i18n-ph="kbRawPh" placeholder="粘贴国家移民管理局、教育部或本校官方通知原文……"></textarea>
+          <div class="wrapflex" style="margin-top:var(--sp-3)">
+            <button class="btn btn-sm" id="btnKbAi"><span class="ico" id="ioWarn2"></span><span data-i18n="kbAiBtn">AI 提炼</span></button>
+            <span class="small muted" data-i18n="kbSourceReq">来源与证据等级必填，无来源不入库</span>
+          </div>
         </div>
-        <div class="field"><label class="label">时限口径</label><input class="input" id="kbD" placeholder="如：报到后 7 日内（以本校规定为准）"></div>
-        <div class="field"><label class="label">说明</label><textarea class="textarea" id="kbX" placeholder="办理方式、所需材料与注意事项"></textarea></div>
-        <div class="field"><label class="label">来源（机构名 + 官方入口 + 证据等级）</label><input class="input" id="kbU" placeholder="如：本校国际学生办公室办事指引 ｜ S3 ｜ 2026-09-26"></div>
+        <div class="grid g3" style="gap:var(--sp-4)">
+          <div class="field"><label class="label" data-i18n="kbFldTitle">事项标题</label><input class="input" id="kbT" data-i18n-ph="kbFldTitlePh" placeholder="如：校内宿舍入住登记"></div>
+          <div class="field"><label class="label" data-i18n="kbFldStage">所属阶段</label><select class="select" id="kbS">
+            <option value="pre" data-i18n="stagePre">来华前</option><option value="arrival" selected data-i18n="stageArrival">抵达初期</option><option value="study" data-i18n="stageStudy">在学日常</option><option value="exit" data-i18n="stageExit">离境前后</option></select></div>
+          <div class="field"><label class="label" data-i18n="priority">优先级</label><select class="select" id="kbP"><option>P0</option><option selected>P1</option><option>P2</option></select></div>
+        </div>
+        <div class="field"><label class="label" data-i18n="kbFldDeadline">时限口径</label><input class="input" id="kbD" data-i18n-ph="kbFldDeadlinePh" placeholder="如：报到后 7 日内（以本校规定为准）"></div>
+        <div class="field"><label class="label" data-i18n="kbFldDesc">说明</label><textarea class="textarea" id="kbX" data-i18n-ph="kbFldDescPh" placeholder="办理方式、所需材料与注意事项"></textarea></div>
+        <div class="field"><label class="label" data-i18n="kbFldSource">来源（机构名 + 官方入口 + 证据等级）</label><input class="input" id="kbU" data-i18n-ph="kbFldSourcePh" placeholder="如：本校国际学生办公室办事指引 ｜ S3 ｜ 2026-09-26"></div>
         <div class="wrapflex"><button class="btn" id="btnSaveKb"><span class="ico" id="ioSave"></span><span data-i18n="kbSave"></span></button>
         <button class="btn btn-ghost" id="btnCancelKb"><span data-i18n="cancel"></span></button></div>
       </div>
       <div class="table-wrap reveal">
         <table class="data" id="kbTable">
-          <thead><tr><th>阶段</th><th>优先级</th><th>事项</th><th>时限口径</th><th>证据等级</th><th>来源</th></tr></thead>
+          <thead><tr><th data-i18n="stage">阶段</th><th data-i18n="priority">优先级</th><th data-i18n="thItem">事项</th><th data-i18n="kbFldDeadline">时限口径</th><th data-i18n="evidenceLevel">证据等级</th><th data-i18n="thSource">来源</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
-      <p class="tiny muted" style="margin-top:var(--sp-3)">无来源不入库；S3 条目在学生端标「待属地复核」。</p>
+      <p class="tiny muted" style="margin-top:var(--sp-3)" data-i18n="kbRuleNote">无来源不入库；S3 条目在学生端标「待属地复核」。</p>
     </div>
   </section>
 
@@ -176,21 +191,21 @@
     <div class="wrap">
       <div class="row-between" style="flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-2)">
         <div>
-          <div class="eyebrow">03 · 成效与看板 / IMPACT</div>
+          <div class="eyebrow" data-i18n="sec3Eyebrow">03 · 成效与看板 / IMPACT</div>
           <h2 style="font-size:var(--fs-h2);margin:var(--sp-1) 0 0" data-i18n="dashboard"></h2>
         </div>
         <span class="chip chip-line" data-i18n="boardOptional"></span>
       </div>
       <p class="tiny muted" style="margin:0 0 var(--sp-5);max-width:72ch" data-i18n="boardDemoNote"></p>
       <div class="grid g4" style="margin-bottom:var(--sp-6)">
-        <div class="kpi reveal"><div class="kpi-v num" id="b1">—</div><div class="kpi-l" data-i18n="kbTotal"></div><div class="kpi-n">知识库条目（事项 + 问答）</div></div>
-        <div class="kpi reveal"><div class="kpi-v num" id="b2">—</div><div class="kpi-l" data-i18n="kbS3"></div><div class="kpi-n">需向属地或本校口径复核</div></div>
-        <div class="kpi reveal"><div class="kpi-v num" id="b3">—</div><div class="kpi-l" data-i18n="boardLang"></div><div class="kpi-n">界面语言 · 材料多语种</div></div>
+        <div class="kpi reveal"><div class="kpi-v num" id="b1">—</div><div class="kpi-l" data-i18n="kbTotal"></div><div class="kpi-n" data-i18n="kpiKbNote">知识库条目（事项 + 问答）</div></div>
+        <div class="kpi reveal"><div class="kpi-v num" id="b2">—</div><div class="kpi-l" data-i18n="kbS3"></div><div class="kpi-n" data-i18n="kpiS3Note">需向属地或本校口径复核</div></div>
+        <div class="kpi reveal"><div class="kpi-v num" id="b3">—</div><div class="kpi-l" data-i18n="boardLang"></div><div class="kpi-n" data-i18n="kpiLangNote">界面语言 · 材料多语种</div></div>
         <div class="kpi reveal"><div class="kpi-v num" id="b4">—</div><div class="kpi-l" data-i18n="boardEfficiency"></div><div class="kpi-n" id="b4n"></div></div>
       </div>
       <div class="grid g2">
         <div class="card card-pad-lg reveal">
-          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="measureTitle"></div><div class="card-sub tiny muted">可核查口径 · 拖动滑杆即算</div></div><span class="chip chip-line tiny">DEMO</span></div>
+          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="measureTitle"></div><div class="card-sub tiny muted" data-i18n="measureSub">可核查口径 · 拖动滑杆即算</div></div><span class="chip chip-line tiny">DEMO</span></div>
           <div class="grid g3" style="gap:var(--sp-4);margin:var(--sp-4) 0">
             <div class="field"><label class="label" for="mA"><span data-i18n="planA"></span>：<span class="strong num" id="mAVal"></span></label><input type="range" id="mA" min="4" max="40" step="1" style="width:100%"></div>
             <div class="field"><label class="label" for="mB"><span data-i18n="planB"></span>：<span class="strong num" id="mBVal"></span></label><input type="range" id="mB" min="20" max="1200" step="10" style="width:100%"></div>
@@ -200,15 +215,15 @@
           <p class="tiny muted" style="margin:var(--sp-3) 0 0" data-i18n="measureNote"></p>
         </div>
         <div class="card reveal">
-          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardConsult"></div><div class="card-sub">近 30 天 · 学生端咨询与检索命中统计（演示数据）</div></div><span class="chip chip-line tiny">DEMO</span></div>
+          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardConsult"></div><div class="card-sub" data-i18n="chartConsultNote">近 30 天 · 学生端咨询与检索命中统计（演示数据）</div></div><span class="chip chip-line tiny">DEMO</span></div>
           <div class="chart" id="chConsult" style="height:300px"></div>
         </div>
         <div class="card reveal">
-          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardDeadline"></div><div class="card-sub">按阶段 × 紧迫度（由知识库时限规则推导）</div></div></div>
+          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardDeadline"></div><div class="card-sub" data-i18n="chartDeadlineNote">按阶段 × 紧迫度（由知识库时限规则推导）</div></div></div>
           <div class="chart" id="chDeadline" style="height:300px"></div>
         </div>
         <div class="card reveal">
-          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardCoverage"></div><div class="card-sub">按阶段 × 证据等级</div></div></div>
+          <div class="card-head"><div><div class="card-title" style="font-size:1rem" data-i18n="boardCoverage"></div><div class="card-sub" data-i18n="chartCoverageNote">按阶段 × 证据等级</div></div></div>
           <div class="chart" id="chCoverage" style="height:300px"></div>
         </div>
       </div>

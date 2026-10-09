@@ -293,7 +293,11 @@ window.Agent = (function () {
       ru: { head: "Заголовок", sec: "Разделы", src: "Источники", note: "Создано студией контента. Требуется проверка человеком.", country: "Адаптация по стране", deadline: "Срок", contact: "Контакты", topic: "Тема", cf: "Религиозный фон", cd: "Питание", cfe: "Праздники", cl: "Языки", ct: "Этикет", docs: "Документы", channel: "Как оформить", extra: "Дополнительно" },
       ar: { head: "العنوان", sec: "الأقسام", src: "المصادر", note: "أُنشئ في استوديو المحتوى. يتطلب مراجعة بشرية.", country: "التوافق الثقافي", deadline: "الموعد", contact: "التواصل", topic: "الموضوع", cf: "الخلفية الدينية", cd: "ملاحظات غذائية", cfe: "الأعياد", cl: "اللغات", ct: "الآداب", docs: "المستندات المطلوبة", channel: "طريقة التقديم", extra: "متطلبات إضافية" },
       fr: { head: "Titre", sec: "Sections", src: "Sources", note: "Généré par le studio de contenu. Validation humaine requise.", country: "Adaptation pays", deadline: "Échéance", contact: "Contact", topic: "Sujet", cf: "Contexte religieux", cd: "Alimentation", cfe: "Fêtes", cl: "Langues", ct: "Étiquette", docs: "Documents requis", channel: "Démarches", extra: "Exigences supplémentaires" },
-      es: { head: "Título", sec: "Secciones", src: "Fuentes", note: "Generado por el estudio de contenido. Requiere revisión humana.", country: "Adaptación por país", deadline: "Plazo", contact: "Contacto", topic: "Tema", cf: "Contexto religioso", cd: "Alimentación", cfe: "Fiestas", cl: "Idiomas", ct: "Etiqueta", docs: "Documentos requeridos", channel: "Cómo tramitar", extra: "Requisitos adicionales" }
+      es: { head: "Título", sec: "Secciones", src: "Fuentes", note: "Generado por el estudio de contenido. Requiere revisión humana.", country: "Adaptación por país", deadline: "Plazo", contact: "Contacto", topic: "Tema", cf: "Contexto religioso", cd: "Alimentación", cfe: "Fiestas", cl: "Idiomas", ct: "Etiqueta", docs: "Documentos requeridos", channel: "Cómo tramitar", extra: "Requisitos adicionales" },
+      vi: { head: "Tiêu đề", sec: "Mục", src: "Nguồn", note: "Được tạo bởi xưởng nội dung. Nội dung AI cần được kiểm duyệt trước khi phát hành.", country: "Thích ứng quốc gia", deadline: "Thời hạn", contact: "Liên hệ", topic: "Nội dung", cf: "Nền tảng tôn giáo", cd: "Lưu ý ăn uống", cfe: "Ngày lễ chính", cl: "Ngôn ngữ thông dụng", ct: "Giao tiếp và lễ nghi", docs: "Giấy tờ cần thiết", channel: "Cách thực hiện", extra: "Yêu cầu bổ sung" },
+      th: { head: "หัวข้อ", sec: "หมวด", src: "แหล่งอ้างอิง", note: "สร้างโดยสตูดิโอเนื้อหา เนื้อหาจาก AI ต้องผ่านการตรวจสอบก่อนเผยแพร่", country: "การปรับตามประเทศ", deadline: "กำหนดเวลา", contact: "ติดต่อ", topic: "เรื่อง", cf: "ภูมิหลังทางศาสนา", cd: "ข้อควรทราบด้านอาหาร", cfe: "เทศกาลสำคัญ", cl: "ภาษาที่ใช้", ct: "การสื่อสารและมารยาท", docs: "เอกสารที่ต้องใช้", channel: "วิธีดำเนินการ", extra: "ข้อกำหนดเพิ่มเติม" },
+      my: { head: "ခေါင်းစဉ်", sec: "အပိုင်းများ", src: "ရင်းမြစ်များ", note: "အကြောင်းအရာ စတူဒီယိုမှ ဖန်တီးသည်။ AI ထုတ်ကုန်ကို လူက စစ်ဆေးပြီးမှ ထုတ်ပြန်ရမည်။", country: "နိုင်ငံအလိုက် ကိုက်ညီမှု", deadline: "နောက်ဆုံးရက်", contact: "ဆက်သွယ်ရန်", topic: "အကြောင်းအရာ", cf: "ဘာသာရေး နောက်ခံ", cd: "အစားအသောက် မှတ်ချက်", cfe: "အဓိက ပွဲတော်များ", cl: "အသုံးများသော ဘာသာစကားများ", ct: "ဆက်သွယ်ရေးနှင့် ကျင့်ဝတ်", docs: "လိုအပ်သော စာရွက်စာတမ်းများ", channel: "လျှောက်ထားနည်း", extra: "ထပ်ဆောင်း လိုအပ်ချက်များ" },
+      ms: { head: "Tajuk", sec: "Bahagian", src: "Sumber", note: "Dijana oleh studio kandungan. Output AI perlu disemak manusia sebelum diterbitkan.", country: "Penyesuaian negara", deadline: "Tarikh akhir", contact: "Hubungan", topic: "Topik", cf: "Latar belakang agama", cd: "Nota pemakanan", cfe: "Perayaan utama", cl: "Bahasa lazim", ct: "Komunikasi & adab", docs: "Dokumen diperlukan", channel: "Cara memohon", extra: "Keperluan tambahan" },
     }[lang] || null;
     if (!L) L = { head: "Title", sec: "Sections", src: "Sources", note: "", country: "Country adaptation", deadline: "Deadline", contact: "Contact", topic: "Topic", cf: "Religious background", cd: "Dietary notes", cfe: "Main festivals", cl: "Common languages", ct: "Communication & etiquette", docs: "Required documents", channel: "How to apply", extra: "Additional requirements" };
     var secs = isZh ? tpl.sections : (tpl.sections_en || tpl.sections);
@@ -599,6 +603,40 @@ window.Agent = (function () {
     });
   }
 
+  /* 知识提炼：粘贴官方原文 → LLM 结构化 → 人工核对入库（机构端知识库） */
+  function extractKb(rawText, lang, onStep) {
+    var steps = [];
+    var push = function (n, title, detail) {
+      steps.push({ n: n, title: title, detail: detail });
+      if (typeof onStep === "function") onStep(steps.length - 1, steps[steps.length - 1]);
+    };
+    var fallback = function () {
+      push(1, "原文识别", "离线模式 · 规则引擎兜底：仅提取标题");
+      push(2, "结构化建议", "未调用 LLM，请按原文手工填写各字段");
+      return { title: rawText.slice(0, 22), stage: "arrival", pri: "P1", deadline: "以官方/本校公布为准", summary: rawText.slice(0, 80), sourceNote: "", steps: steps, llm: false };
+    };
+    return new Promise(function (resolve) {
+      if (!bridgeOk()) { resolve(fallback()); return; }
+      push(1, "原文识别", "输入 " + rawText.length + " 字官方文本");
+      push(2, "调用大模型", "MiniMax-Text-01 · 结构化提炼");
+      var sys = "你是高校国际学生事务部门的知识库编辑助手。请把用户粘贴的官方原文（国家政策、出入境规定或学校通知）提炼为一条结构化知识条目。只输出严格 JSON：{\"title\":\"事项标题（20字内）\",\"stage\":\"pre|arrival|study|exit 之一\",\"pri\":\"P0|P1|P2\",\"deadline\":\"时限口径，如：报到后7日内（以本校规定为准）；原文无时限则写：以官方/本校公布为准\",\"summary\":\"办理方式、所需材料与注意事项，80-150字，忠实原文不得编造\",\"sourceNote\":\"原文发布机构名称（如：国家移民管理局 / 本校国际学生办公室；无明确机构写：官方公开渠道）\"}。不得编造原文没有的信息。";
+      llmChat([{ role: "user", content: "官方原文：\n" + rawText }], lang || "zh", sys).then(function (res) {
+        push(3, "结构化完成", "已生成条目，待人工核对入库");
+        var reply = (res && res.reply) || "";
+        var parsed = null;
+        var m = reply.match(/\{[\s\S]*\}/);
+        if (m) { try { parsed = JSON.parse(m[0]); } catch (e) { parsed = null; } }
+        if (parsed && parsed.title) {
+          resolve({
+            title: String(parsed.title).slice(0, 60), stage: parsed.stage || "arrival", pri: parsed.pri || "P1",
+            deadline: parsed.deadline || "以官方/本校公布为准", summary: parsed.summary || "",
+            sourceNote: parsed.sourceNote || "官方公开渠道", steps: steps, llm: true
+          });
+        } else { resolve(fallback()); }
+      }).catch(function () { resolve(fallback()); });
+    });
+  }
+
   /* 智能问答：代理在线 → 真 LLM；离线 → 规则引擎（双模式，任何环境可演示） */
   function askSmart(query, profile, lang, onStep, history) {
     return new Promise(function (resolve) {
@@ -635,7 +673,7 @@ window.Agent = (function () {
     computeDeadline: computeDeadline, buildChecklist: buildChecklist,
     renderMaterial: renderMaterial, askAsync: askAsync, buildAnswer: buildAnswer,
     glossaryTranslate: glossaryTranslate, efficiencyModel: efficiencyModel,
-    bridgeOk: bridgeOk, setBridge: setBridge, ensureBridge: ensureBridge, askSmart: askSmart, buildLLMAnswer: buildLLMAnswer, genMaterialLLM: genMaterialLLM,
+    bridgeOk: bridgeOk, setBridge: setBridge, ensureBridge: ensureBridge, askSmart: askSmart, buildLLMAnswer: buildLLMAnswer, genMaterialLLM: genMaterialLLM, extractKb: extractKb,
     DEFAULT_PROFILE: DEFAULT_PROFILE, LLM_ADAPTER: LLM_ADAPTER, fmt: fmt, srcLine: srcLine
   };
 })();

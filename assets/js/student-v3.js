@@ -50,20 +50,19 @@
     return "study";
   }
 
-  /* 高频推荐条目标题：非中英语种内联翻译（长句超出术语表能力，这里显式提供） */
-  var REC_T = {
-    "判定并申请来华签证类型": {ru: "Определение и подача на визу нужного типа", ar: "تحديد نوع التأشيرة الصحيحة والتقديم عليها", fr: "Déterminer et demander le bon type de visa", es: "Determinar y solicitar el tipo de visado correcto"},
-    "体检与《外国人体格检查记录》": {ru: "Медосмотр и «Запись иностранца о медобследовании»", ar: "الفحص الطبي و«سجل الفحص الطبي للأجانب»", fr: "Visite médicale et «Formulaire d'examen médical des étrangers»", es: "Reconocimiento médico y «Registro de examen médico para extranjeros»"},
-    "落实来华期间的医疗保障": {ru: "Медицинская страховка на время пребывания", ar: "التغطية الطبية خلال الإقامة في الصين", fr: "Couverture médicale pendant le séjour", es: "Cobertura médica durante la estancia"},
-    "支付准备：境外卡绑定与应急现金": {ru: "Оплата: привязка зарубежной карты и наличные на экстренный случай", ar: "الاستعداد للدفع: ربط بطاقة خارجية والاحتفاظ بنقود للطوارئ", fr: "Paiements : lier une carte étrangère et garder du liquide", es: "Pagos: vincular una tarjeta del extranjero y llevar efectivo de reserva"}
+  /* 高频推荐条目：title → i18n 键（十语走词典，不再内联四语） */
+  var REC_KEY = {
+    "判定并申请来华签证类型": "rec1",
+    "体检与《外国人体格检查记录》": "rec2",
+    "落实来华期间的医疗保障": "rec3",
+    "支付准备：境外卡绑定与应急现金": "rec4"
   };
 
   function matterById(id) { return window.KB.matter(id); }
   function matterText(m) {
     var zh = isZh();
-    var tr = REC_T[m.title];
-    var cur = window.L10N.current;
-    return { title: kbText(zh ? m.title : ((tr && tr[cur]) || m.title_en || m.title)),
+    var rk = REC_KEY[m.title];
+    return { title: kbText(zh ? m.title : (rk ? T(rk) : (m.title_en || m.title))),
              desc: kbText(zh ? m.summary : (m.summary_en || m.summary)),
              label: zh ? (m.deadline ? m.deadline.label : "") : (m.deadline ? (m.deadline.label_en || m.deadline.label) : ""),
              docs: zh ? (m.docs || []) : (m.docs_en || m.docs || []),
@@ -269,7 +268,7 @@
       var mt = matterText(refs[0]);
       var meta = T("deadline") + " " + fmtDate(target);
       if (d < 0) meta = T("daysOverdue") + " · " + fmtDate(target);
-      else if (d === 0) meta = "今天 · " + fmtDate(target);
+      else if (d === 0) meta = T("dateToday") + " · " + fmtDate(target);
       else meta = meta + " · " + d + " " + T("daysUnit");
       out.push({ pri: d < 0 ? "high" : r.pri, text: mt.title, meta: meta, group: refs[0].id });
     });
@@ -517,7 +516,7 @@
     });
     var ed = document.getElementById("btnExportData");
     if (ed) ed.addEventListener("click", function () {
-      window.UI.download("来华助手-我的数据.json", JSON.stringify({ profile: S.profile, done: S.done, star: S.star }, null, 2), "application/json");
+      window.UI.download(T("fileNameData"), JSON.stringify({ profile: S.profile, done: S.done, star: S.star }, null, 2), "application/json");
     });
   }
 
@@ -528,7 +527,7 @@
       lines.push((i + 1) + ". [" + (S.done.indexOf(it.matter.id) >= 0 ? "x" : " ") + "] " + it.matter.title +
         (it.deadline.dateStr ? "  (" + it.deadline.dateStr + ")" : ""));
     });
-    window.UI.download("办事清单.md", lines.join("\n"), "text/markdown;charset=utf-8");
+    window.UI.download(T("fileNameChecklist"), lines.join("\n"), "text/markdown;charset=utf-8");
   }
 
   /* =====================================================================
@@ -559,19 +558,14 @@
   function closeSheet() { document.getElementById("sheet").classList.remove("open"); }
 
   function quickChips() {
-    var qs = [
-      { zh: "拿到学习签证后先做什么", en: "What do I do first after getting my study visa?" },
-      { zh: "住宿登记要多久内办", en: "How soon must I register my accommodation?" },
-      { zh: "居留许可到期怎么办", en: "My residence permit is expiring, what now?" },
-      { zh: "护照丢了怎么办", en: "I lost my passport, what should I do?" },
-      { zh: "实习需要额外手续吗", en: "Do I need extra procedures for an internship?" }
-    ];
-    var isZh = String(window.L10N.current).slice(0, 2) === "zh";
+    var body = document.getElementById("chatBody");
+    var old = body.querySelector(".chips");
+    if (old) old.remove();
+    var qs = ["q1", "q2", "q3", "q4", "q5"];
     var box = document.createElement("div");
     box.className = "chips";
-    box.innerHTML = qs.map(function (q) {
-      var txt = isZh ? q.zh : q.en;
-      return '<button class="chip-q">' + esc(txt) + "</button>";
+    box.innerHTML = qs.map(function (qk) {
+      return '<button class="chip-q">' + esc(T(qk)) + "</button>";
     }).join("");
     box.querySelectorAll(".chip-q").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -579,7 +573,7 @@
         ask();
       });
     });
-    document.getElementById("chatBody").appendChild(box);
+    body.appendChild(box);
   }
 
   function myMsg(text) {
@@ -655,8 +649,9 @@
     var zh = String(lang || "zh").slice(0, 2) === "zh";
     var d = document.createElement("div");
     d.className = "trace-card";
-    d.innerHTML = "<div class='trace-head' role='button' tabindex='0'>" + esc(zh ? "Agent 运行轨迹" : "Agent trace") + " · " +
-      steps.length + " 步 <span class='trace-arrow'>▾</span></div><div class='trace-body'>" +
+    d.innerHTML = "<div class='trace-head' role='button' tabindex='0'>" +
+      esc(T("agentTraceSteps").replace("{n}", steps.length)) +
+      " <span class='trace-arrow'>▾</span></div><div class='trace-body'>" +
       steps.map(function (s) {
         return "<div class='trace-step'><span class='n'>" + s.n + "</span><div><b>" + esc(s.title) + "</b>" +
           "<p class='tiny muted'>" + esc(s.detail) + "</p></div></div>";
@@ -682,7 +677,7 @@
     var zh = String(window.L10N.current || "zh").slice(0, 2) === "zh";
     var on = !!llm;
     wrap.className = "ai-status" + (on ? " on" : "");
-    wrap.textContent = on ? (zh ? "LLM 在线" : "LLM live") : (zh ? "离线兜底引擎" : "local engine");
+    wrap.textContent = on ? T("llmOnline") : T("llmOffline");
   }
 
   /* =====================================================================
@@ -736,6 +731,9 @@
     document.addEventListener("langchange", function () {
       /* 语言切换后重建文案；表单值从 S.profile 回填，无需另行保存 */
       renderAll();
+      /* 助手面板若已打开过，建议问题需随语种重绘 */
+      var cb = document.getElementById("chatBody");
+      if (cb && cb.dataset.init) quickChips();
     });
 
     /* 待办与推荐里的「查看详情」跳转到访华指南 */

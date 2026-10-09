@@ -27,15 +27,6 @@
   var LOCAL_KB = U.load("localKb", []);
   function allMatters() { return KB.MATTERS.concat(LOCAL_KB); }
 
-  var total = allMatters().length + KB.FAQ.length;
-  var s3n = allMatters().filter(function (m) { return m.source.some(function (k) { return KB.SRC[k] && KB.SRC[k].level === "S3"; }); }).length;
-  $("b1").textContent = total;
-  $("b2").textContent = s3n;
-  $("b3").textContent = KB.LANGS.length;
-  var eff0 = A.efficiencyModel({});
-  $("b4").textContent = Math.round(eff0.cut * 100) + "%";
-  $("b4n").textContent = "假设自助解决比例（可在下方调整）";
-
   var charts = [];
   function chart(id, opt) {
     var el = $(id); if (!el || !window.echarts) return;
@@ -48,6 +39,13 @@
   function drawBoard() {
     charts.forEach(function (c) { try { c.dispose(); } catch (e) { } });
     charts = [];
+
+    /* KPI 与副标题：随语种与知识库变动重算 */
+    $("b1").textContent = allMatters().length + KB.FAQ.length;
+    $("b2").textContent = allMatters().filter(function (m) { return m.source.some(function (k) { return KB.SRC[k] && KB.SRC[k].level === "S3"; }); }).length;
+    $("b3").textContent = KB.LANGS.length;
+    $("b4").textContent = Math.round(A.efficiencyModel({}).cut * 100) + "%";
+    $("b4n").textContent = t("boardAssumeNote");
 
     /* 咨询热点 Top 6 —— 由知识库条目 + 演示命中权重推导，可解释 */
     var hot = allMatters().slice(0).map(function (m, i) {
@@ -63,7 +61,7 @@
     }));
 
     /* 时限分布：按阶段统计 P0/P1/P2 */
-    var stages = [["pre", "来华前"], ["arrival", "抵达初期"], ["study", "在学日常"], ["exit", "离境前后"]];
+    var stages = [["pre", t("stagePre")], ["arrival", t("stageArrival")], ["study", t("stageStudy")], ["exit", t("stageExit")]];
     var series = ["P0", "P1", "P2"].map(function (p, i) {
       return {
         name: p, type: "bar", stack: "x", barWidth: 26, itemStyle: { color: PAL[i] },
@@ -95,7 +93,7 @@
       yAxis: { type: "value", splitLine: { lineStyle: { color: "#EBF0F6" } }, axisLabel: { fontSize: 11 } },
       series: [
         { name: "S1/S2", type: "bar", stack: "y", barWidth: 26, itemStyle: { color: PAL[1] }, data: s1 },
-        { name: "含 S3", type: "bar", stack: "y", barWidth: 26, itemStyle: { color: PAL[3], borderRadius: [4, 4, 0, 0] }, data: s3 }
+        { name: t("chartS3"), type: "bar", stack: "y", barWidth: 26, itemStyle: { color: PAL[3], borderRadius: [4, 4, 0, 0] }, data: s3 }
       ]
     }));
   }
@@ -105,16 +103,19 @@
   $("gTpl").innerHTML = KB.TEMPLATES.map(function (x, i) { return '<option value="' + x.id + '"' + (i === 0 ? " selected" : "") + ">" + x.name + " · " + x.name_en + "</option>"; }).join("");
   /* 模板卡片（参考模板画廊的直观选择） */
   var TPL_ICONS = { t_guide: "book", t_checklist: "list", t_notice: "bell", t_faq: "chat", t_brief: "clock", t_emergency: "alert" };
-  var TPL_PICK = { t_guide: "国别指南", t_checklist: "行前清单", t_notice: "公告", t_faq: "FAQ", t_brief: "迎新简报", t_emergency: "应急卡" };
+  var TPL_PICK = { t_guide: "tplPickGuide", t_checklist: "tplPickChecklist", t_notice: "tplPickNotice", t_faq: "tplPickFaq", t_brief: "tplPickBrief", t_emergency: "tplPickEmergency" };
+  function isZh() { return String(window.L10N.current || "zh").slice(0, 2) === "zh"; }
   function renderTplCards() {
     var sel = $("gTpl").value;
+    var zh = isZh();
     $("tplCards").innerHTML = KB.TEMPLATES.map(function (x) {
       var ic = U.icon(TPL_ICONS[x.id] || "doc");
-      var pick = TPL_PICK[x.id] || "";
+      var pick = t(TPL_PICK[x.id] || "genTemplate");
+      var nm = zh ? (U.esc(x.name) + ' <span class="tpl-e">' + U.esc(x.name_en) + "</span>") : U.esc(x.name_en || x.name);
       return '<button type="button" class="tpl-card' + (x.id === sel ? " on" : "") + '" data-tpl="' + x.id + '">' +
         '<span class="tpl-ic">' + ic + "</span>" +
-        "<div><div class=\"tpl-n\">" + U.esc(x.name) + " <span class=\"tpl-e\">" + U.esc(x.name_en) + "</span></div>" +
-        '<div class="tpl-p">' + pick + "</div></div></button>";
+        '<div><div class="tpl-n">' + nm + "</div>" +
+        '<div class="tpl-p">' + U.esc(pick) + "</div></div></button>";
     }).join("");
     Array.prototype.forEach.call($("tplCards").querySelectorAll(".tpl-card"), function (b) {
       b.addEventListener("click", function () {
@@ -128,13 +129,20 @@
   renderTplCards();
   $("gCountry").innerHTML = Object.keys(KB.COUNTRY).map(function (k) {
     var c = KB.COUNTRY[k];
-    return '<option value="' + k + '"' + (k === "PK" ? " selected" : "") + ">" + c.zh + (c.en !== c.zh ? " · " + c.en : "") + "</option>";
+    var lab = isZh() ? (c.zh + (c.en !== c.zh ? " · " + c.en : "")) : (c.en || c.zh);
+    return '<option value="' + k + '"' + (k === "PK" ? " selected" : "") + ">" + U.esc(lab) + "</option>";
   }).join("");
-  $("gLang").innerHTML = KB.LANGS.map(function (l) { return '<option value="' + l.code + '"' + (l.code === "zh" ? " selected" : "") + ">" + l.name + (l.en && l.en !== l.name ? " · " + l.en : "") + "</option>"; }).join("");
+  $("gLang").innerHTML = KB.LANGS.map(function (l) { return '<option value="' + l.code + '"' + (l.code === "zh" ? " selected" : "") + ">" + U.esc(l.name) + ((isZh() && l.en && l.en !== l.name) ? " · " + U.esc(l.en) : "") + "</option>"; }).join("");
 
   function tplDesc() {
     var id = $("gTpl").value;
-    KB.TEMPLATES.forEach(function (x) { if (x.id === id) $("gTplDesc").textContent = x.desc + " ｜ 章节：" + x.sections.join(" / "); });
+    var zh = isZh();
+    KB.TEMPLATES.forEach(function (x) {
+      if (x.id !== id) return;
+      var d = zh ? x.desc : (x.desc_en || x.desc);
+      var sec = (zh ? x.sections : (x.sections_en || x.sections)).join(" / ");
+      $("gTplDesc").textContent = d + t("tplDescChapter") + sec;
+    });
   }
   tplDesc();
 
@@ -156,29 +164,29 @@
   /* ================= AI Agent 一句话生成 ================= */
   $("btnAiGen").addEventListener("click", function () {
     var task = $("aiTask").value.trim();
-    if (!task) { U.toast("请输入任务描述，例如：为哈萨克斯坦研学团生成行前手册"); return; }
+    if (!task) { U.toast(t("aiTaskEmpty")); return; }
     $("btnAiGen").disabled = true;
     var btnTxt = $("btnAiGen");
-    btnTxt.querySelector("span:last-child").textContent = "生成中…";
-    $("aiTrace").innerHTML = '<div class="ai-working">AI Agent 正在执行任务：任务解析 → 知识检索 → 大模型生成 → 合规复核</div>';
+    btnTxt.querySelector("span:last-child").textContent = t("generating");
+    $("aiTrace").innerHTML = '<div class="ai-working">' + U.esc(t("agentRunning")) + '</div>';
     A.genMaterialLLM(task, $("gLang").value).then(function (r) {
       LAST = r;
       $("pvMeta").textContent = "AI Agent · " + task.slice(0, 34) + " ｜ " + new Date().toLocaleString();
-      $("pvAI").textContent = r.aiLabel || "AI 生成 · 待人工复核";
+      $("pvAI").textContent = t("aiGenerated");
       $("pvBody").innerHTML = U.mdToHtml(r.markdown);
       $("pvSrc").innerHTML = '<div class="small strong" style="margin-bottom:6px">' + t("sourceLabel") + "</div>" +
-        '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + (r.sources.length ? r.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") : "<li>AI 生成内容，请人工复核后发布</li>") + "</ul>";
+        '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + (r.sources.length ? r.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") : "<li>" + U.esc(t("aiReviewPublish")) + "</li>") + "</ul>";
       if (r.steps && r.steps.length) {
-        $("aiTrace").innerHTML = "<div class='trace-card'><div class='trace-head' role='button' tabindex='0'>Agent 运行轨迹 · " + r.steps.length + " 步 <span class='trace-arrow'>▾</span></div><div class='trace-body'>" +
+        $("aiTrace").innerHTML = "<div class='trace-card'><div class='trace-head' role='button' tabindex='0'>" + U.esc(t("agentTraceSteps").replace("{n}", r.steps.length)) + " <span class='trace-arrow'>▾</span></div><div class='trace-body'>" +
           r.steps.map(function (s) { return "<div class='trace-step'><span class='n'>" + s.n + "</span><div><b>" + U.esc(s.title) + "</b><p class='tiny muted'>" + U.esc(s.detail) + "</p></div></div>"; }).join("") + "</div></div>";
         var head = $("aiTrace").querySelector(".trace-head");
         head.addEventListener("click", function () { $("aiTrace").querySelector(".trace-body").classList.toggle("open"); });
       } else {
         $("aiTrace").innerHTML = "";
       }
-      btnTxt.querySelector("span:last-child").textContent = "AI 生成";
+      btnTxt.querySelector("span:last-child").textContent = t("aiGenBtn");
       $("btnAiGen").disabled = false;
-      U.toast("AI 生成完成 ✓（请复核后发布）");
+      U.toast(t("aiGenDone"));
     });
   });
 
@@ -203,7 +211,7 @@
     var cur = $("gLang").value;
     var next = codes[(codes.indexOf(cur) + 1) % codes.length];
     $("gLang").value = next; genContent();
-    U.toast(t("genTranslate") + " → " + next.toUpperCase() + "（机器翻译 · 待人工复核）");
+    U.toast(t("genTranslate") + " → " + next.toUpperCase() + t("mtPending"));
   });
   $("btnExpHtml").addEventListener("click", function () {
     var html = '<!DOCTYPE html><html lang="' + $("gLang").value + '"><head><meta charset="utf-8"><title>' + U.esc(LAST.title) + "</title>" +
@@ -212,7 +220,7 @@
       "li{margin:.3em 0}.meta{color:#64748B;font-size:.85em;border-top:1px solid #E1E8F1;padding-top:12px;margin-top:24px}</style></head><body>" +
       U.mdToHtml(LAST.markdown) +
       '<div class="meta">' + LAST.aiLabel + " ｜ " + t("sourceLabel") + "：" + LAST.sources.join("；") + " ｜ " + KB.META.updated + "</div></body></html>";
-    U.download("材料_" + $("gTpl").value + "_" + $("gLang").value + "_" + new Date().toISOString().slice(0, 10) + ".html", html, "text/html;charset=utf-8");
+    U.download(t("fileNamePrefix") + $("gTpl").value + "_" + $("gLang").value + "_" + new Date().toISOString().slice(0, 10) + ".html", html, "text/html;charset=utf-8");
     U.toast(t("genExport") + " ✓");
   });
   $("btnCopy").addEventListener("click", function () {
@@ -225,8 +233,8 @@
   function renderEff() {
     M = { minPerCase: +$("mA").value, cases: +$("mB").value, cut: +$("mC").value };
     U.save("effParams", M);
-    $("mAVal").textContent = M.minPerCase + " 分钟";
-    $("mBVal").textContent = M.cases + " 次";
+    $("mAVal").textContent = M.minPerCase + t("unitMinute");
+    $("mBVal").textContent = M.cases + t("unitTimes");
     $("mCVal").textContent = M.cut + "%";
     var r = A.efficiencyModel({ minPerCase: M.minPerCase, cases: M.cases, cut: M.cut / 100, hourly: 60 });
     $("b4").textContent = Math.round(r.cut * 100) + "%";
@@ -240,12 +248,12 @@
       grid: { left: 52, right: 24, top: 18, bottom: 44 },
       xAxis: { type: "category", data: [t("calcNow"), t("calcWith")], axisLine: { lineStyle: { color: "#D8E0EA" } }, axisLabel: { fontSize: 11 } },
       yAxis: [
-        { type: "value", name: "小时 / 月", nameTextStyle: { fontSize: 10 }, max: function (v) { return Math.ceil(v.max / 20) * 20; }, splitLine: { lineStyle: { color: "#EBF0F6" } }, axisLabel: { fontSize: 11 } },
+        { type: "value", name: t("chartHoursMonth"), nameTextStyle: { fontSize: 10 }, max: function (v) { return Math.ceil(v.max / 20) * 20; }, splitLine: { lineStyle: { color: "#EBF0F6" } }, axisLabel: { fontSize: 11 } },
         { type: "value", show: false, max: function (v) { return Math.ceil(v.max / 1000) * 1000; } }
       ],
       series: [
-        { name: "人工工时", type: "bar", barWidth: 44, itemStyle: { color: PAL[0], borderRadius: [6, 6, 0, 0] }, label: { show: true, position: "top", fontSize: 11, formatter: "{c} h" }, data: [r.manualHours.toFixed(1), r.agentHours.toFixed(1)] },
-        { name: "折算成本（元）", type: "line", yAxisIndex: 1, symbolSize: 0, lineStyle: { width: 0 }, itemStyle: { color: PAL[1] }, label: { show: true, position: "top", fontSize: 10, formatter: "¥{c}" }, data: [r.manualCost.toFixed(0), r.agentCost.toFixed(0)] }
+        { name: t("chartManualHours"), type: "bar", barWidth: 44, itemStyle: { color: PAL[0], borderRadius: [6, 6, 0, 0] }, label: { show: true, position: "top", fontSize: 11, formatter: "{c} h" }, data: [r.manualHours.toFixed(1), r.agentHours.toFixed(1)] },
+        { name: t("chartCost"), type: "line", yAxisIndex: 1, symbolSize: 0, lineStyle: { width: 0 }, itemStyle: { color: PAL[1] }, label: { show: true, position: "top", fontSize: 10, formatter: "¥{c}" }, data: [r.manualCost.toFixed(0), r.agentCost.toFixed(0)] }
       ]
     }));
   }
@@ -258,30 +266,58 @@
     return lv.indexOf("S3") >= 0 ? "S3" : (lv.indexOf("S2") >= 0 ? "S2" : "S1");
   }
   function renderKbTable() {
-    var stName = { pre: "来华前", arrival: "抵达初期", study: "在学日常", exit: "离境前后" };
+    var stName = { pre: t("stagePre"), arrival: t("stageArrival"), study: t("stageStudy"), exit: t("stageExit") };
     var rows = allMatters().map(function (m) {
       var lv = levelOf(m);
       return "<tr><td>" + (stName[m.stage] || m.stage) + "</td><td><span class=\"chip " + (m.pri === "P0" ? "chip-cin" : (m.pri === "P1" ? "chip-amber" : "chip-line")) + '">' + m.pri + "</span></td>" +
-        "<td>" + m.title + (m._local ? ' <span class="chip chip-jade tiny">校本</span>' : "") + "</td>" +
+        "<td>" + m.title + (m._local ? ' <span class="chip chip-jade tiny">' + U.esc(t("schoolLocal")) + '</span>' : "") + "</td>" +
         "<td class=\"small muted\">" + m.deadline.label + "</td>" +
-        '<td><span class="badge-src src-' + lv + '">' + (lv === "S3" ? "S3 待复核" : lv) + "</span></td>" +
+        '<td><span class="badge-src src-' + lv + '">' + (lv === "S3" ? U.esc(t("s3Review")) : lv) + "</span></td>" +
         '<td class="small muted">' + KB.sources(m.source).map(function (s) { return s.name; }).join("；") + "</td></tr>";
     }).join("");
     $("kbTable").querySelector("tbody").innerHTML = rows;
-    $("kbMeta").textContent = t("kbTotal") + " " + allMatters().length + " ｜ " + t("kbLastUpdate") + " " + KB.META.updated + " ｜ 校本条目 " + LOCAL_KB.length;
+    $("kbMeta").textContent = t("kbTotal") + " " + allMatters().length + " ｜ " + t("kbLastUpdate") + " " + KB.META.updated + t("metaLocalItems") + LOCAL_KB.length;
   }
   renderKbTable();
 
   $("btnAddKb").addEventListener("click", function () { $("kbAddBox").classList.toggle("hidden"); });
   $("btnCancelKb").addEventListener("click", function () { $("kbAddBox").classList.add("hidden"); });
+
+  /* AI 提炼导入：粘贴官方原文 → LLM 结构化 → 预填表单 → 人工核对后保存 */
+  $("btnKbAi").addEventListener("click", function () {
+    var raw = $("kbRaw").value.trim();
+    if (!raw) { U.toast(t("kbRawEmpty")); return; }
+    if (raw.length < 20) { U.toast(t("kbRawTooShort")); return; }
+    var btn = $("btnKbAi");
+    btn.disabled = true;
+    var old = btn.innerHTML;
+    btn.innerHTML = U.esc(t("kbExtracting"));
+    window.Agent.extractKb(raw, "zh", function () {}).then(function (r) {
+      $("kbT").value = r.title || "";
+      $("kbS").value = r.stage || "arrival";
+      $("kbP").value = r.pri || "P1";
+      $("kbD").value = r.deadline || "";
+      $("kbX").value = r.summary || "";
+      $("kbU").value = (r.sourceNote ? r.sourceNote + " ｜ " : "") + "S2 ｜ " + new Date().toISOString().slice(0, 10);
+      $("kbRaw").value = "";
+      U.toast(t("kbExtractDone"));
+      btn.disabled = false;
+      btn.innerHTML = old;
+    }).catch(function () {
+      U.toast(t("kbExtractFail"));
+      btn.disabled = false;
+      btn.innerHTML = old;
+    });
+  });
+
   $("btnSaveKb").addEventListener("click", function () {
     var title = $("kbT").value.trim();
-    if (!title) { U.toast("请填写事项标题"); return; }
+    if (!title) { U.toast(t("kbTitleRequired")); return; }
     var item = {
       id: "local_" + Date.now(), _local: true, stage: $("kbS").value, order: 99, pri: $("kbP").value,
-      title: title, title_en: title, summary: $("kbX").value.trim() || "（校本条目，说明待补充）",
-      summary_en: $("kbX").value.trim() || "", deadline: { kind: "none", from: "none", label: $("kbD").value.trim() || "以本校规定为准" },
-      docs: [], channel: "本校国际学生办公室（校本口径）", risk: "以本校最新规定为准。",
+      title: title, title_en: title, summary: $("kbX").value.trim() || t("localKbDefaultSummary"),
+      summary_en: $("kbX").value.trim() || "", deadline: { kind: "none", from: "none", label: $("kbD").value.trim() || t("localKbDefaultDeadline") },
+      docs: [], channel: t("localKbDefaultChannel"), risk: t("localKbDefaultRisk"),
       source: ["school"], applies: { purposes: [], durations: [] }, _srcNote: $("kbU").value.trim()
     };
     LOCAL_KB.push(item); U.save("localKb", LOCAL_KB);
@@ -308,7 +344,7 @@
   }, 400);
 
   document.addEventListener("langchange", function () {
-    drawBoard(); renderEff(); renderKbTable(); tplDesc(); genContent();
+    renderTplCards(); drawBoard(); renderEff(); renderKbTable(); tplDesc(); genContent();
   });
   window.addEventListener("resize", function () { charts.forEach(function (c) { try { c.resize(); } catch (e) { } }); });
 })();
