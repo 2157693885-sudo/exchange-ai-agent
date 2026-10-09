@@ -660,6 +660,19 @@ window.Agent = (function () {
   }
 
   /* ================= 6d. 机构端材料生成（LLM 版） ================= */
+  var trTrace = function (k) {
+    return (window.UI && window.UI.L10N && window.UI.L10N.t) ? window.UI.L10N.t(k) : k;
+  };
+  /* 从任务文本中识别目标国别（中/英文名匹配），无命中返回 OTHER */
+  function detectCountry(text) {
+    var k = "OTHER";
+    if (!text) return k;
+    Object.keys(window.KB.COUNTRY).forEach(function (key) {
+      var c = window.KB.COUNTRY[key];
+      if (text.indexOf(c.zh) >= 0 || (c.en && text.toLowerCase().indexOf(c.en.toLowerCase()) >= 0)) k = key;
+    });
+    return k;
+  }
   function genMaterialLLM(taskText, lang, onStep) {
     var steps = [];
     var push = function (n, title, detail) {
@@ -667,24 +680,20 @@ window.Agent = (function () {
       if (typeof onStep === "function") onStep(steps.length - 1, steps[steps.length - 1]);
     };
     var fallback = function () {
-      push(1, "任务解析", "离线模式 · 规则引擎兜底");
-      push(2, "材料组装", "基于模板与知识库快速生成（未调用 LLM）");
-      push(3, "合规复核", "AI 生成标识已附加，待人工复核");
-      var cfg = { template: "t_guide", country: "KZ", lang: lang || "zh", topic: taskText, deadline: "", contact: "", extra: "", audience: "国际学生" };
+      push(1, trTrace("traceParse"), trTrace("traceOffline"));
+      push(2, trTrace("traceAssemble"), trTrace("traceNoLLM"));
+      push(3, trTrace("traceReview"), trTrace("traceAiLabel"));
+      var cfg = { template: "t_guide", country: detectCountry(taskText), lang: lang || "zh", topic: taskText, deadline: "", contact: "", extra: "", audience: "国际学生" };
       var r = renderMaterial(cfg);
       return { markdown: r.markdown, title: r.title, sources: r.sources, steps: steps, aiLabel: r.aiLabel, llm: false };
     };
     return new Promise(function (resolve) {
       if (!bridgeOk()) { resolve(fallback()); return; }
       var cls = classify(taskText);
-      push(1, "任务解析", "intent=" + cls.intent + "；命中关键词 " + cls.hits.length + " 个");
-      var countryKey = "OTHER";
-      Object.keys(window.KB.COUNTRY).forEach(function (k) {
-        var c = window.KB.COUNTRY[k];
-        if (taskText.indexOf(c.zh) >= 0 || (c.en && taskText.toLowerCase().indexOf(c.en.toLowerCase()) >= 0)) countryKey = k;
-      });
+      push(1, trTrace("traceParse"), "intent=" + cls.intent + "；命中关键词 " + cls.hits.length + " 个");
+      var countryKey = detectCountry(taskText);
       var cname = window.KB.COUNTRY[countryKey];
-      push(2, "国别与受众", "country=" + countryKey + "（" + (cname ? cname.zh : "") + "）· 机构端内容工作台");
+      push(2, trTrace("traceCountry"), "country=" + countryKey + "（" + (cname ? cname.zh : "") + "）· 机构端内容工作台");
       var hits = retrieve(taskText, 5, cls);
       var ctx = [], srcKeys = [];
       hits.slice(0, 5).forEach(function (h) {
@@ -696,15 +705,17 @@ window.Agent = (function () {
         ctx.push({ title: label, text: text, src: srcText });
         keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
       });
-      push(3, "知识检索（RAG）", ctx.length ? ctx.map(function (x) { return x.title.slice(0, 18); }).join("；") : "无命中，提示以官方为准");
+      push(3, trTrace("traceRetrieve"), ctx.length ? ctx.map(function (x) { return x.title.slice(0, 18); }).join("；") : "无命中，提示以官方为准");
       var kbCtx = "【知识库条目（内容须以此为准，不得编造政策/时限/流程）】\n" +
         (ctx.length ? ctx.map(function (x, i) { return (i + 1) + ". " + x.title + "：" + x.text + "（来源：" + x.src + "）"; }).join("\n")
                     : "本主题暂无知识库条目，请按通用知识谨慎撰写，并注明以官方渠道为准。");
-      push(4, "知识组装（RAG）", "注入知识条目 " + ctx.length + " 条 / " + kbCtx.length + " 字");
-      push(5, "调用大模型", "MiniMax-Text-01 · 材料生成");
+      push(4, trTrace("traceCompose"), "注入知识条目 " + ctx.length + " 条 / " + kbCtx.length + " 字");
+      push(5, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceMaterialGen"));
+      var cc = window.KB.COUNTRY[countryKey];
+      var countryLine = "目标对象：来华" + (cc && cc.zh ? cc.zh : "国际学生") + "留学生；材料须包含该国别的饮食/宗教/节日/礼仪适配提示。";
       var sys = "你是高校国际学生事务部门的助手。请把用户下达的任务编写成一份可直接发布的来华留学材料（Markdown 格式）。要求：1) 分节组织：背景与对象 / 办理事项与步骤 / 所需材料 / 时限与提示 / 紧急联系与来源；2) 内容严格基于知识库条目，不得编造政策、时限、机构与流程；3) 语言务实、可执行、面向留学生；4) 结尾标注「本文档由 AI 生成 · 待人工复核」。";
-      llmChat([{ role: "user", content: "任务：" + taskText }], lang, sys + "\n" + kbCtx).then(function (res) {
-        push(6, "合规复核", "AI 生成标识已附加；来源 " + srcKeys.length + " 条");
+      llmChat([{ role: "user", content: "任务：" + taskText }], lang, sys + "\n" + countryLine + "\n" + kbCtx).then(function (res) {
+        push(6, trTrace("traceReview"), "AI 生成标识已附加；来源 " + srcKeys.length + " 条");
         var md = (res && res.reply) || "";
         var title = taskText.length > 34 ? taskText.slice(0, 34) + "…" : taskText;
         resolve({
@@ -724,17 +735,17 @@ window.Agent = (function () {
       if (typeof onStep === "function") onStep(steps.length - 1, steps[steps.length - 1]);
     };
     var fallback = function () {
-      push(1, "原文识别", "离线模式 · 规则引擎兜底：仅提取标题");
-      push(2, "结构化建议", "未调用 LLM，请按原文手工填写各字段");
+      push(1, trTrace("traceExtract"), trTrace("traceOfflineExtract"));
+      push(2, trTrace("traceExtractSuggest"), trTrace("traceNoLLMFill"));
       return { title: rawText.slice(0, 22), stage: "arrival", pri: "P1", deadline: "以官方/本校公布为准", summary: rawText.slice(0, 80), sourceNote: "", steps: steps, llm: false };
     };
     return new Promise(function (resolve) {
       if (!bridgeOk()) { resolve(fallback()); return; }
-      push(1, "原文识别", "输入 " + rawText.length + " 字官方文本");
-      push(2, "调用大模型", "MiniMax-Text-01 · 结构化提炼");
+      push(1, trTrace("traceExtract"), trTrace("traceInputChars").replace("{n}", rawText.length));
+      push(2, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceStructured"));
       var sys = "你是高校国际学生事务部门的知识库编辑助手。请把用户粘贴的官方原文（国家政策、出入境规定或学校通知）提炼为一条结构化知识条目。只输出严格 JSON：{\"title\":\"事项标题（20字内）\",\"stage\":\"pre|arrival|study|exit 之一\",\"pri\":\"P0|P1|P2\",\"deadline\":\"时限口径，如：报到后7日内（以本校规定为准）；原文无时限则写：以官方/本校公布为准\",\"summary\":\"办理方式、所需材料与注意事项，80-150字，忠实原文不得编造\",\"sourceNote\":\"原文发布机构名称（如：国家移民管理局 / 本校国际学生办公室；无明确机构写：官方公开渠道）\"}。不得编造原文没有的信息。";
       llmChat([{ role: "user", content: "官方原文：\n" + rawText }], lang || "zh", sys).then(function (res) {
-        push(3, "结构化完成", "已生成条目，待人工核对入库");
+        push(3, trTrace("traceExtractSuggest"), trTrace("traceReady"));
         var reply = (res && res.reply) || "";
         var parsed = null;
         var m = reply.match(/\{[\s\S]*\}/);
