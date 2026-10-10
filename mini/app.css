@@ -1,0 +1,106 @@
+/* =========================================================
+   mini 小程序体验版 · 手机壳样式（新版 iframe 同源壳）
+   ========================================================= */
+:root {
+  --ink: #16243A;
+  --ink-2: #45566E;
+  --line: #E1E8F1;
+  --accent: #174E8C;
+  --bg: #F2F5FA;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(1200px 800px at 20% 0%, #EDF2F9 0%, #DCE4EF 55%, #C9D5E4 100%);
+  color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+}
+
+/* ---------- 真机壳 ---------- */
+.device {
+  position: relative;
+  width: 390px; height: 844px;
+  border-radius: 54px;
+  background: #101216;
+  padding: 14px;
+  box-shadow: 0 40px 90px rgba(15, 26, 45, .35), 0 0 0 1px rgba(255, 255, 255, .06) inset;
+}
+.device::before {
+  content: ""; position: absolute; left: 50%; top: 10px; transform: translateX(-50%);
+  width: 118px; height: 26px; border-radius: 20px; background: #0A0C0F; z-index: 5;
+}
+.screen {
+  position: relative; width: 100%; height: 100%;
+  border-radius: 42px; overflow: hidden; background: #fff;
+}
+.screen iframe {
+  display: none; width: 100%; height: 100%; border: 0; background: #fff;
+}
+.screen iframe.on { display: block; }
+
+/* 状态栏与胶囊（壳内装饰） */
+.statusbar {
+  position: absolute; top: 18px; left: 0; right: 0; z-index: 4;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 34px; font-size: 12px; font-weight: 600; color: var(--ink);
+  pointer-events: none;
+}
+.sb-right { display: flex; align-items: center; gap: 5px; }
+.sb-ico { display: inline-block; }
+.sb-signal { width: 16px; height: 10px; border-radius: 2px; background: linear-gradient(90deg, var(--ink) 0 60%, transparent 60% 100%); position: relative; }
+.sb-signal::before { content: ""; position: absolute; right: -4px; top: 2px; width: 3px; height: 3px; border-radius: 1px; background: var(--ink); box-shadow: 3px -3px 0 var(--ink); }
+.sb-wifi { width: 15px; height: 11px; border-radius: 50% 50% 0 0; border: 1.5px solid var(--ink); border-bottom: 0; }
+.sb-wifi::before { content: ""; position: absolute; left: 50%; bottom: -3px; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--ink); }
+.sb-batt { width: 22px; height: 11px; border: 1.5px solid var(--ink); border-radius: 3px; position: relative; }
+.sb-batt::after { content: ""; position: absolute; left: 2px; top: 2px; bottom: 2px; width: 60%; border-radius: 1.5px; background: var(--ink); }
+.capsule {
+  position: absolute; top: 40px; right: 22px; z-index: 6;
+  width: 76px; height: 24px; border-radius: 14px;
+  background: rgba(22, 36, 58, .96);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 9px; pointer-events: none;
+}
+.cap-dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,.85); }
+.cap-bar { width: 34px; height: 9px; border-radius: 5px; background: rgba(255,255,255,.28); }
+
+/* ---------- 底部 TabBar ---------- */
+.tabbar {
+  position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 8;
+  height: 62px; border-radius: 22px;
+  background: rgba(255, 255, 255, .96);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 -8px 30px rgba(15, 26, 45, .12);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 6px;
+}
+.tabbar button {
+  flex: 1; height: 100%; border: 0; background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  color: #8A97A8; font-size: 11px; transition: color .2s;
+}
+.tabbar button .tb-ic { display: block; width: 22px; height: 22px; }
+.tabbar button.on { color: var(--accent); }
+.tabbar button.on .tb-ic { filter: none; }
+
+/* Tab 图标（SVG 描线） */
+.tb-home { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 10.5 12 3l9 7.5'/><path d='M5 9.5V21h14V9.5'/></svg>") center/contain no-repeat; color: #8A97A8; }
+.tb-stu { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h16v12H4z'/><path d='M4 6l8 5 8-5'/><path d='M9 12 4 16M15 12l5 4'/></svg>") center/contain no-repeat; color: #8A97A8; }
+.tb-org { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='3' width='16' height='18' rx='2'/><path d='M9 8h6M9 12h6M9 16h4'/></svg>") center/contain no-repeat; color: #8A97A8; }
+.tb-ai { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z'/><path d='M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z'/></svg>") center/contain no-repeat; color: #8A97A8; }
+.tabbar button.on .tb-home, .tabbar button.on .tb-stu, .tabbar button.on .tb-org, .tabbar button.on .tb-ai { color: var(--accent); }
+
+/* ---------- 手机端：全屏沉浸（无壳） ---------- */
+@media (max-width: 480px) {
+  body { background: #fff; display: block; }
+  .device {
+    width: 100%; height: 100vh; height: 100dvh;
+    border-radius: 0; padding: 0; box-shadow: none;
+  }
+  .device::before { display: none; }
+  .screen { border-radius: 0; height: 100%; }
+  .statusbar { top: 10px; padding: 0 26px; }
+  .capsule { top: 28px; }
+  .tabbar { left: 0; right: 0; bottom: 0; border-radius: 18px 18px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+}
