@@ -157,6 +157,40 @@ window.KBI18N.register("es", {
     }
   },
   matter: {
+    /* ---- 试点校本预设（中山大学，S3 待属地复核）---- */
+    preset_sysu_reg: {
+      title: "Matrícula y registro en la SYSU (centro)",
+      summary: "El alumnado admitido debe formalizar la matrícula y el registro presencialmente en la fecha y el campus indicados en la carta de admisión; no se admite la llegada anticipada. Lleve la carta de admisión, el pasaporte original y el formulario JW201/JW202; el carné de estudiante y la tarjeta del campus se entregan tras el registro.",
+      channel: "Oficina de Estudiantes Internacionales de la SYSU (ejemplo del centro)",
+      risk: "Datos de ejemplo. Consulte el último aviso oficial de la universidad; véase iso.sysu.edu.cn",
+      label: "Según la fecha indicada en la carta de admisión"
+    },
+    preset_sysu_res: {
+      title: "Convertir el visado X1 en permiso de residencia (plazo del centro)",
+      summary: "Tras entrar con un visado de estudios X1, hay que completar el registro en la universidad y convertir el visado X1 en permiso de residencia de estudios en la administración de entrada y salida en un plazo de 30 días desde la entrada, presentando la carta de admisión y el formulario JW201/JW202.",
+      channel: "Oficina de Estudiantes Internacionales de la SYSU (ejemplo del centro)",
+      risk: "Datos de ejemplo. Consulte el último aviso oficial de la universidad; véase iso.sysu.edu.cn",
+      label: "En los 30 días siguientes a la entrada"
+    },
+    preset_sysu_pay: {
+      title: "Pago de matrícula y alojamiento (canal del centro)",
+      summary: "Las tasas de matrícula y alojamiento se abonan en línea a través de la plataforma de pagos de la SYSU, que admite Alipay, WeChat, UnionPay y tarjetas internacionales (VISA / MasterCard / JCB / American Express). El acceso al alojamiento exige el pago previo.",
+      channel: "Oficina de Estudiantes Internacionales de la SYSU (ejemplo del centro)",
+      risk: "Datos de ejemplo. Consulte el último aviso oficial de la universidad; véase iso.sysu.edu.cn",
+      label: "Según el calendario publicado en la plataforma de pagos"
+    },
+    preset_sysu_contact: {
+      title: "Canales oficiales de contacto de la SYSU (centro)",
+      summary: "Programas y trámites: iso.sysu.edu.cn; solicitud en línea: apply.sysu.edu.cn; correo: admissions@mail.sysu.edu.cn; teléfono de admisión: 0086 (20) 84110819.",
+      channel: "Oficina de Estudiantes Internacionales de la SYSU (ejemplo del centro)",
+      risk: "Datos de ejemplo. Consulte el último aviso oficial de la universidad."
+    },
+    preset_sysu_guide: {
+      title: "Guías oficiales de matrícula (materiales del centro)",
+      summary: "El centro de ayuda oficial publica la «Guía de matrícula para nuevos estudiantes internacionales 2026» y la «Guía previa a la llegada», que cubren matrícula, visado, alojamiento, pagos y reconocimiento médico. Se recomienda leerlas antes de viajar.",
+      channel: "Oficina de Estudiantes Internacionales de la SYSU (ejemplo del centro)",
+      risk: "Datos de ejemplo. Consulte el último aviso oficial de la universidad; véase iso.sysu.edu.cn/cn/bz"
+    },
     pre_visa: {
       title: "Determinar y solicitar el tipo de visado adecuado para China",
       summary: "El tipo de visado depende del motivo y la duración de la estancia: estudios largos (más de 180 días) normalmente X1, estudios cortos (hasta 180 días) normalmente X2; también existen F (visita e intercambio), M (negocios), L (turismo), Z (trabajo) y el tránsito sin visado. El tipo de visado condiciona el permiso de residencia posterior, por lo que un error afecta a la matrícula y al trámite de residencia.",

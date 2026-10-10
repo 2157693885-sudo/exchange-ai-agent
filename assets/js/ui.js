@@ -9,7 +9,7 @@ window.UI = (function () {
   /* ---------- SVG 图标集 ---------- */
   var P = function (d, extra) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"' + (extra || "") + ">" + d + "</svg>"; };
   var ICONS = {
-    logo: P('<path d="M12 3l7 3.5v5c0 4.2-2.9 7.9-7 9-4.1-1.1-7-4.8-7-9v-5L12 3z"/><path d="M9.2 12.2l2 2 3.6-4"/>'),
+    logo: P('<path d="M12 20L5 10M12 20L7.7 5.6M12 20L12 4.8M12 20L16.3 5.6M12 20L19 10"/><path d="M5 10Q12 1.5 19 10"/><circle cx="12" cy="3" r="1.5" fill="currentColor" stroke="none"/>'),
     home: P('<path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-9.5z"/>'),
     student: P('<path d="M12 4L3 8.5 12 13l9-4.5L12 4z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/>'),
     org: P('<path d="M4 21V6a1 1 0 0 1 1-1h7v16"/><path d="M12 10h7a1 1 0 0 1 1 1v10"/><path d="M7 9h2M7 13h2M7 17h2M15 14h2M15 18h2"/>'),

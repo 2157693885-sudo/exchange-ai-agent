@@ -145,19 +145,23 @@ window.Agent = (function () {
         return c;
       });
     }
+    /* 1) 用户自建条目（机构端「AI 提炼导入」保存的）——只有这部分才持久化。
+       预置条目若也落盘，旧缓存会把「尚未补齐译文的旧版本」一直带下去，
+       导致后来补的十语译文永远不生效。 */
+    var mine = [];
     try {
       var v = localStorage.getItem("ea2_localKb");
       var arr = v ? JSON.parse(v) : [];
-      if (Array.isArray(arr) && arr.length) return ensure(arr);
-    } catch (e) {}
-    /* 未自建校本库时：预置试点示例库（中山大学，S3 待复核）并落盘，供机构端统一管理；
-       机构端一旦通过「AI 提炼导入」保存自有数据，localStorage 有值即自动让位。 */
+      if (Array.isArray(arr)) {
+        mine = arr.filter(function (x) { return x && !x._preset; });
+      }
+    } catch (e) { /* 隐私模式忽略 */ }
+    var mineOut = ensure(mine);
+    /* 2) 预置试点示例库（中山大学，S3 待复核）——始终取文件最新版，含十语译文 */
     if (window.SYSU_PRESET_KB && window.SYSU_PRESET_KB.length) {
-      var presets = ensure(window.SYSU_PRESET_KB);
-      try { localStorage.setItem("ea2_localKb", JSON.stringify(presets)); } catch (e2) {}
-      return presets;
+      return mineOut.concat(ensure(window.SYSU_PRESET_KB));
     }
-    return [];
+    return mineOut;
   }
 
   /* 意图门控检索：命中明确意图时给对应事项加权；过境免签条目只在用户明确询问时召回，
@@ -288,6 +292,14 @@ window.Agent = (function () {
 
   /* ================= 5. 内容生成 ================= */
   function t(key) { return window.L10N.t(key); }
+
+  /* 列表分隔符：中日韩用全角顿号/分号，阿拉伯语用倒逗号，其余用半角 */
+  function sepFor(lang) {
+    var c = String(lang || "zh").slice(0, 2);
+    if (c === "zh") return "；";
+    if (c === "ar") return "؛ ";
+    return "; ";
+  }
 
   function matterText(m, lang) {
     var zh = lang === "zh";
@@ -575,7 +587,7 @@ window.Agent = (function () {
 
     /* 步骤 2 画像读取 */
     var c = window.KB.COUNTRY[p.country] || window.KB.COUNTRY.OTHER;
-    push(2, t("flow2"), "purpose=" + p.purpose + "；duration=" + p.duration + "；country=" + (lang === "zh" ? c.zh : (c.en || c.zh)) + (p.arrival ? "；arrival=" + p.arrival : ""));
+    push(2, t("flow2"), "purpose=" + p.purpose + "；duration=" + p.duration + "；country=" + window.KB.L(c, "name", lang) + (p.arrival ? "；arrival=" + p.arrival : ""));
 
     /* 步骤 3 知识检索 */
     var hits = retrieve(query, 4, cls);
@@ -603,10 +615,10 @@ window.Agent = (function () {
           /* 校本条目：机构端导入的本校口径，置顶展示并标注校本徽标 */
           blocks.push(
             '<div style="margin-bottom:10px"><div class="row-between" style="gap:10px;align-items:flex-start">' +
-            "<div><strong>" + (lang === "zh" ? it.title : (it.title_en || it.title)) + "</strong></div>" +
+            "<div><strong>" + window.KB.L(it, "title", lang) + "</strong></div>" +
             '<span class="badge-src src-S3">' + t("schoolLocal") + "</span></div>" +
-            '<p class="small" style="margin:6px 0 0">' + (lang === "zh" ? it.summary : (it.summary_en || it.summary)) + "</p>" +
-            (it.channel ? '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + it.channel + "</p>" : "") +
+            '<p class="small" style="margin:6px 0 0">' + window.KB.L(it, "summary", lang) + "</p>" +
+            (window.KB.L(it, "channel", lang) ? '<p class="tiny muted" style="margin:6px 0 0">' + t("sourceLabel") + (lang === "zh" ? "：" : ": ") + window.KB.L(it, "channel", lang) + "</p>" : "") +
             "</div>"
           );
           needReview = true;
@@ -669,7 +681,7 @@ window.Agent = (function () {
       push(1, t("flow1"), cls.intent === "unknown" ? "未识别明确意图，转 LLM 自由回答" : ("intent=" + cls.intent + "，命中关键词 " + cls.hits.length + " 个"));
 
       var c = window.KB.COUNTRY[p.country] || window.KB.COUNTRY.OTHER;
-      push(2, t("flow2"), "purpose=" + p.purpose + "；duration=" + p.duration + "；country=" + (lang === "zh" ? c.zh : (c.en || c.zh)));
+      push(2, t("flow2"), "purpose=" + p.purpose + "；duration=" + p.duration + "；country=" + window.KB.L(c, "name", lang));
 
       var hits = retrieve(query, 4, cls);
       var ctx = [], srcKeys = [];
@@ -703,7 +715,7 @@ window.Agent = (function () {
         var html = '<div class="ai-md">' + (window.UI && window.UI.mdToHtml ? window.UI.mdToHtml(reply) : "<p>" + esc(reply) + "</p>") + "</div>";
         if (srcKeys.length) {
           html += '<div class="trace"><div class="trace-line"><span class="k">' + t("sourceLabel") + '</span><span>' +
-            window.KB.sources(srcKeys).map(function (s) { return window.KB.L(s, "name"); }).join(lang === "zh" ? "；" : "; ") + "</span></div></div>";
+            window.KB.sources(srcKeys).map(function (s) { return window.KB.L(s, "name"); }).join(sepFor(lang)) + "</span></div></div>";
         }
         resolve({ steps: steps, html: html, sources: window.KB.sources(srcKeys), needReview: true, confidence: 0.85, llm: true, reply: reply });
       }).catch(function (e) { reject(e); });

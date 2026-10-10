@@ -157,6 +157,40 @@ window.KBI18N.register("fr", {
     }
   },
   matter: {
+    /* ---- 试点校本预设（中山大学，S3 待属地复核）---- */
+    preset_sysu_reg: {
+      title: "Inscription et enregistrement à la SYSU (établissement)",
+      summary: "Les étudiants admis doivent accomplir en personne les formalités d'inscription à la date et sur le campus indiqués dans la lettre d'admission ; aucune arrivée anticipée n'est acceptée. Munissez-vous de la lettre d'admission, du passeport original et du formulaire JW201/JW202 ; la carte d'étudiant et la carte de campus sont remises après l'inscription.",
+      channel: "Bureau des étudiants internationaux de la SYSU (exemple d'établissement)",
+      risk: "Données d'exemple. Reportez-vous au dernier avis officiel de l'université ; voir iso.sysu.edu.cn",
+      label: "Selon la date indiquée dans la lettre d'admission"
+    },
+    preset_sysu_res: {
+      title: "Convertir le visa X1 en titre de séjour (délai de l'établissement)",
+      summary: "Après une entrée avec un visa d'études X1, il faut finaliser l'inscription à l'université puis convertir le visa X1 en titre de séjour étudiant auprès de l'administration des entrées et sorties dans les 30 jours suivant l'entrée, avec la lettre d'admission et le formulaire JW201/JW202.",
+      channel: "Bureau des étudiants internationaux de la SYSU (exemple d'établissement)",
+      risk: "Données d'exemple. Reportez-vous au dernier avis officiel de l'université ; voir iso.sysu.edu.cn",
+      label: "Dans les 30 jours suivant l'entrée"
+    },
+    preset_sysu_pay: {
+      title: "Paiement des frais de scolarité et de logement (canal de l'établissement)",
+      summary: "Les frais de scolarité et de logement se règlent en ligne via la plateforme de paiement de la SYSU, qui accepte Alipay, WeChat, UnionPay et les cartes internationales (VISA / MasterCard / JCB / American Express). L'accès au logement exige un paiement préalable.",
+      channel: "Bureau des étudiants internationaux de la SYSU (exemple d'établissement)",
+      risk: "Données d'exemple. Reportez-vous au dernier avis officiel de l'université ; voir iso.sysu.edu.cn",
+      label: "Selon le calendrier annoncé sur la plateforme de paiement"
+    },
+    preset_sysu_contact: {
+      title: "Canaux de contact officiels de la SYSU (établissement)",
+      summary: "Programmes et démarches : iso.sysu.edu.cn ; candidature en ligne : apply.sysu.edu.cn ; courriel : admissions@mail.sysu.edu.cn ; téléphone admissions : 0086 (20) 84110819.",
+      channel: "Bureau des étudiants internationaux de la SYSU (exemple d'établissement)",
+      risk: "Données d'exemple. Reportez-vous au dernier avis officiel de l'université."
+    },
+    preset_sysu_guide: {
+      title: "Guides officiels d'inscription (documents de l'établissement)",
+      summary: "Le centre d'aide officiel publie le « Guide d'inscription des nouveaux étudiants internationaux 2026 » et le « Guide avant l'arrivée », couvrant inscription, visa, logement, paiements et visite médicale. À lire avant le départ.",
+      channel: "Bureau des étudiants internationaux de la SYSU (exemple d'établissement)",
+      risk: "Données d'exemple. Reportez-vous au dernier avis officiel de l'université ; voir iso.sysu.edu.cn/cn/bz"
+    },
     pre_visa: {
       title: "Déterminer et demander le bon type de visa pour la Chine",
       summary: "Le type de visa dépend du motif et de la durée du séjour : études longues (plus de 180 jours) généralement X1, études courtes (jusqu'à 180 jours) généralement X2 ; il existe aussi F (visite et échange), M (affaires), L (tourisme), Z (travail) et le transit sans visa. Le type de visa conditionne directement le titre de séjour ultérieur : une erreur affecte l'inscription universitaire et la demande de séjour.",

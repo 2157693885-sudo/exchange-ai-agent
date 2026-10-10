@@ -17,6 +17,18 @@ window.KBI18N = (function () {
     obj[f + "_" + lang] = v;
   }
 
+  /* 事项查找：内置事项（KB.MATTERS）+ 试点校本预设（SYSU_PRESET_KB）。
+     两者共用同一套 id 空间与字段约定（title/summary/docs/channel/risk/label），
+     因此多语包只需一份条目即可同时覆盖，无需为校本数据另建机制。 */
+  function findMatter(id) {
+    var i;
+    var builtin = (window.KB && window.KB.MATTERS) || [];
+    for (i = 0; i < builtin.length; i++) { if (builtin[i].id === id) return builtin[i]; }
+    var preset = window.SYSU_PRESET_KB || [];
+    for (i = 0; i < preset.length; i++) { if (preset[i].id === id) return preset[i]; }
+    return null;
+  }
+
   function applyPack(lang, P) {
     var KB = window.KB, KBM = window.KBM;
     if (!KB) return;
@@ -37,8 +49,7 @@ window.KBI18N = (function () {
 
     /* ---------- 办理事项 ---------- */
     Object.keys(P.matter || new Object()).forEach(function (id) {
-      var m = null;
-      (KB.MATTERS || []).forEach(function (x) { if (x.id === id) m = x; });
+      var m = findMatter(id);
       if (!m) return;
       var e = P.matter[id];
       setF(m, "title", e.title, lang);
@@ -129,6 +140,18 @@ window.KBI18N = (function () {
       try { applyPack(lang, pack); }
       catch (e) { if (window.console) console.warn("[KBI18N] " + lang + " 应用失败", e); }
       return this;
+    },
+    /* 重新应用全部已注册语言包。
+       用途：内容包可能先于目标数据（如校本预设）加载，此时 applyPack 查不到对象、
+       译文会被静默丢弃。数据到位后调用本方法即可补齐。
+       重复应用是幂等的——只覆盖 *_lang 字段，不新增或删除条目。 */
+    applyAll: function () {
+      var self = this;
+      (self.langs || []).slice().forEach(function (l) {
+        try { applyPack(l, DATA[l]); }
+        catch (e) { if (window.console) console.warn("[KBI18N] 重新应用失败 " + l, e); }
+      });
+      return self;
     },
     stats: function () {
       var o = {};

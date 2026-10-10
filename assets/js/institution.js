@@ -406,7 +406,10 @@
       docs: [], channel: t("localKbDefaultChannel"), risk: t("localKbDefaultRisk"),
       source: ["school"], applies: { purposes: [], durations: [] }, _srcNote: $("kbU").value.trim()
     };
-    LOCAL_KB.push(item); U.save("localKb", LOCAL_KB);
+    LOCAL_KB.push(item);
+    /* 只持久化用户自建条目：预置条目始终从 kb-school-sysu.js 读最新版，
+       否则会把「当前这份快照」冻结进缓存，后续补的译文无法生效。 */
+    U.save("localKb", LOCAL_KB.filter(function (x) { return x && !x._preset; }));
     $("kbT").value = ""; $("kbD").value = ""; $("kbX").value = ""; $("kbU").value = "";
     $("kbAddBox").classList.add("hidden");
     renderKbTable(); drawBoard();

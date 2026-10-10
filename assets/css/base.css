@@ -139,7 +139,7 @@ a { color: var(--brand-600); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1, h2, h3, h4 { margin: 0; line-height: var(--lh-tight); letter-spacing: -.014em; color: var(--ink-900); font-weight: 700; }
 p { margin: 0 0 var(--sp-4); }
-ul, ol { margin: 0 0 var(--sp-4); padding-left: 1.25em; }
+ul, ol { margin: 0 0 var(--sp-4); padding-inline-start: 1.25em; }
 li { margin-bottom: var(--sp-1); }
 hr { border: 0; border-top: 1px solid var(--line); margin: var(--sp-8) 0; }
 code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--ink-100); padding: 1px 5px; border-radius: var(--r-xs); }
@@ -214,7 +214,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-name { font-size: .98rem; letter-spacing: -.01em; }
 .brand-sub { font-size: .68rem; color: var(--ink-500); font-weight: 600; letter-spacing: .04em; }
-.nav { display: flex; gap: var(--sp-1); margin-left: auto; flex-wrap: wrap; }
+.nav { display: flex; gap: var(--sp-1); margin-inline-start: auto; flex-wrap: wrap; }
 .nav a {
   padding: 9px 13px; border-radius: var(--r-sm); font-size: .9rem; font-weight: 600;
   color: var(--ink-600); transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
@@ -299,7 +299,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 .input:hover, .select:hover, .textarea:hover { border-color: var(--brand-200); }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--brand-500); box-shadow: var(--ring); }
 .textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
-.select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-500) 50%), linear-gradient(135deg, var(--ink-500) 50%, transparent 50%); background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+.select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-500) 50%), linear-gradient(135deg, var(--ink-500) 50%, transparent 50%); background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-inline-end: 34px; }
 .seg { display: flex; padding: 3px; gap: 3px; background: var(--ink-100); border-radius: var(--r-sm); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
 .seg::-webkit-scrollbar { display: none; }
 .seg button { flex: 0 0 auto; }
@@ -339,12 +339,12 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 /* ---------- 11. Stage rail / Steps ---------- */
 .stages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
 .stage {
-  position: relative; text-align: left; border: 1px solid var(--line); background: var(--surface);
+  position: relative; text-align: start; border: 1px solid var(--line); background: var(--surface);
   border-radius: var(--r-md); padding: var(--sp-4); cursor: pointer; overflow: hidden;
   transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
   min-height: 44px;
 }
-.stage::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--ink-200); transition: background var(--dur) var(--ease); }
+.stage::before { content: ""; position: absolute; inset-block: 0; inset-inline: 0 auto; width: 4px; background: var(--ink-200); transition: background var(--dur) var(--ease); }
 .stage[data-stage="pre"]::before { background: var(--stage-pre); }
 .stage[data-stage="arrival"]::before { background: var(--stage-arrival); }
 .stage[data-stage="study"]::before { background: var(--stage-study); }
@@ -368,11 +368,11 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 .flow-step.is-done .fs-n { color: var(--jade-700); }
 
 /* ---------- 12. Timeline ---------- */
-.timeline { position: relative; padding-left: 26px; }
-.timeline::before { content: ""; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+.timeline { position: relative; padding-inline-start: 26px; }
+.timeline::before { content: ""; position: absolute; inset-inline-start: 8px; inset-block: 6px; width: 2px; background: var(--line); }
 .tl-item { position: relative; padding-bottom: var(--sp-5); }
 .tl-item::before {
-  content: ""; position: absolute; left: -22px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
+  content: ""; position: absolute; inset-inline-start: -22px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
   background: var(--surface); border: 2.5px solid var(--brand-400);
 }
 .tl-item.is-urgent::before { border-color: var(--cinnabar-500); background: var(--cinnabar-100); }
@@ -382,7 +382,7 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
 /* ---------- 13. Tables ---------- */
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
 table.data { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
-table.data th, table.data td { padding: 11px 13px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.data th, table.data td { padding: 11px 13px; text-align: start; border-bottom: 1px solid var(--line); vertical-align: top; }
 table.data th { background: var(--surface-2); font-weight: 700; color: var(--ink-700); font-size: var(--fs-xs); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
 table.data tr:last-child td { border-bottom: 0; }
 table.data tbody tr:hover { background: var(--brand-050); }
@@ -477,12 +477,19 @@ table.data tbody tr:hover { background: var(--brand-050); }
 .print-only { display: none; }
 
 /* ---------- 21. RTL ---------- */
-[dir="rtl"] .timeline { padding-left: 0; padding-right: 26px; }
-[dir="rtl"] .timeline::before { left: auto; right: 8px; }
-[dir="rtl"] .tl-item::before { left: auto; right: -22px; }
-[dir="rtl"] .stage { text-align: right; }
-[dir="rtl"] .stage::before { inset: 0 0 0 auto; }
-[dir="rtl"] .nav { margin-left: 0; margin-right: auto; }
+/* =========================================================================
+   RTL 方向适配
+   -------------------------------------------------------------------------
+   本项目已全面采用 CSS 逻辑属性（margin-inline / padding-inline /
+   inset-inline 等），布局随 <html dir> 自动翻转，无需逐组件写覆盖规则。
+
+   仅以下两类必须保持"物理方向"，因此单独处理：
+     1) background-position —— CSS 没有逻辑版本，需按方向显式翻转
+     2) safe-area-inset-* —— 设备物理边缘（刘海/圆角），不随文字方向改变
+   ========================================================================= */
+
+/* 下拉箭头：LTR 在右侧，RTL 镜像到左侧 */
+[dir="rtl"] .select { background-position: 18px 50%, 13px 50%; }
 
 /* ---------- 22. Responsive ---------- */
 @media (max-width: 1024px) {
@@ -496,7 +503,7 @@ table.data tbody tr:hover { background: var(--brand-050); }
   .g3, .g2 { grid-template-columns: 1fr; }
   .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .appbar-inner { flex-wrap: wrap; gap: var(--sp-2); padding: var(--sp-2) 0; }
-  .nav { order: 3; width: 100%; margin-left: 0; }
+  .nav { order: 3; width: 100%; margin-inline-start: 0; }
   .card-pad-lg { padding: var(--sp-5); }
   .foot-grid { grid-template-columns: 1fr; gap: var(--sp-6); }
 }
@@ -550,9 +557,6 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .gate-hero-inner p { color: rgba(255, 255, 255, .9); font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.78; max-width: 52ch; }
 .gate-hero-rule { width: 72px; height: 2px; background: linear-gradient(90deg, #FFFFFF, rgba(255, 255, 255, 0)); margin: 0 0 var(--sp-5); }
 /* RTL：箭头与渐变方向随阅读方向翻转 */
-[dir="rtl"] .door-go svg { transform: scaleX(-1); }
-[dir="rtl"] .door:hover .door-go svg { transform: translateX(-4px) scaleX(-1); }
-[dir="rtl"] .gate-hero-rule { background: linear-gradient(270deg, #FFFFFF, rgba(255, 255, 255, 0)); }
 
 /* ---- 精制入口卡：去掉顶部色条，改左侧细线 + 更多留白 ---- */
 .door { border-radius: var(--r-lg); border-color: var(--line); padding: var(--sp-8) var(--sp-6); }
@@ -624,14 +628,14 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 }
 .paper-dots { display: flex; gap: 5px; }
 .paper-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-200); }
-.paper-name { margin-left: auto; font-weight: 650; color: var(--ink-600); }
+.paper-name { margin-inline-start: auto; font-weight: 650; color: var(--ink-600); }
 .paper-body { padding: var(--sp-5); }
 .input:focus, .select:focus, .textarea:focus {
   border-color: var(--brand-500);
   box-shadow: 0 0 0 3px rgba(31, 102, 176, .12);
   outline: none;
 }
-.select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
+.select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-inline-end: 36px; }
 
 
 /* ===== 机构端 · 模板卡片（模板画廊式选择） ===== */
@@ -666,7 +670,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 
 
 /* ---------- v3.0 门户：痛点区 + OPC 创业实践区 ---------- */
-.gate-pilot{display:inline-flex;align-items:center;gap:5px;margin-left:14px;padding:4px 12px;border:1px solid var(--brand-400);border-radius:var(--r-full);color:var(--brand-700);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-050) 70%,transparent)}
+.gate-pilot{display:inline-flex;align-items:center;gap:5px;margin-inline-start:14px;padding:4px 12px;border:1px solid var(--brand-400);border-radius:var(--r-full);color:var(--brand-700);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-050) 70%,transparent)}
 .pain{margin-top:var(--sp-12)}
 .pain .sec-h{font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin:0 0 var(--sp-6);letter-spacing:-.01em}
 .pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)}
@@ -704,6 +708,7 @@ h2 .ico svg, h3 .ico svg { width: 22px; height: 22px; }
 .gate-kpis{margin-top:var(--sp-8)}
 
 /* ===== v4 覆盖层：三色系统下组件精修 ===== */
+/* safe-area 是设备物理边缘（刘海/圆角），不随文字方向翻转，故此处必须保持 padding-left/right 物理写法 */
 .wrap{padding-left:max(20px, env(safe-area-inset-left));padding-right:max(20px, env(safe-area-inset-right));box-sizing:border-box}
 body{background:var(--bg);color:var(--ink-800);margin:0}
 .appbar{background:rgba(10,42,35,.92);backdrop-filter:blur(10px)}
@@ -752,7 +757,7 @@ h1,h2,h3{font-family:var(--font-serif)}
 .journey{margin-top:var(--sp-12);padding:var(--sp-8) var(--sp-6);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-xl)}
 .j-track{grid-template-columns:repeat(4,1fr);gap:var(--sp-6)}
 .j-step{border-top:2px solid var(--line-strong);padding-top:var(--sp-6);position:relative}
-.j-step::before{content:"";position:absolute;top:-5px;left:0;width:10px;height:10px;border-radius:50%;background:var(--line-strong)}
+.j-step::before{content:"";position:absolute;top:-5px;inset-inline-start:0;width:10px;height:10px;border-radius:50%;background:var(--line-strong)}
 .j-step:first-child::before{background:var(--coral-500);box-shadow:0 0 0 4px var(--coral-100)}
 .j-dot{width:12px;height:12px;box-shadow:0 0 0 4px var(--coral-100)}
 .j-step h4{font-family:var(--font-serif);font-size:1.02rem}

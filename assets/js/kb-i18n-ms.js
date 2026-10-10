@@ -157,6 +157,40 @@ window.KBI18N.register("ms", {
     }
   },
   matter: {
+    /* ---- 试点校本预设（中山大学，S3 待属地复核）---- */
+    preset_sysu_reg: {
+      title: "Pendaftaran dan enrolmen SYSU (mengikut institusi)",
+      summary: "Pelajar yang diterima mesti hadir sendiri untuk mendaftar pada tarikh dan kampus yang dinyatakan dalam Surat Tawaran; ketibaan awal tidak diterima. Bawa surat tawaran, pasport asal dan borang JW201/JW202; kad pelajar dan kad kampus diberikan selepas pendaftaran.",
+      channel: "Pejabat Pelajar Antarabangsa SYSU (contoh institusi)",
+      risk: "Data contoh. Rujuk pengumuman rasmi terkini universiti; lihat iso.sysu.edu.cn",
+      label: "Mengikut tarikh yang dinyatakan dalam surat tawaran"
+    },
+    preset_sysu_res: {
+      title: "Tukar visa X1 kepada permit pemastautinan (tempoh institusi)",
+      summary: "Selepas masuk dengan visa pelajar X1, lengkapkan pendaftaran di universiti dan tukar visa X1 kepada permit pemastautinan pelajar di jabatan imigresen dalam tempoh 30 hari selepas masuk, dengan surat tawaran dan borang JW201/JW202.",
+      channel: "Pejabat Pelajar Antarabangsa SYSU (contoh institusi)",
+      risk: "Data contoh. Rujuk pengumuman rasmi terkini universiti; lihat iso.sysu.edu.cn",
+      label: "Dalam 30 hari selepas masuk"
+    },
+    preset_sysu_pay: {
+      title: "Bayaran yuran pengajian dan asrama (saluran institusi)",
+      summary: "Yuran pengajian dan asrama dibayar dalam talian melalui platform pembayaran SYSU, menyokong Alipay, WeChat, UnionPay dan kad antarabangsa (VISA / MasterCard / JCB / American Express). Kemasukan ke asrama memerlukan bayaran terlebih dahulu.",
+      channel: "Pejabat Pelajar Antarabangsa SYSU (contoh institusi)",
+      risk: "Data contoh. Rujuk pengumuman rasmi terkini universiti; lihat iso.sysu.edu.cn",
+      label: "Mengikut jadual yang diumumkan di platform pembayaran"
+    },
+    preset_sysu_contact: {
+      title: "Saluran hubungan rasmi SYSU (mengikut institusi)",
+      summary: "Program dan urusan: iso.sysu.edu.cn; permohonan dalam talian: apply.sysu.edu.cn; e-mel: admissions@mail.sysu.edu.cn; telefon kemasukan: 0086 (20) 84110819.",
+      channel: "Pejabat Pelajar Antarabangsa SYSU (contoh institusi)",
+      risk: "Data contoh. Rujuk pengumuman rasmi terkini universiti."
+    },
+    preset_sysu_guide: {
+      title: "Panduan pendaftaran rasmi (bahan institusi)",
+      summary: "Pusat bantuan rasmi menerbitkan «Panduan Pendaftaran Pelajar Antarabangsa Baharu 2026» dan «Panduan Sebelum Tiba», merangkumi pendaftaran, visa, asrama, bayaran dan pemeriksaan kesihatan. Digalakkan membaca sebelum bertolak.",
+      channel: "Pejabat Pelajar Antarabangsa SYSU (contoh institusi)",
+      risk: "Data contoh. Rujuk pengumuman rasmi terkini universiti; lihat iso.sysu.edu.cn/cn/bz"
+    },
     pre_visa: {
       title: "Tentukan dan mohon jenis visa China yang betul",
       summary: "Jenis visa bergantung pada tujuan dan tempoh tinggal: pengajian jangka panjang (lebih 180 hari) biasanya X1, pengajian jangka pendek (dalam 180 hari) biasanya X2; terdapat juga F (lawatan dan pertukaran), M (perniagaan), L (pelancongan), Z (kerja) dan transit tanpa visa. Jenis visa berkait langsung dengan permit kediaman kemudian, jadi kesilapan menjejaskan pendaftaran universiti dan urusan kediaman.",

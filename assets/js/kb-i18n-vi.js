@@ -157,6 +157,40 @@ window.KBI18N.register("vi", {
     }
   },
   matter: {
+    /* ---- 试点校本预设（中山大学，S3 待属地复核）---- */
+    preset_sysu_reg: {
+      title: "Đăng ký nhập học tại Đại học Trung Sơn (theo đơn vị)",
+      summary: "Sinh viên được nhận phải trực tiếp làm thủ tục đăng ký, nhập học đúng ngày và đúng cơ sở ghi trong Giấy báo nhập học; không tiếp nhận đến sớm. Mang theo giấy báo nhập học, hộ chiếu bản gốc và mẫu JW201/JW202; thẻ sinh viên và thẻ khuôn viên được phát sau khi đăng ký.",
+      channel: "Phòng Sinh viên Quốc tế Đại học Trung Sơn (ví dụ theo đơn vị)",
+      risk: "Dữ liệu minh hoạ. Vui lòng tham khảo thông báo chính thức mới nhất của nhà trường; xem iso.sysu.edu.cn",
+      label: "Theo ngày ghi trong Giấy báo nhập học"
+    },
+    preset_sysu_res: {
+      title: "Chuyển thị thực X1 sang giấy phép cư trú (thời hạn theo đơn vị)",
+      summary: "Sau khi nhập cảnh bằng thị thực du học X1, phải hoàn tất đăng ký tại trường và chuyển thị thực X1 sang giấy phép cư trú du học tại cơ quan quản lý xuất nhập cảnh trong vòng 30 ngày kể từ ngày nhập cảnh, kèm giấy báo nhập học và mẫu JW201/JW202.",
+      channel: "Phòng Sinh viên Quốc tế Đại học Trung Sơn (ví dụ theo đơn vị)",
+      risk: "Dữ liệu minh hoạ. Vui lòng tham khảo thông báo chính thức mới nhất của nhà trường; xem iso.sysu.edu.cn",
+      label: "Trong vòng 30 ngày kể từ ngày nhập cảnh"
+    },
+    preset_sysu_pay: {
+      title: "Nộp học phí và phí ký túc xá (kênh của đơn vị)",
+      summary: "Học phí và phí ký túc xá được nộp trực tuyến qua nền tảng thanh toán của Đại học Trung Sơn, hỗ trợ Alipay, WeChat, UnionPay và thẻ quốc tế (VISA / MasterCard / JCB / American Express); phải nộp trước khi vào ở ký túc xá.",
+      channel: "Phòng Sinh viên Quốc tế Đại học Trung Sơn (ví dụ theo đơn vị)",
+      risk: "Dữ liệu minh hoạ. Vui lòng tham khảo thông báo chính thức mới nhất của nhà trường; xem iso.sysu.edu.cn",
+      label: "Theo lịch thông báo trên nền tảng thanh toán"
+    },
+    preset_sysu_contact: {
+      title: "Kênh liên hệ chính thức của Đại học Trung Sơn (theo đơn vị)",
+      summary: "Chương trình và thủ tục: iso.sysu.edu.cn; đăng ký trực tuyến: apply.sysu.edu.cn; email: admissions@mail.sysu.edu.cn; điện thoại tuyển sinh: 0086 (20) 84110819.",
+      channel: "Phòng Sinh viên Quốc tế Đại học Trung Sơn (ví dụ theo đơn vị)",
+      risk: "Dữ liệu minh hoạ. Vui lòng tham khảo thông báo chính thức mới nhất của nhà trường."
+    },
+    preset_sysu_guide: {
+      title: "Hướng dẫn nhập học chính thức (tài liệu của đơn vị)",
+      summary: "Trung tâm trợ giúp chính thức công bố «Hướng dẫn nhập học cho sinh viên quốc tế mới 2026» và «Hướng dẫn trước khi đến», bao gồm đăng ký, thị thực, ký túc xá, thanh toán và khám sức khoẻ. Nên đọc trước khi lên đường.",
+      channel: "Phòng Sinh viên Quốc tế Đại học Trung Sơn (ví dụ theo đơn vị)",
+      risk: "Dữ liệu minh hoạ. Vui lòng tham khảo thông báo chính thức mới nhất của nhà trường; xem iso.sysu.edu.cn/cn/bz"
+    },
     pre_visa: {
       title: "Xác định và xin đúng loại thị thực nhập cảnh Trung Quốc",
       summary: "Loại thị thực phụ thuộc mục đích và thời gian lưu trú: học dài hạn (trên 180 ngày) thường là X1, học ngắn hạn (trong 180 ngày) thường là X2; ngoài ra còn có F (thăm và trao đổi), M (thương mại), L (du lịch), Z (lao động) và quá cảnh miễn thị thực. Loại thị thực gắn trực tiếp với giấy phép cư trú sau này, nên chọn sai sẽ ảnh hưởng đến việc nhập học và thủ tục cư trú.",

@@ -29,7 +29,7 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 .sec-title{display:flex;align-items:center;gap:10px;font-size:1.05rem;font-weight:700;margin:var(--sp-6) 0 var(--sp-4)}
 .sec-title .ico{color:var(--brand-600);display:inline-flex}
 .sec-title .ico svg{width:19px;height:19px}
-.sec-title .count{margin-left:auto;font-size:.82rem;font-weight:600;color:var(--ink-500)}
+.sec-title .count{margin-inline-start:auto;font-size:.82rem;font-weight:600;color:var(--ink-500)}
 
 .cd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:var(--sp-4)}
 .cd{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--sp-5)}
@@ -65,7 +65,7 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 /* 窄屏：时间轴转竖向，否则横线会横穿换行后的圆点 */
 @media(max-width:660px){
   .tl{grid-template-columns:1fr;gap:0}
-  .tl::before{top:8px;bottom:20px;left:16px;right:auto;width:2px;height:auto}
+  .tl::before{top:8px;bottom:20px;inset-inline-start:16px;inset-inline-end:auto;width:2px;height:auto}
   .tl-item{display:grid;grid-template-columns:34px 1fr;column-gap:14px;align-items:start;text-align:start;padding-bottom:20px}
   .tl-dot{margin:0}
   .tl-item .nm{margin-top:6px}
@@ -80,6 +80,13 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
 .emg .nt{font-size:.76rem;color:var(--ink-500);line-height:1.4}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(282px,1fr));gap:var(--sp-4)}
+/* 日常生活速览：双图横幅，图上零文字，hover 微缩放 */
+.life-hero{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4);margin-bottom:var(--sp-5)}
+.life-card{margin:0;position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh-1)}
+.life-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .65s var(--ease)}
+.life-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,24,20,0) 58%,rgba(8,24,20,.22));pointer-events:none}
+.life-card:hover img{transform:scale(1.05)}
+@media(max-width:640px){.life-hero{grid-template-columns:1fr;gap:var(--sp-3)}}
 .acc{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);overflow:hidden}
 .acc-h{display:flex;gap:12px;align-items:flex-start;padding:var(--sp-5);cursor:pointer;user-select:none}
 .acc-h:hover{background:var(--bg-alt)}
@@ -142,7 +149,7 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
   .appbar .nav{display:none}
   .brand-sub{display:none}
   .appbar-inner{flex-wrap:wrap;row-gap:6px;padding-block:8px;min-height:0}
-  .appbar-tools{width:100%;justify-content:center;margin-left:0}
+  .appbar-tools{width:100%;justify-content:center;margin-inline-start:0}
   .appbar-tools .seg button{padding:8px 9px;font-size:.8rem}
 }
 
@@ -304,6 +311,10 @@ body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 96p
         <div class="eyebrow" data-i18n="mDaily">日常生活</div>
         <h1 data-i18n="mDailyT">吃、住、行、医、钱</h1>
         <p data-i18n="dailyIntro"></p>
+      </div>
+      <div class="life-hero">
+        <figure class="life-card"><img src="assets/img/life-dining.jpg" alt="" loading="lazy"></figure>
+        <figure class="life-card"><img src="assets/img/life-transport.jpg" alt="" loading="lazy"></figure>
       </div>
       <div class="cards" id="dailyBox"></div>
       <div class="sec-title"><span class="ico" id="iEmg"></span><span data-i18n="homeEmergency">紧急联系</span></div>

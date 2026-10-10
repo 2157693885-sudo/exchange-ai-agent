@@ -50,6 +50,12 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 .pm-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 13px 10px;background:linear-gradient(180deg,#123a30,#0c2a23);color:#fff;font-size:8px;letter-spacing:.02em}
 .pm-brand{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pm-langs{font-size:7px;opacity:.72;white-space:nowrap;letter-spacing:.04em}
+/* 语种条：每项一个 <i>，当前语种高亮（不再是写死的字符串） */
+.pm-langs i{font-style:normal;opacity:.45;margin-inline-start:4px}
+.pm-langs i.on{opacity:1;font-weight:800}
+/* 「查看全部」箭头：RTL 下镜像，保持"向前"的语义一致 */
+.pm-more .ar{display:inline-block}
+[dir="rtl"] .pm-more .ar{transform:scaleX(-1)}
 .pm-body{padding:13px 14px 16px}
 .pm-eyebrow{font-size:7px;font-weight:800;letter-spacing:.16em;color:#a08a6e;margin-bottom:6px}
 .pm-title{font-size:13px;font-weight:800;color:#14231d;line-height:1.25;margin-bottom:4px}
@@ -58,7 +64,7 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 .pm-search button{border:0;background:#14503f;color:#fff;font-size:7.5px;font-weight:700;border-radius:6px;padding:4px 9px;cursor:default}
 .pm-stage{display:flex;align-items:center;gap:6px;font-size:8px;color:#5a6b63;margin-bottom:10px}
 .pm-stage b{color:#14231d}
-.pm-stage em{margin-left:auto;color:#a08a6e;font-style:normal}
+.pm-stage em{margin-inline-start:auto;color:#a08a6e;font-style:normal}
 .pm-prog{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2ddd3;border-radius:9px;padding:7px 10px;margin-bottom:10px}
 .pm-prog b{font-size:8px;color:#14503f;white-space:nowrap}
 .pm-prog .bar{flex:1;height:5px;border-radius:3px;background:#e8e4da;overflow:hidden}
@@ -96,13 +102,17 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 .j-head{display:flex;align-items:center;gap:10px;color:var(--ink-500);font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0 0 var(--sp-6)}
 .j-head::after{content:'';flex:1;height:1px;background:var(--line)}
 .j-track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-5)}
-.j-step{position:relative;padding:var(--sp-5);background:#fdfcf9;border:1px solid var(--line);border-radius:16px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
-.j-step:hover{border-color:var(--brand-400);box-shadow:0 14px 30px -20px rgba(20,80,63,.25);transform:translateY(-2px)}
+.j-step{position:relative;padding:0;overflow:hidden;background:#fdfcf9;border:1px solid var(--line);border-radius:16px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
+.j-step:hover{border-color:var(--brand-400);box-shadow:0 18px 36px -22px rgba(20,80,63,.32);transform:translateY(-3px)}
+.j-thumb{position:relative;margin:0;overflow:hidden}
+.j-thumb img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transform:scale(1.01);transition:transform .65s var(--ease)}
+.j-step:hover .j-thumb img{transform:scale(1.07)}
+.j-thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,24,20,0) 62%,rgba(8,24,20,.16));pointer-events:none}
 .j-dot{display:none}
-.j-num{display:block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--brand-500);margin:0 0 8px}
-.j-step h4{font-size:1.02rem;margin:0 0 5px;color:var(--ink-900)}
-.j-step p{font-size:.84rem;color:var(--ink-500);margin:0;line-height:1.5;min-height:3em}
-@media(max-width:720px){.j-track{grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}.j-step{padding:var(--sp-4)}.j-step p{min-height:0}}
+.j-num{display:block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--brand-500);margin:0;padding:var(--sp-4) var(--sp-5) 0}
+.j-step h4{font-size:1.02rem;margin:8px var(--sp-5) 5px;color:var(--ink-900)}
+.j-step p{font-size:.84rem;color:var(--ink-500);margin:0 var(--sp-5);padding-bottom:var(--sp-4);line-height:1.5;min-height:0}
+@media(max-width:720px){.j-track{grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}.j-num{padding-top:var(--sp-3)}.j-step h4{margin-top:6px}.j-step p{padding-bottom:var(--sp-3)}}
 @media(max-width:768px){.gate-hero-inner{min-height:min(58vh,520px)}}
 
 /* 信任窄带 */
@@ -176,6 +186,9 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 <div id="chrome-bottom"></div>
 
 <script src="assets/js/kb.js"></script>
+<!-- 试点校本预设：首页手机模拟要展示带校本徽标的条目，故与其它两页保持一致引入。
+     本文件末尾会调用 KBI18N.applyAll()，因此它与各内容包的加载先后不影响译文生效。 -->
+<script src="assets/js/kb-school-sysu.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/i18n-v3.js"></script>
 <script src="assets/js/kb-i18n.js"></script>
@@ -220,20 +233,31 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
     document.getElementById("chrome-bottom").innerHTML = UI.footer("");
   });
 
-  /* 手机 mockup：真实渲染学生端首页，随语言重绘 */
+  /* 手机 mockup：真实渲染学生端首页，随语言重绘
+     —— 全部界面文案走 i18n 词条（十语种），任务标题与时限走 KB.L（当前语种 → 英文 → 中文）；
+        顶部语种条取真实十语种并高亮当前语种，不再硬编码。 */
   function renderPhoneMock() {
     var box = document.getElementById("phoneMock");
     if (!box) return;
-    var zh = String(window.L10N.current).slice(0, 2) === "zh";
     var t = window.L10N.t;
+    var cur = String(window.L10N.current || "zh").slice(0, 2);
     var list = [];
     try {
       list = window.Agent.buildChecklist({ country: "PK", purpose: "degree", duration: "lt180", arrival: "2026-10-20" }).slice(0, 4);
     } catch (e) {}
     var tasks = list.map(function (x) {
       var m = x.matter;
+      var label = window.KB.L(m.deadline, "label");
       return '<div class="pm-task"><div class="pm-t">' + UI.esc(window.KB.L(m, "title")) + "</div>" +
-        '<div class="pm-d">' + UI.esc(window.KB.L(m.deadline, "label")) + "</div></div>";
+        (label ? '<div class="pm-d">' + UI.esc(label) + "</div>" : "") + "</div>";
+    }).join("");
+    /* 演示态进度：4 项中完成 1 项 */
+    var total = list.length || 4;
+    var finished = 1;
+    /* 顶部语种条：真实十语种 + 当前语种高亮（与页面语言条一致） */
+    var langs = (window.KB.LANGS || []).map(function (l) {
+      return '<i class="' + (l.code === cur ? "on" : "") + '">' +
+        UI.esc(l.flag || l.code.toUpperCase()) + "</i>";
     }).join("");
     var dock = [["home", "mHome"], ["plane", "mGuide"], ["book", "mCampus"], ["heart", "mDaily"], ["users", "mMine"]].map(function (d, i) {
       return '<div class="pm-di' + (i === 0 ? " on" : "") + '">' + (I[d[0]] || "") + "<span>" + UI.esc(t(d[1])) + "</span></div>";
@@ -241,26 +265,32 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
     var sig = '<svg viewBox="0 0 24 24"><path d="M3.5 20h2v-4.5h-2zM8.5 20h2V11h-2zM13.5 20h2V7h-2zM18.5 20h2V3h-2z"/></svg>' +
       '<svg viewBox="0 0 24 24"><path d="M12 18.6a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8zM6.9 14.6a7 7 0 0 1 10.2 0M4 10.9a11.5 11.5 0 0 1 16 0"/></svg>' +
       '<svg viewBox="0 0 24 24"><rect x="1.5" y="7.5" width="17" height="10" rx="1.8"/><path d="M20.5 10.5v4"/></svg>';
+    /* 问候语复用学生端同一套模板与阶段词条，保证两端措辞一致 */
+    var welcome = t("homeWelcomeTpl")
+      .replace("{greet}", t("greetMorning"))
+      .replace("{stage}", t("stagePre"));
     box.innerHTML =
       '<div class="pm-notch"></div>' +
       '<div class="pm-status"><span>9:41</span><span class="pm-sig">' + sig + "</span></div>" +
-      '<div class="pm-top"><span class="pm-brand">' + (zh ? "来华交流全程助手" : "Exchange AI Agent for China") + "</span>" +
-      '<span class="pm-langs">ZH EN RU AR ES VI TH</span></div>' +
-      '<div class="pm-body"><div class="pm-eyebrow">HOME</div>' +
+      '<div class="pm-top"><span class="pm-brand">' + UI.esc(t("appName")) + "</span>" +
+      '<span class="pm-langs">' + langs + "</span></div>" +
+      '<div class="pm-body"><div class="pm-eyebrow">' + UI.esc(t("mHome")) + "</div>" +
       '<div class="pm-title">' + UI.esc(t("mHomeT")) + "</div>" +
-      '<div class="pm-sub">' + (zh ? "你好！你正处于来华前阶段，以下按紧急程度排序。" : "Good evening! You are at the Before arrival stage; below is sorted by urgency.") + "</div>" +
-      '<div class="pm-search"><span>' + (zh ? "问任何来华问题：签证、住宿登记…" : "Ask anything: visa, accommodation…") + "</span>" +
-      "<button>" + (zh ? "提问" : "Ask") + "</button></div>" +
+      '<div class="pm-sub">' + UI.esc(welcome) + "</div>" +
+      '<div class="pm-search"><span>' + UI.esc(t("pmSearchPh")) + "</span>" +
+      "<button>" + UI.esc(t("pmAsk")) + "</button></div>" +
       '<div class="pm-stage"><span>' + UI.esc(t("tripStage")) + "</span><b>" + UI.esc(t("stagePre")) + "</b><em>1/4</em></div>" +
-      '<div class="pm-prog"><b>' + (zh ? "本周待办 4 项" : "4 to-dos this week") + "</b><span class=\"bar\"><i></i></span><span>" + (zh ? "已完成 1 项" : "1 done") + "</span></div>" +
+      '<div class="pm-prog"><b>' + UI.esc(t("pmWeekTodoTpl").replace("{n}", total)) + "</b>" +
+      '<span class="bar"><i style="width:' + Math.round(finished / total * 100) + '%"></i></span>' +
+      "<span>" + UI.esc(t("pmDoneTpl").replace("{n}", finished)) + "</span></div>" +
       '<div class="pm-tasks">' + tasks + "</div>" +
-      '<div class="pm-tip">' + (I.info || "") + "<div>" + (zh ? "小贴士：持 X1 签证入境后须在 30 日内申请居留许可；住宿登记须在入住后 24 小时内完成。" : "Tip: Apply for residence permit within 30 days of entry on an X1 visa; register accommodation within 24 hours of check-in.") + "</div></div>" +
+      '<div class="pm-tip">' + (I.info || "") + "<div>" + UI.esc(t("pmTip")) + "</div></div>" +
       '<div class="pm-grid">' +
-      '<div class="pm-g">' + (I.key || "") + "<span>" + (zh ? "签证办理" : "Visa") + "</span></div>" +
-      '<div class="pm-g">' + (I.building || "") + "<span>" + (zh ? "住宿登记" : "Housing") + "</span></div>" +
-      '<div class="pm-g">' + (I.heart || "") + "<span>" + (zh ? "就医保险" : "Health") + "</span></div>" +
-      '<div class="pm-g">' + (I.plane || "") + "<span>" + (zh ? "出行支付" : "Travel") + "</span></div></div>" +
-      '<div class="pm-more">' + (zh ? "查看全部待办" : "View all to-dos") + " →</div></div>" +
+      '<div class="pm-g">' + (I.key || "") + "<span>" + UI.esc(t("pmVisa")) + "</span></div>" +
+      '<div class="pm-g">' + (I.building || "") + "<span>" + UI.esc(t("pmHousing")) + "</span></div>" +
+      '<div class="pm-g">' + (I.heart || "") + "<span>" + UI.esc(t("pmHealth")) + "</span></div>" +
+      '<div class="pm-g">' + (I.plane || "") + "<span>" + UI.esc(t("pmTravel")) + "</span></div></div>" +
+      '<div class="pm-more">' + UI.esc(t("pmMore")) + ' <span class="ar">→</span></div></div>' +
       '<div class="pm-dock">' + dock + "</div>" +
       '<div class="pm-homebar"></div>';
   }
@@ -270,16 +300,36 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
   var J = ["stagePre", "stageArrival", "stageStudy", "stageExit"];
   var JD = ["stagePreDesc", "stageArrivalDesc", "stageStudyDesc", "stageExitDesc"];
   var JC = ["#14503F", "#CE5738", "#1B5E47", "#6C7B74"];
+  var JIMG = ["journey-before.jpg", "journey-arrival.jpg", "journey-campus.jpg", "journey-departure.jpg"];
   function renderJourney() {
     document.getElementById("journey").innerHTML =
       '<div class="j-head">' + UI.esc(t("stages")) + "</div>" +
       '<div class="j-track">' + J.map(function (k, i) {
-        return '<div class="j-step"><span class="j-num">0' + (i + 1) + "</span>" +
+        return '<div class="j-step"><div class="j-thumb"><img src="assets/img/' + JIMG[i] + '" alt="" loading="lazy"></div>' +
+          '<span class="j-num">0' + (i + 1) + "</span>" +
           "<h4>" + UI.esc(t(k)) + "</h4><p>" + UI.esc(t(JD[i])) + "</p></div>";
       }).join("") + "</div>";
   }
   renderJourney();
   document.addEventListener("langchange", renderJourney);
+
+  /* hero 轻视差：滚动时背景图缓慢上移，增加页面纵深 */
+  (function () {
+    var heroImg = document.querySelector(".gate-hero-media img");
+    if (!heroImg) return;
+    heroImg.style.transform = "scale(1.1)";
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        var y = Math.min(window.pageYOffset, 640);
+        heroImg.style.transform = "scale(1.1) translateY(" + Math.round(y * 0.1) + "px)";
+        ticking = false;
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+  })();
 
   UI.initReveal();
   UI.bindChrome();
