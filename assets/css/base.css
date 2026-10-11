@@ -200,20 +200,20 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; background: var(--i
   border-bottom: 1px solid var(--line);
 }
 [data-theme="dark"] .appbar { background: rgba(8, 17, 38, .96); }
-.appbar-inner { display: flex; align-items: center; gap: var(--sp-5); min-height: 66px; }
+.appbar-inner { display: flex; align-items: center; gap: var(--sp-5); min-height: 72px; }
 .brand { display: flex; align-items: center; gap: var(--sp-3); font-weight: 800; color: var(--ink-900); }
 .brand:hover { text-decoration: none; }
 .brand-mark { box-shadow: 0 2px 10px rgba(23, 78, 140, .22), 0 1px 2px rgba(16, 24, 40, .08); }
 .brand-mark {
-  width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto;
+  width: 44px; height: 44px; border-radius: 13px; flex: 0 0 auto;
   background: linear-gradient(140deg, var(--brand-700), var(--brand-500));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), var(--sh-2);
   display: grid; place-items: center; color: #fff;
 }
-.brand-mark svg { width: 30px; height: 30px; }
+.brand-mark svg { width: 34px; height: 34px; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-name { font-size: .98rem; letter-spacing: -.01em; }
-.brand-sub { font-size: .68rem; color: var(--ink-500); font-weight: 600; letter-spacing: .04em; }
+.brand-name { font-size: 1.1rem; letter-spacing: -.01em; }
+.brand-sub { font-size: .78rem; color: var(--ink-500); font-weight: 600; letter-spacing: .04em; }
 .nav { display: flex; gap: var(--sp-1); margin-inline-start: auto; flex-wrap: wrap; }
 .nav a {
   padding: 9px 13px; border-radius: var(--r-sm); font-size: .9rem; font-weight: 600;
@@ -718,8 +718,8 @@ body{background:var(--bg);color:var(--ink-800);margin:0}
 .appbar-tools button{color:rgba(244,240,230,.9)}
 /* 深色 appbar 文字对比度：白字 + 半透明米白辅助文字（三端通用） */
 .appbar{background:rgba(7,25,21,.95);box-shadow:0 1px 0 rgba(255,255,255,.08) inset}
-.appbar .brand-name{color:#fff;font-size:1.08rem;font-weight:750}
-.appbar .brand-sub{color:rgba(244,240,230,.94);font-size:.72rem;font-weight:600}
+.appbar .brand-name{color:#fff;font-size:1.18rem;font-weight:750}
+.appbar .brand-sub{color:rgba(244,240,230,.94);font-size:.8rem;font-weight:600}
 .appbar .seg{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12)}
 .appbar .seg button{color:rgba(244,240,230,.95)}
 .appbar .seg button:hover{color:#fff}
