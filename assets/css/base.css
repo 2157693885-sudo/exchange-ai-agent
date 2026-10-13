@@ -726,9 +726,9 @@ body{background:var(--bg);color:var(--ink-800);margin:0}
 .appbar .seg button[aria-pressed="true"]{background:rgba(255,255,255,.26);color:#fff;box-shadow:none}
 .appbar .btn-ghost{background:transparent;border-color:rgba(244,240,230,.5);color:rgba(244,240,230,.95)}
 .appbar .btn-ghost:hover{border-color:rgba(244,240,230,.72);color:#fff}
-.lang-sel-wrap{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:4px 10px;cursor:pointer}
+.lang-sel-wrap{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:4px 12px;cursor:pointer}
 .lang-sel-wrap:hover{background-color:rgba(255,255,255,.2)}
-.lang-sel-wrap .lang-ico{font-size:.9rem;line-height:1}
+.lang-sel-wrap .lang-ico{font-size:.78rem;color:rgba(244,240,230,.7);font-weight:500;white-space:nowrap}
 .lang-sel{appearance:auto;-webkit-appearance:auto;-moz-appearance:auto;background:transparent;border:none;color:rgba(244,240,230,.96);font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;padding:2px 0;max-width:150px;white-space:nowrap;outline:none}
 .lang-sel option{background:#0F3E35;color:#f4f0e6;font-weight:600}
 .eyebrow{color:var(--coral-600);font-weight:750;letter-spacing:.16em}

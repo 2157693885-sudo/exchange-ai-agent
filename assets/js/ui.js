@@ -144,7 +144,7 @@ window.UI = (function () {
         /* 学生端/机构端顶栏空间紧张，语言选择器折叠为下拉；首页保留一排按钮 */
         if (active === "student" || active === "org") {
           var cur = window.L10N.current || "zh";
-          return '<span class="lang-sel-wrap"><span class="lang-ico">🌐</span><select id="langSel" class="lang-sel" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
+          return '<span class="lang-sel-wrap"><span class="lang-ico">语言</span><select id="langSel" class="lang-sel" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
             window.KB.LANGS.map(function (l) {
               return '<option value="' + l.code + '"' + (l.code === cur ? " selected" : "") + ">" + l.flag + " " + l.en + "</option>";
             }).join("") + "</select></span>";
