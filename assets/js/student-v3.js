@@ -440,7 +440,11 @@
     ];
   }
   function durationOptions() {
-    return [{ v: "le180", t: T("durLe180") }, { v: "lt180", t: T("durLt180") }, { v: "le240", t: T("durLe240") }];
+    /* 2026-10-12 修 transit 死路径：第三项取值原为 'le240'（漏小时单位），
+       与 KB.PATHS transit 的 durations:["le240h"] 严格比对不上，过境免签
+       用户会静默落兜底 other。表单值改规范值 'le240h'；存量画像里的旧值
+       'le240' 由 kb.js 尾部的 DURATION_ALIAS 双保险兜底（勿删）。 */
+    return [{ v: "le180", t: T("durLe180") }, { v: "lt180", t: T("durLt180") }, { v: "le240h", t: T("durLe240") }];
   }
   function faithOptions() {
     return [
@@ -811,6 +815,14 @@
         try { updateAiStatus(window.Agent.bridgeOk()); } catch (e) {}
       }, 700);
     }, 400);
+    /* 探测落定后刷新徽标：两级探测可能晚于上面的固定检查点才完成
+       （如本地打开时同源探测失败、回退托管代理约需数百毫秒），
+       不刷新会一直停在「离线兜底引擎」的过期状态 */
+    if (window.Agent && window.Agent.onBridgeSettle) {
+      window.Agent.onBridgeSettle(function () {
+        try { updateAiStatus(window.Agent.bridgeOk()); } catch (e) {}
+      });
+    }
 
     document.addEventListener("langchange", function () {
       /* 语言切换后重建文案；表单值从 S.profile 回填，无需另行保存 */

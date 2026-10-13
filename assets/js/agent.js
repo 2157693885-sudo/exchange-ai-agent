@@ -8,8 +8,9 @@
      规则层  → 规则判定 Rule Engine（法定时限 → 你的关键日期）
      生成层  → 内容生成 Generation（路径 / 清单 / 多语种材料）
      合规层  → 合规复核 Compliance（证据等级 + AI 标识 + 人工复核入口）
-   说明：本演示版将"Agent 能力"实现为可解释流水线；接口层预留大模型接入点
-        （Agent.LLM_ADAPTER），替换实现不影响上层调用。
+   说明：本演示版将"Agent 能力"实现为可解释流水线；问答与材料生成已接入
+        真大模型（托管代理转发 MiniMax，API key 只在服务端），代理不可达
+        时自动回退本规则引擎，任何环境可演示。
    ========================================================================= */
 
 window.Agent = (function () {
@@ -19,29 +20,105 @@ window.Agent = (function () {
   /* HTML 转义（本模块内统一使用；UI.esc 亦可用但此处保持模块自足） */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]; }); }
 
-  /* ================= 0. LLM 桥（本地代理 · 真模型问答） =================
-     说明：线上静态版默认走下方规则引擎；本机运行 agent-bridge 代理时自动
-           切换到真实大模型（MiniMax），知识检索结果作为 RAG 上下文注入，
-           回答仍带来源与「待人工复核」标识。 */
-  var BRIDGE = "http://127.0.0.1:8787";
-  var _bridgeOk = null;
+  /* ================= 0. LLM 桥（托管代理 · 真模型问答） =================
+     说明：BRIDGE 为空串 = 走「同源托管代理」——与本页面同一个域名的
+           /chat 服务（MiniMax-Text-01；API key 只存服务端，不进前端代码）。
+           同源不可用时（直接双击本地 student.html、本地静态服务预览等），
+           自动回退到平台托管代理 HOSTED_BRIDGE（CORS 已放开，任何打开
+           方式都能用上真模型）；两级都不可达才回退下方规则引擎。
+           知识检索结果作为 RAG 上下文注入，回答带来源与「待人工复核」标识。
+           本机开发：控制台执行 setBridge("http://127.0.0.1:8787")
+           即可切到本机 agent-bridge 代理（显式指定后只探该地址，不再回退）。 */
+  var BRIDGE = "";
+  /* 平台托管代理地址：线上同源部署即它本身；本地打开时作为回退桥 */
+  var HOSTED_BRIDGE = "https://exchange-ai-agent-mp.app.workbuddy.host";
+  /* 托管代理防刷门：挡随机扫描的弱凭证（可被提取，故不含高价值信息）；
+     真正的 MiniMax API key 只在服务端 config.json，任何前端代码都拿不到 */
+  var BRIDGE_KEY = "3z8v3oo4Ezwcyu6VeCF3c1nTpwZCvEjr";
+  var _bridgeOk = null;   /* null=探测中/未探测；true/false=探测结果 */
   var _bridgeAt = 0;
-  function setBridge(url) { if (url) BRIDGE = url; _bridgeOk = null; }
-  /* 异步探测（file:// 页面禁止同步跨源 XHR，必须用异步） */
-  function bridgeProbe() {
+  var _probing = false;   /* 探测锁：避免并发调用重复发起探测 */
+  var _eff = null;        /* 生效桥基址：null=未定（用 BRIDGE）；""=同源；HOSTED_BRIDGE=回退 */
+  /* file:// 双击打开：本域没有 /health 服务，同源探测必然失败，
+     直接探托管代理，避免白等 2.5 秒超时 */
+  var IS_FILE = (typeof location !== "undefined" && location.protocol === "file:");
+  var _settleCbs = [];    /* 探测落定通知（徽标刷新等） */
+  var _waiters = [];      /* 等待探测落定的 Promise resolve 队列 */
+  function bridgeBase() { return _eff === null ? BRIDGE : _eff; }
+  function setBridge(url) {
+    if (url) { BRIDGE = url; _eff = url; } /* 显式指定：只探该地址，不再回退 */
+    _bridgeOk = null;
+  }
+  /* 探测落定：解锁 + 通知徽标刷新 + 唤醒等待中的问答 */
+  function settle(ok) {
+    _probing = false;
+    _settleCbs.forEach(function (f) { try { f(ok); } catch (e) {} });
+    var w = _waiters; _waiters = [];
+    w.forEach(function (f) { f(ok); });
+  }
+  /* 注册探测落定回调（页面刷新「LLM 在线 / 离线兜底引擎」徽标用） */
+  function onBridgeSettle(cb) { if (typeof cb === "function") _settleCbs.push(cb); }
+  /* 等待桥状态落定：已缓存直接返回；探测中等结果（首个问题不误走兜底） */
+  function whenBridgeReady() {
+    return new Promise(function (resolve) {
+      if (!_probing && _bridgeOk !== null && Date.now() - _bridgeAt < 8000) { resolve(_bridgeOk); return; }
+      if (!_probing) bridgeProbe();
+      var done = false;
+      var finish = function (ok) { if (!done) { done = true; resolve(ok); } };
+      _waiters.push(finish);
+      setTimeout(function () { finish(!!_bridgeOk); }, 8500); /* 安全阀：两级探测各 4s + 余量 */
+    });
+  }
+  /* 单级异步探测（file:// 页面禁止同步跨源 XHR，必须用异步；settled 防重入，
+     避免 onerror 与 ontimeout 双火导致重复发起下一级探测；
+     超时 4s：托管域名首次连接含 TLS 握手，跨境网关偶发慢于 2.5s） */
+  function probeOne(baseUrl, cb) {
+    var settled = false;
+    var finish = function (ok) { if (!settled) { settled = true; cb(ok); } };
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", BRIDGE + "/health", true);
-    xhr.timeout = 2500;
+    xhr.open("GET", baseUrl + "/health", true);
+    xhr.timeout = 4000;
     xhr.onreadystatechange = function () {
       if (xhr.readyState !== 4) return;
+      var ok = false;
       if (xhr.status === 200) {
-        try { var j = JSON.parse(xhr.responseText); _bridgeOk = !!(j && j.ok); } catch (e) { _bridgeOk = false; }
-      } else { _bridgeOk = false; }
-      _bridgeAt = Date.now();
+        try { var j = JSON.parse(xhr.responseText); ok = !!(j && j.ok); } catch (e) { ok = false; }
+      }
+      finish(ok);
     };
-    xhr.onerror = function () { _bridgeOk = false; _bridgeAt = Date.now(); };
-    xhr.ontimeout = function () { _bridgeOk = false; _bridgeAt = Date.now(); };
-    try { xhr.send(null); } catch (e) { _bridgeOk = false; _bridgeAt = Date.now(); }
+    xhr.onerror = function () { finish(false); };
+    xhr.ontimeout = function () { finish(false); };
+    try { xhr.send(null); } catch (e) { finish(false); }
+  }
+  /* 两级探测：http(s) 页面先同源、失败回退托管代理；file:// 直接探托管代理 */
+  function bridgeProbe() {
+    if (_probing) return;
+    _probing = true;
+    _bridgeOk = null;
+    _bridgeAt = Date.now();
+    var explicit = BRIDGE !== "";
+    var firstUrl = explicit ? BRIDGE : (IS_FILE ? HOSTED_BRIDGE : "");
+    probeOne(firstUrl, function (ok) {
+      if (ok) {
+        _eff = firstUrl;
+        _bridgeOk = true;
+        _bridgeAt = Date.now();
+        settle(true);
+      } else if (!explicit && !IS_FILE) {
+        /* 同源不可用 → 回退平台托管代理（本地静态服务等打开方式也能用真模型） */
+        probeOne(HOSTED_BRIDGE, function (ok2) {
+          _eff = ok2 ? HOSTED_BRIDGE : null;
+          _bridgeOk = ok2;
+          _bridgeAt = Date.now();
+          settle(ok2);
+        });
+      } else {
+        _eff = null;
+        _bridgeOk = false;
+        _bridgeAt = Date.now();
+        settle(false);
+      }
+    });
   }
   function ensureBridge() {
     if (_bridgeOk === null) bridgeProbe();
@@ -55,8 +132,9 @@ window.Agent = (function () {
   function llmChat(messages, lang, systemExtra) {
     return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", BRIDGE + "/chat", true);
+      xhr.open("POST", bridgeBase() + "/chat", true);
       xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("X-Bridge-Key", BRIDGE_KEY);
       xhr.timeout = 60000;
       xhr.onreadystatechange = function () {
         if (xhr.readyState !== 4) return;
@@ -750,43 +828,46 @@ window.Agent = (function () {
       var r = renderMaterial(cfg);
       return { markdown: r.markdown, title: r.title, sources: r.sources, steps: steps, aiLabel: r.aiLabel, llm: false };
     };
-    return new Promise(function (resolve) {
-      if (!bridgeOk()) { resolve(fallback()); return; }
-      var cls = classify(taskText);
-      push(1, trTrace("traceParse"), "intent=" + cls.intent + "；命中关键词 " + cls.hits.length + " 个");
-      var countryKey = detectCountry(taskText);
-      var cname = window.KB.COUNTRY[countryKey];
-      push(2, trTrace("traceCountry"), "country=" + countryKey + "（" + (cname ? cname.zh : "") + "）· 机构端内容工作台");
-      var hits = retrieve(taskText, 5, cls);
-      var ctx = [], srcKeys = [];
-      hits.slice(0, 5).forEach(function (h) {
-        var it = h.item;
-        var label, text, keys, srcText;
-        if (h.type === "local") { label = it.title; text = it.summary || ""; keys = []; srcText = it.channel || it.sourceNote || "校本口径"; }
-        else if (h.type === "matter") { label = it.title; text = it.summary; keys = it.source; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
-        else { label = it.q; text = it.a; keys = it.src; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
-        ctx.push({ title: label, text: text, src: srcText });
-        keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
-      });
-      push(3, trTrace("traceRetrieve"), ctx.length ? ctx.map(function (x) { return x.title.slice(0, 18); }).join("；") : "无命中，提示以官方为准");
-      var kbCtx = "【知识库条目（内容须以此为准，不得编造政策/时限/流程）】\n" +
-        (ctx.length ? ctx.map(function (x, i) { return (i + 1) + ". " + x.title + "：" + x.text + "（来源：" + x.src + "）"; }).join("\n")
-                    : "本主题暂无知识库条目，请按通用知识谨慎撰写，并注明以官方渠道为准。");
-      push(4, trTrace("traceCompose"), "注入知识条目 " + ctx.length + " 条 / " + kbCtx.length + " 字");
-      push(5, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceMaterialGen"));
-      var cc = window.KB.COUNTRY[countryKey];
-      var countryLine = "目标对象：来华" + (cc && cc.zh ? cc.zh : "国际学生") + "留学生；材料须包含该国别的饮食/宗教/节日/礼仪适配提示。";
-      var sys = "你是高校国际学生事务部门的助手。请把用户下达的任务编写成一份可直接发布的来华留学材料（Markdown 格式）。要求：1) 分节组织：背景与对象 / 办理事项与步骤 / 所需材料 / 时限与提示 / 紧急联系与来源；2) 内容严格基于知识库条目，不得编造政策、时限、机构与流程；3) 语言务实、可执行、面向留学生；4) 结尾标注「本文档由 AI 生成 · 待人工复核」。";
-      llmChat([{ role: "user", content: "任务：" + taskText }], lang, sys + "\n" + countryLine + "\n" + kbCtx).then(function (res) {
-        push(6, trTrace("traceReview"), "AI 生成标识已附加；来源 " + srcKeys.length + " 条");
-        var md = (res && res.reply) || "";
-        var title = taskText.length > 34 ? taskText.slice(0, 34) + "…" : taskText;
-        resolve({
-          markdown: md, title: title,
-          sources: window.KB.sources(srcKeys).map(function (s) { return s.name + "（" + s.org + "）"; }),
-          steps: steps, aiLabel: "AI 生成 · 待人工复核", llm: true
+    /* 探测进行中时等落定（file:// 下同源探测不再白等超时），首个请求不误走模板兜底 */
+    return whenBridgeReady().then(function (ok) {
+      if (!ok) return fallback();
+      return new Promise(function (resolve) {
+        var cls = classify(taskText);
+        push(1, trTrace("traceParse"), "intent=" + cls.intent + "；命中关键词 " + cls.hits.length + " 个");
+        var countryKey = detectCountry(taskText);
+        var cname = window.KB.COUNTRY[countryKey];
+        push(2, trTrace("traceCountry"), "country=" + countryKey + "（" + (cname ? cname.zh : "") + "）· 机构端内容工作台");
+        var hits = retrieve(taskText, 5, cls);
+        var ctx = [], srcKeys = [];
+        hits.slice(0, 5).forEach(function (h) {
+          var it = h.item;
+          var label, text, keys, srcText;
+          if (h.type === "local") { label = it.title; text = it.summary || ""; keys = []; srcText = it.channel || it.sourceNote || "校本口径"; }
+          else if (h.type === "matter") { label = it.title; text = it.summary; keys = it.source; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
+          else { label = it.q; text = it.a; keys = it.src; srcText = window.KB.sources(keys).map(function (s) { return s.name; }).join("；"); }
+          ctx.push({ title: label, text: text, src: srcText });
+          keys.forEach(function (k) { if (srcKeys.indexOf(k) < 0) srcKeys.push(k); });
         });
-      }).catch(function () { resolve(fallback()); });
+        push(3, trTrace("traceRetrieve"), ctx.length ? ctx.map(function (x) { return x.title.slice(0, 18); }).join("；") : "无命中，提示以官方为准");
+        var kbCtx = "【知识库条目（内容须以此为准，不得编造政策/时限/流程）】\n" +
+          (ctx.length ? ctx.map(function (x, i) { return (i + 1) + ". " + x.title + "：" + x.text + "（来源：" + x.src + "）"; }).join("\n")
+                      : "本主题暂无知识库条目，请按通用知识谨慎撰写，并注明以官方渠道为准。");
+        push(4, trTrace("traceCompose"), "注入知识条目 " + ctx.length + " 条 / " + kbCtx.length + " 字");
+        push(5, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceMaterialGen"));
+        var cc = window.KB.COUNTRY[countryKey];
+        var countryLine = "目标对象：来华" + (cc && cc.zh ? cc.zh : "国际学生") + "留学生；材料须包含该国别的饮食/宗教/节日/礼仪适配提示。";
+        var sys = "你是高校国际学生事务部门的助手。请把用户下达的任务编写成一份可直接发布的来华留学材料（Markdown 格式）。要求：1) 分节组织：背景与对象 / 办理事项与步骤 / 所需材料 / 时限与提示 / 紧急联系与来源；2) 内容严格基于知识库条目，不得编造政策、时限、机构与流程；3) 语言务实、可执行、面向留学生；4) 结尾标注「本文档由 AI 生成 · 待人工复核」。";
+        llmChat([{ role: "user", content: "任务：" + taskText }], lang, sys + "\n" + countryLine + "\n" + kbCtx).then(function (res) {
+          push(6, trTrace("traceReview"), "AI 生成标识已附加；来源 " + srcKeys.length + " 条");
+          var md = (res && res.reply) || "";
+          var title = taskText.length > 34 ? taskText.slice(0, 34) + "…" : taskText;
+          resolve({
+            markdown: md, title: title,
+            sources: window.KB.sources(srcKeys).map(function (s) { return s.name + "（" + s.org + "）"; }),
+            steps: steps, aiLabel: "AI 生成 · 待人工复核", llm: true
+          });
+        }).catch(function () { resolve(fallback()); });
+      });
     });
   }
 
@@ -802,40 +883,46 @@ window.Agent = (function () {
       push(2, trTrace("traceExtractSuggest"), trTrace("traceNoLLMFill"));
       return { title: rawText.slice(0, 22), stage: "arrival", pri: "P1", deadline: "以官方/本校公布为准", summary: rawText.slice(0, 80), sourceNote: "", steps: steps, llm: false };
     };
-    return new Promise(function (resolve) {
-      if (!bridgeOk()) { resolve(fallback()); return; }
-      push(1, trTrace("traceExtract"), trTrace("traceInputChars").replace("{n}", rawText.length));
-      push(2, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceStructured"));
-      var sys = "你是高校国际学生事务部门的知识库编辑助手。请把用户粘贴的官方原文（国家政策、出入境规定或学校通知）提炼为一条结构化知识条目。只输出严格 JSON：{\"title\":\"事项标题（20字内）\",\"stage\":\"pre|arrival|study|exit 之一\",\"pri\":\"P0|P1|P2\",\"deadline\":\"时限口径，如：报到后7日内（以本校规定为准）；原文无时限则写：以官方/本校公布为准\",\"summary\":\"办理方式、所需材料与注意事项，80-150字，忠实原文不得编造\",\"sourceNote\":\"原文发布机构名称（如：国家移民管理局 / 本校国际学生办公室；无明确机构写：官方公开渠道）\"}。不得编造原文没有的信息。";
-      llmChat([{ role: "user", content: "官方原文：\n" + rawText }], lang || "zh", sys).then(function (res) {
-        push(3, trTrace("traceExtractSuggest"), trTrace("traceReady"));
-        var reply = (res && res.reply) || "";
-        var parsed = null;
-        var m = reply.match(/\{[\s\S]*\}/);
-        if (m) { try { parsed = JSON.parse(m[0]); } catch (e) { parsed = null; } }
-        if (parsed && parsed.title) {
-          resolve({
-            title: String(parsed.title).slice(0, 60), stage: parsed.stage || "arrival", pri: parsed.pri || "P1",
-            deadline: parsed.deadline || "以官方/本校公布为准", summary: parsed.summary || "",
-            sourceNote: parsed.sourceNote || "官方公开渠道", steps: steps, llm: true
-          });
-        } else { resolve(fallback()); }
-      }).catch(function () { resolve(fallback()); });
+    /* 探测进行中时等落定，首个请求不误走本地填充兜底 */
+    return whenBridgeReady().then(function (ok) {
+      if (!ok) return fallback();
+      return new Promise(function (resolve) {
+        push(1, trTrace("traceExtract"), trTrace("traceInputChars").replace("{n}", rawText.length));
+        push(2, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceStructured"));
+        var sys = "你是高校国际学生事务部门的知识库编辑助手。请把用户粘贴的官方原文（国家政策、出入境规定或学校通知）提炼为一条结构化知识条目。只输出严格 JSON：{\"title\":\"事项标题（20字内）\",\"stage\":\"pre|arrival|study|exit 之一\",\"pri\":\"P0|P1|P2\",\"deadline\":\"时限口径，如：报到后7日内（以本校规定为准）；原文无时限则写：以官方/本校公布为准\",\"summary\":\"办理方式、所需材料与注意事项，80-150字，忠实原文不得编造\",\"sourceNote\":\"原文发布机构名称（如：国家移民管理局 / 本校国际学生办公室；无明确机构写：官方公开渠道）\"}。不得编造原文没有的信息。";
+        llmChat([{ role: "user", content: "官方原文：\n" + rawText }], lang || "zh", sys).then(function (res) {
+          push(3, trTrace("traceExtractSuggest"), trTrace("traceReady"));
+          var reply = (res && res.reply) || "";
+          var parsed = null;
+          var m = reply.match(/\{[\s\S]*\}/);
+          if (m) { try { parsed = JSON.parse(m[0]); } catch (e) { parsed = null; } }
+          if (parsed && parsed.title) {
+            resolve({
+              title: String(parsed.title).slice(0, 60), stage: parsed.stage || "arrival", pri: parsed.pri || "P1",
+              deadline: parsed.deadline || "以官方/本校公布为准", summary: parsed.summary || "",
+              sourceNote: parsed.sourceNote || "官方公开渠道", steps: steps, llm: true
+            });
+          } else { resolve(fallback()); }
+        }).catch(function () { resolve(fallback()); });
+      });
     });
   }
 
   /* 智能问答：代理在线 → 真 LLM；离线 → 规则引擎（双模式，任何环境可演示） */
   function askSmart(query, profile, lang, onStep, history) {
-    return new Promise(function (resolve) {
-      if (bridgeOk()) {
-        buildLLMAnswer(query, profile, lang, history, onStep).then(resolve).catch(function () {
+    /* 探测进行中时等落定，首个问题不误走规则引擎兜底 */
+    return whenBridgeReady().then(function (ok) {
+      return new Promise(function (resolve) {
+        if (ok) {
+          buildLLMAnswer(query, profile, lang, history, onStep).then(resolve).catch(function () {
+            var r = buildAnswer(query, profile, lang, onStep);
+            resolve(r);
+          });
+        } else {
           var r = buildAnswer(query, profile, lang, onStep);
           resolve(r);
-        });
-      } else {
-        var r = buildAnswer(query, profile, lang, onStep);
-        resolve(r);
-      }
+        }
+      });
     });
   }
 
@@ -860,7 +947,7 @@ window.Agent = (function () {
     computeDeadline: computeDeadline, buildChecklist: buildChecklist,
     renderMaterial: renderMaterial, askAsync: askAsync, buildAnswer: buildAnswer,
     glossaryTranslate: glossaryTranslate, efficiencyModel: efficiencyModel,
-    bridgeOk: bridgeOk, setBridge: setBridge, ensureBridge: ensureBridge, askSmart: askSmart, buildLLMAnswer: buildLLMAnswer, genMaterialLLM: genMaterialLLM, extractKb: extractKb,
+    bridgeOk: bridgeOk, bridgeBase: bridgeBase, setBridge: setBridge, ensureBridge: ensureBridge, onBridgeSettle: onBridgeSettle, whenBridgeReady: whenBridgeReady, askSmart: askSmart, buildLLMAnswer: buildLLMAnswer, genMaterialLLM: genMaterialLLM, extractKb: extractKb,
     DEFAULT_PROFILE: DEFAULT_PROFILE, LLM_ADAPTER: LLM_ADAPTER, fmt: fmt, srcLine: srcLine
   };
 })();

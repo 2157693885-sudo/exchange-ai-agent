@@ -102,8 +102,10 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
 .j-head{display:flex;align-items:center;gap:10px;color:var(--ink-500);font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0 0 var(--sp-6)}
 .j-head::after{content:'';flex:1;height:1px;background:var(--line)}
 .j-track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-5)}
-.j-step{position:relative;padding:0;overflow:hidden;background:#fdfcf9;border:1px solid var(--line);border-radius:16px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
+.j-step{position:relative;padding:0;overflow:hidden;background:#fdfcf9;border:1px solid var(--line);border-radius:16px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease);text-decoration:none;color:inherit;display:block}
 .j-step:hover{border-color:var(--brand-400);box-shadow:0 18px 36px -22px rgba(20,80,63,.32);transform:translateY(-3px)}
+.j-go{display:inline-block;margin:2px var(--sp-5) var(--sp-5);font-size:.78rem;font-weight:650;color:var(--brand-600);opacity:0;transform:translateX(-4px);transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.j-step:hover .j-go{opacity:1;transform:translateX(0)}
 .j-thumb{position:relative;margin:0;overflow:hidden}
 .j-thumb img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transform:scale(1.01);transition:transform .65s var(--ease)}
 .j-step:hover .j-thumb img{transform:scale(1.07)}
@@ -305,9 +307,10 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
     document.getElementById("journey").innerHTML =
       '<div class="j-head">' + UI.esc(t("stages")) + "</div>" +
       '<div class="j-track">' + J.map(function (k, i) {
-        return '<div class="j-step"><div class="j-thumb"><img src="assets/img/' + JIMG[i] + '" alt="" loading="lazy"></div>' +
+        return '<a class="j-step" href="student.html"><div class="j-thumb"><img src="assets/img/' + JIMG[i] + '" alt="" loading="lazy"></div>' +
           '<span class="j-num">0' + (i + 1) + "</span>" +
-          "<h4>" + UI.esc(t(k)) + "</h4><p>" + UI.esc(t(JD[i])) + "</p></div>";
+          "<h4>" + UI.esc(t(k)) + "</h4><p>" + UI.esc(t(JD[i])) + "</p>" +
+          '<span class="j-go">' + UI.esc(t("enterStudent")) + ' →</span></a>';
       }).join("") + "</div>";
   }
   renderJourney();

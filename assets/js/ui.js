@@ -165,6 +165,7 @@ window.UI = (function () {
       "</div>" +
       '<div class="foot-note">' + (extra || "") +
       '<br><span data-i18n="footerNote">' + window.L10N.t("footerNote") + '</span><br>' +
+      '<span style="opacity:.75">Now in 13 languages · more added on demand · 已支持 13 种语言，将按需求持续增加适配</span><br>' +
       '© 2026 <span data-i18n="appName">' + window.L10N.t("appName") + '</span> · <span data-i18n="verLabel">' + window.L10N.t("verLabel") + '</span> · <span data-i18n="updLabel">' + window.L10N.t("updLabel") + '</span> ' + window.KB.META.updated +
       "</div></div></footer>";
   }
