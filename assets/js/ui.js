@@ -93,6 +93,8 @@ window.UI = (function () {
   function switchLang(code) {
     window.L10N.apply(code);
     save("lang", code);
+    var ls = document.getElementById("langSel");
+    if (ls) ls.value = code;
     document.dispatchEvent(new CustomEvent("langchange", { detail: { lang: code } }));
     return code;
   }
@@ -138,9 +140,19 @@ window.UI = (function () {
         return '<a href="' + n.href + '"' + (n.k === active ? ' aria-current="page"' : "") + ' data-i18n="' + n.label + '">' + window.L10N.t(n.label) + "</a>";
       }).join("") + "</nav>" +
       '<div class="appbar-tools">' +
-      '<div class="seg" id="langSeg" role="group" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
-      window.KB.LANGS.map(function (l) { return '<button type="button" data-lang="' + l.code + '" aria-pressed="false">' + l.flag + "</button>"; }).join("") +
-      "</div>" +
+      (function () {
+        /* 学生端/机构端顶栏空间紧张，语言选择器折叠为下拉；首页保留一排按钮 */
+        if (active === "student" || active === "org") {
+          var cur = window.L10N.current || "zh";
+          return '<select id="langSel" class="lang-sel" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
+            window.KB.LANGS.map(function (l) {
+              return '<option value="' + l.code + '"' + (l.code === cur ? " selected" : "") + ">" + l.flag + " " + l.en + "</option>";
+            }).join("") + "</select>";
+        }
+        return '<div class="seg" id="langSeg" role="group" data-i18n-aria="language" aria-label="' + window.L10N.t("language") + '">' +
+          window.KB.LANGS.map(function (l) { return '<button type="button" data-lang="' + l.code + '" aria-pressed="false">' + l.flag + "</button>"; }).join("") +
+          "</div>";
+      })() +
       '<button class="btn btn-ghost btn-sm" id="themeBtn" type="button" data-i18n-aria="theme" aria-label="' + window.L10N.t("theme") + '">' + ICONS.moon + "</button>" +
       "</div></div></header>";
   }
@@ -181,6 +193,11 @@ window.UI = (function () {
       });
       if (b.getAttribute("data-lang") === window.L10N.current) b.setAttribute("aria-pressed", "true");
     });
+    var ls = document.getElementById("langSel");
+    if (ls) {
+      ls.value = window.L10N.current || "zh";
+      ls.addEventListener("change", function () { switchLang(this.value); });
+    }
     var tb = document.getElementById("themeBtn");
     if (tb) tb.addEventListener("click", function () { toggleTheme(); });
   }

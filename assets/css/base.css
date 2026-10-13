@@ -726,6 +726,9 @@ body{background:var(--bg);color:var(--ink-800);margin:0}
 .appbar .seg button[aria-pressed="true"]{background:rgba(255,255,255,.26);color:#fff;box-shadow:none}
 .appbar .btn-ghost{background:transparent;border-color:rgba(244,240,230,.5);color:rgba(244,240,230,.95)}
 .appbar .btn-ghost:hover{border-color:rgba(244,240,230,.72);color:#fff}
+.lang-sel{appearance:-webkit-appearance:none;-moz-appearance:none;background:rgba(255,255,255,.12) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='rgba(244,240,230,.9)' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>") no-repeat right 8px center;border:1px solid rgba(255,255,255,.18);border-radius:99px;color:rgba(244,240,230,.96);font:inherit;font-size:.82rem;font-weight:600;padding:6px 28px 6px 12px;cursor:pointer;max-width:170px;white-space:nowrap}
+.lang-sel:hover{background-color:rgba(255,255,255,.2);color:#fff}
+.lang-sel option{background:#0F3E35;color:#f4f0e6;font-weight:600}
 .eyebrow{color:var(--coral-600);font-weight:750;letter-spacing:.16em}
 h1,h2,h3{font-family:var(--font-serif)}
 .btn{border-radius:var(--r-full);font-weight:650}
