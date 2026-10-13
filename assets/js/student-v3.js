@@ -12,9 +12,20 @@
   var ic = function (n) { return window.UI.icon(n); };
   var esc = window.UI.esc;
 
+  /* 演示默认画像：新访客即看到一位巴基斯坦学位生的真实办理路径，避免空白页。
+     日期相对今天动态生成（抵达+50天 / 报到+95天），任何时间打开都落在"来华前"阶段。 */
+  function demoProfile() {
+    var d = new Date();
+    var arr = new Date(d); arr.setDate(d.getDate() + 50);
+    var enr = new Date(d); enr.setDate(d.getDate() + 95);
+    var iso = function (x) { return x.toISOString().slice(0, 10); };
+    return { country: "PK", purpose: "degree", duration: "lt180",
+             arrival: iso(arr), enroll: iso(enr), faith: "islam" };
+  }
+
   var S = {
     mod: "home",
-    profile: window.UI.load("v3_profile", null),
+    profile: window.UI.load("v3_profile", null) || demoProfile(),
     done: window.UI.load("v3_done", []),
     star: window.UI.load("v3_star", []),
     open: {},
