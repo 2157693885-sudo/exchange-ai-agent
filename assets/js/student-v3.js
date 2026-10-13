@@ -13,11 +13,11 @@
   var esc = window.UI.esc;
 
   /* 演示默认画像：新访客即看到一位巴基斯坦学位生的真实办理路径，避免空白页。
-     日期相对今天动态生成（抵达+50天 / 报到+95天），任何时间打开都落在"来华前"阶段。 */
+     入学日固定为下一年9月1日（秋季入学），抵达为提前一周，任何时间打开都落在"来华前"阶段。 */
   function demoProfile() {
     var d = new Date();
-    var arr = new Date(d); arr.setDate(d.getDate() + 50);
-    var enr = new Date(d); enr.setDate(d.getDate() + 95);
+    var enr = new Date(d.getFullYear() + 1, 8, 1);   // 明年9月1日
+    var arr = new Date(enr); arr.setDate(enr.getDate() - 7);  // 提前一周抵达
     var iso = function (x) { return x.toISOString().slice(0, 10); };
     return { country: "PK", purpose: "degree", duration: "lt180",
              arrival: iso(arr), enroll: iso(enr), faith: "islam" };
