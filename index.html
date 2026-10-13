@@ -307,7 +307,8 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
     document.getElementById("journey").innerHTML =
       '<div class="j-head">' + UI.esc(t("stages")) + "</div>" +
       '<div class="j-track">' + J.map(function (k, i) {
-        return '<a class="j-step" href="student.html"><div class="j-thumb"><img src="assets/img/' + JIMG[i] + '" alt="" loading="lazy"></div>' +
+  var JQ = ["pre", "arrival", "study", "exit"];
+      return '<a class="j-step" href="student.html?stage=' + JQ[i] + '"><div class="j-thumb"><img src="assets/img/' + JIMG[i] + '" alt="" loading="lazy"></div>' +
           '<span class="j-num">0' + (i + 1) + "</span>" +
           "<h4>" + UI.esc(t(k)) + "</h4><p>" + UI.esc(t(JD[i])) + "</p>" +
           '<span class="j-go">' + UI.esc(t("enterStudent")) + ' →</span></a>';
