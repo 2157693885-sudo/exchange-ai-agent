@@ -52,6 +52,12 @@
   function fmtDate(s) { return s ? String(s).replace(/-/g, ".") : "—"; }
 
   function stageOf(p) {
+    /* URL 参数 ?stage=pre|arrival|study|exit 优先（从首页四阶段卡片跳入时使用） */
+    try {
+      var qs = new URLSearchParams(location.search);
+      var s = qs.get("stage");
+      if (["pre", "arrival", "study", "exit"].indexOf(s) >= 0) return s;
+    } catch (e) {}
     if (!p || !p.arrival) return "pre";
     var a = days(p.arrival);
     if (a > 0) return "pre";
