@@ -56,14 +56,15 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
       <div class="grid g2" style="grid-template-columns:.85fr 1.15fr;align-items:start">
         <div class="card card-pad-lg reveal">
           <div class="ai-taskbar">
-            <div class="ai-taskbar-h"><span class="ai-tag">AI Agent</span><span data-i18n="aiTaskHint">一句话下达任务，自动拆解 · 检索知识库 · 生成 · 待复核</span></div>
+            <div class="ai-taskbar-h"><span class="step-dot">1</span><span class="ai-tag">AI Agent</span><span class="ai-state" id="aiState" data-s="idle" role="status" aria-live="polite"><i class="ai-dot" aria-hidden="true"></i><span class="ai-state-tx"></span></span><span class="ai-hint" data-i18n="aiTaskHint">一句话下达任务，自动拆解 · 检索知识库 · 生成 · 待复核</span></div>
             <div class="wrapflex" style="gap:var(--sp-3)">
               <input class="input" id="aiTask" data-i18n-ph="aiTaskPh" placeholder="例如：为哈萨克斯坦的研学团生成中俄双语行前手册，注明宗教饮食与外币兑换" />
               <button class="btn btn-lg" id="btnAiGen"><span class="ico" id="ioWarn2"></span><span data-i18n="aiGenBtn">AI 生成</span></button>
             </div>
             <div id="aiTrace" class="ai-trace-org"></div>
           </div>
-          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">1</span><span class="step-tx" data-i18n="orgStep1"></span></div>
+          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">2</span><span class="step-tx" data-i18n="orgStep1"></span></div>
+          <div id="autoFillNote" class="autofill-note" hidden></div>
           <div class="field">
             <label class="label" data-i18n="genTemplate"></label>
             <div class="tpl-grid" id="tplCards"></div>
@@ -71,7 +72,7 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
             <div class="hint" id="gTplDesc"></div>
           </div>
 
-          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">2</span><span class="step-tx" data-i18n="orgStep2"></span></div>
+          <div class="subhead" data-i18n="orgStep2"></div>
           <div class="grid g2" style="gap:var(--sp-4)">
             <div class="field">
               <label class="label" for="gCountry" data-i18n="genCountry"></label>
@@ -83,7 +84,7 @@ document.documentElement.dir=(c==="ar")?"rtl":"ltr";}}catch(e){}})();</script>
             </div>
           </div>
 
-          <div class="stepbar" style="margin-top:var(--sp-6)"><span class="step-dot">3</span><span class="step-tx" data-i18n="orgStep3"></span></div>
+          <div class="subhead" data-i18n="orgStep3"></div>
           <div class="field">
             <label class="label" for="gTopic" data-i18n="genTopic"></label>
             <input class="input" id="gTopic" value="秋季学期居留许可集中办理">

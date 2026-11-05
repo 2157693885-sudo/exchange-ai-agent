@@ -202,16 +202,139 @@
       '<ul class="tiny muted" style="padding-left:1.1em;margin:0">' + LAST.sources.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>";
     U.toast(t("genPreview") + " ✓");
   }
+  /* ============ 国别 → 输出语种（用于材料语种自动跟随） ============ */
+  var C2LANG = {
+    KR:"ko", JP:"ja", DE:"de", RU:"ru", KZ:"ru", SA:"ar", EG:"ar", FR:"fr",
+    US:"en", TH:"th", VN:"vi", MY:"ms", ID:"ms", MM:"my", PK:"en", IN:"en", BD:"en"
+  };
+  var langTouched = false;   /* 用户手动改过「目标语种」后不再自动覆盖 */
+
+  function langName(code) {
+    var n = code;
+    (window.KB.LANGS || []).forEach(function (l) {
+      if (l.code === code) n = isZh() ? (l.name || code) : (l.en || l.name || code);
+    });
+    return n;
+  }
+
+  /* AI 任务状态灯：idle 隐藏 / run 生成中 / ok 已完成 */
+  function setAiState(st) {
+    var el = $("aiState");
+    if (!el) return;
+    el.setAttribute("data-s", st);
+    var tx = el.querySelector(".ai-state-tx");
+    if (tx) tx.textContent = (st === "run") ? t("generating") : "";
+  }
+
+  /* 本地预识别（毫秒级、不联网）：国别 → 语种 → 模板 → 事项，并回写表单。
+     放在调用大模型「之前」执行，所以点下按钮界面立刻有反应，
+     而且材料语种能跟着国别走（韩国 → 韩文）。 */
+  function prefillFromTask(task) {
+    var t0 = String(task || ""), q = t0.toLowerCase();
+    var parts = [], els = [];
+    var ck = (typeof A.detectCountry === "function") ? A.detectCountry(t0) : "";
+
+    /* ① 目标国别 */
+    if (ck && ck !== "OTHER" && $("gCountry").value !== ck) {
+      $("gCountry").value = ck;
+      parts.push(t("genCountry") + " " + countryName(ck));
+      els.push($("gCountry"));
+    }
+
+    /* ② 目标语种：跟随国别；用户手改过就不再覆盖 */
+    if (!langTouched && ck && C2LANG[ck]) {
+      var code = C2LANG[ck];
+      if ($("gLang").value !== code && $("gLang").querySelector('option[value="' + code + '"]')) {
+        $("gLang").value = code;
+        parts.push(t("genLang") + " " + langName(code));
+        els.push($("gLang"));
+      }
+    }
+
+    /* ③ 选择模板：按任务用词归类；无明确信号用「国别化来华指南」 */
+    var tpl = "t_guide";
+    if (/问答|答疑|faq|常见问题/.test(q)) tpl = "t_faq";
+    else if (/应急|紧急|突发|emergency/.test(q)) tpl = "t_emergency";
+    else if (/通知|公告|notice/.test(q)) tpl = "t_notice";
+    else if (/简报|brief|迎新|orientation/.test(q)) tpl = "t_brief";
+    else if (/清单|checklist|要准备|材料清单/.test(q)) tpl = "t_checklist";
+    if ($("gTpl").value !== tpl) {
+      $("gTpl").value = tpl;
+      renderTplCards(); tplDesc();
+      var tn = tpl;
+      KB.TEMPLATES.forEach(function (x) { if (x.id === tpl) tn = isZh() ? x.name : KB.L(x, "name"); });
+      parts.push(t("genTemplate") + " " + tn);
+      els.push($("tplCards"));
+    }
+
+    /* ④ 事项/主题：任务里明确点到某条办事事项才覆盖，没点到不猜 */
+    var hit = null;
+    allMatters().forEach(function (m) {
+      var ti = window.KB.L(m, "title") || m.title || "";
+      if (ti && ti.length >= 4 && t0.indexOf(ti) >= 0) hit = m;
+    });
+    if (hit) {
+      var tv = window.KB.L(hit, "title") || hit.title;
+      if (tv && $("gTopic").value !== tv) {
+        $("gTopic").value = tv; parts.push(t("genTopic") + " " + tv); els.push($("gTopic"));
+      }
+    }
+    return { parts: parts, els: els, country: ck };
+  }
+
+  /* 把预识别/回填的结果呈现出来：绿色提示条 + 控件高亮 + 轻提示 */
+  function showFillResult(res) {
+    var parts = (res && res.parts) || [], els = (res && res.els) || [];
+    var note = $("autoFillNote");
+    if (note) {
+      if (parts.length) {
+        note.hidden = false;
+        note.innerHTML = "<b>" + U.esc(t("aiGenDone")) + "</b>" +
+          '<div class="af-list">' + U.esc(parts.join(" · ")) + "</div>";
+      } else {
+        note.hidden = true;
+      }
+    }
+    els.forEach(function (el) {
+      if (!el || !el.classList) return;
+      el.classList.remove("af-flash");
+      void el.offsetWidth;
+      el.classList.add("af-flash");
+      setTimeout(function () { el.classList.remove("af-flash"); }, 2600);
+    });
+    if (parts.length) U.toast(t("aiGenDone") + " · " + parts.join(" · "));
+  }
+
+  /* ================= 一句话任务 → 同步表单 =================
+     背景：Agent 生成内容时内部已识别国别（detectCountry）与意图（classify），
+          但从未回写到「目标国别 / 选择模板 / 事项主题」三个控件，
+          导致「内容按韩国生成、目标国别却仍显示巴基斯坦」这类前后不一致。
+     做法：复用 Agent 同一套识别逻辑回写控件。注意用直接赋值（不派发 change），
+          否则会触发 genContent() 把刚生成的 AI 预览覆盖掉。 */
+  function syncGenFormFromTask(task) {
+    /* 兼容入口：预识别已在点击时执行过，这里只负责呈现结果 */
+    showFillResult(prefillFromTask(task));
+  }
+
   /* ================= AI Agent 一句话生成 ================= */
   $("btnAiGen").addEventListener("click", function () {
     var task = $("aiTask").value.trim();
     if (!task) { U.toast(t("aiTaskEmpty")); return; }
-    $("btnAiGen").disabled = true;
     var btnTxt = $("btnAiGen");
+    btnTxt.disabled = true;
     btnTxt.querySelector("span:last-child").textContent = t("generating");
+    setAiState("run");
     $("aiTrace").innerHTML = '<div class="ai-working">' + U.esc(t("agentRunning")) + '</div>';
+
+    /* 先做本地预识别并回填（毫秒级）：点下按钮界面立刻有反应，
+       且材料语种能随国别自动切换（韩国 → 韩文）。 */
+    var pre = { parts: [], els: [], country: "" };
+    try { pre = prefillFromTask(task); showFillResult(pre); } catch (e) { }
+
     A.genMaterialLLM(task, $("gLang").value).then(function (r) {
       LAST = r;
+      /* 把 Agent 已识别出的国别/模板/事项回写表单，保证界面与内容一致 */
+      try { syncGenFormFromTask(task); } catch (e) { }
       var _mBar = mIsZh() ? " ｜ " : " | ";
       var _mLang = $("gLang").value;
       $("pvMeta").textContent = "AI Agent · " + task.slice(0, 34) + _mBar + new Date().toLocaleString();
@@ -227,11 +350,21 @@
       } else {
         $("aiTrace").innerHTML = "";
       }
+      btnTxt.querySelector("span:last-child").textContent = t("regenerate");
+      $("btnAiGen").disabled = false;
+      setAiState("ok");
+      U.toast(t("aiGenDone"));
+    }).catch(function () {
       btnTxt.querySelector("span:last-child").textContent = t("aiGenBtn");
       $("btnAiGen").disabled = false;
-      U.toast(t("aiGenDone"));
+      setAiState("idle");
     });
   });
+  /* 用户手动改过语种后，后续不再被国别自动覆盖 */
+  $("gLang").addEventListener("change", function () { langTouched = true; });
+
+  /* 任务描述一改，状态灯回到待命：暗示"内容变了，可再次生成" */
+  $("aiTask").addEventListener("input", function () { if (!$("btnAiGen").disabled) setAiState("idle"); });
 
   $("btnGenContent").addEventListener("click", genContent);
   $("gTpl").addEventListener("change", function () { tplDesc(); genContent(); });

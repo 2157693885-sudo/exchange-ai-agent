@@ -239,6 +239,10 @@ window.UI = (function () {
     }).join("\n");
     h = h.replace(/^### (.*)$/gm, "<h4>$1</h4>").replace(/^## (.*)$/gm, "<h3>$1</h3>").replace(/^# (.*)$/gm, "<h2>$1</h2>");
     h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    /* 链接：目录锚点（预览内无跳转目标）降级为纯文本；
+       外部链接渲染为可点链接，避免把 [文字](#锚点) 原样漏在正文里 */
+    h = h.replace(/\[([^\]]*)\]\(#[^)]*\)/g, "$1");
+    h = h.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     h = h.replace(/^&gt; (.*)$/gm, '<div class="callout callout-info" style="margin:8px 0"><p class="small" style="margin:0">$1</p></div>');
     h = h.replace(/^(\d+)\. (.*)$/gm, "<li>$2</li>").replace(/(<li>[\s\S]*?<\/li>)(?!\s*<li>)/g, "<ol>$1</ol>");
     h = h.replace(/^- (.*)$/gm, "<li>$1</li>").replace(/(<li>[\s\S]*?<\/li>)(?!\s*<li>)/g, "<ul>$1</ul>");

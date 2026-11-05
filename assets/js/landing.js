@@ -28,7 +28,7 @@
     document.getElementById("chip1").innerHTML = '<span class="ico">' + U.ICONS.book + "</span>" + (zh ? "来源锚定 · 无来源不入库" : "Source-anchored · nothing enters without a source");
     document.getElementById("chip2").innerHTML = '<span class="ico">' + U.ICONS.shield + "</span>" + (zh ? "AI 生成标识 + 人工复核" : "AI-labelled · human review before release");
     document.getElementById("chip3").innerHTML = '<span class="ico">' + U.ICONS.lock + "</span>" + (zh ? "数据本地化 · 零后端依赖" : "Local-first · zero backend dependency");
-    document.getElementById("chip4").innerHTML = '<span class="ico">' + U.ICONS.globe + "</span>" + (zh ? "十语界面 · 含 RTL" : "10-language UI · RTL ready");
+    document.getElementById("chip4").innerHTML = '<span class="ico">' + U.ICONS.globe + "</span>" + (zh ? "十三语界面 · 含 RTL" : "13-language UI · RTL ready");
     document.getElementById("painLead").textContent = zh
       ? "2024—2025 学年已有来自 191 个国家和地区的 38 万名国际学生在华学习交流；240 小时过境免签适用国家达 57 国、单方面免签达 50 国。规模与政策红利同时释放，但办事指引仍停留在「自己找、反复问」的阶段。"
       : "In the 2024–2025 academic year, over 380,000 international students from 191 countries studied in China. 240-hour visa-free transit now covers 57 countries, and unilateral visa exemption 50. Policy dividends keep expanding, yet guidance still means \u201csearch on your own, ask repeatedly.\u201d";

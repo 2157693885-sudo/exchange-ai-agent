@@ -225,7 +225,7 @@ window.Agent = (function () {
     }
     /* 1) 用户自建条目（机构端「AI 提炼导入」保存的）——只有这部分才持久化。
        预置条目若也落盘，旧缓存会把「尚未补齐译文的旧版本」一直带下去，
-       导致后来补的十语译文永远不生效。 */
+       导致后来补的多语译文永远不生效。 */
     var mine = [];
     try {
       var v = localStorage.getItem("ea2_localKb");
@@ -814,6 +814,11 @@ window.Agent = (function () {
     });
     return k;
   }
+  /* 输出语言：材料生成必须显式锁定语种，否则会被中文提示词带跑 */
+  var LANG_EN = { zh: "Simplified Chinese", en: "English", ru: "Russian", ar: "Arabic",
+    fr: "French", es: "Spanish", vi: "Vietnamese", th: "Thai", my: "Burmese",
+    ms: "Malay", ja: "Japanese", ko: "Korean", de: "German" };
+
   function genMaterialLLM(taskText, lang, onStep) {
     var steps = [];
     var push = function (n, title, detail) {
@@ -856,7 +861,8 @@ window.Agent = (function () {
         push(5, trTrace("traceModel"), "MiniMax-Text-01 · " + trTrace("traceMaterialGen"));
         var cc = window.KB.COUNTRY[countryKey];
         var countryLine = "目标对象：来华" + (cc && cc.zh ? cc.zh : "国际学生") + "留学生；材料须包含该国别的饮食/宗教/节日/礼仪适配提示。";
-        var sys = "你是高校国际学生事务部门的助手。请把用户下达的任务编写成一份可直接发布的来华留学材料（Markdown 格式）。要求：1) 分节组织：背景与对象 / 办理事项与步骤 / 所需材料 / 时限与提示 / 紧急联系与来源；2) 内容严格基于知识库条目，不得编造政策、时限、机构与流程；3) 语言务实、可执行、面向留学生；4) 结尾标注「本文档由 AI 生成 · 待人工复核」。";
+        var sys = "你是高校国际学生事务部门的助手。请把用户下达的任务编写成一份可直接发布的来华留学材料（Markdown 格式）。要求：1) 分节组织：背景与对象 / 办理事项与步骤 / 所需材料 / 时限与提示 / 紧急联系与来源；2) 内容严格基于知识库条目，不得编造政策、时限、机构与流程；3) 语言务实、可执行、面向留学生；4) 结尾标注「本文档由 AI 生成 · 待人工复核」；5) 不要输出目录 / TOC 或锚点链接，直接从正文第一节开始。" +
+          "\n【输出语言】整篇材料必须用 " + (LANG_EN[lang] || LANG_EN.zh) + "（" + lang + "）撰写；除机构名、校名等专有名词外，不得出现中文。";
         llmChat([{ role: "user", content: "任务：" + taskText }], lang, sys + "\n" + countryLine + "\n" + kbCtx).then(function (res) {
           push(6, trTrace("traceReview"), "AI 生成标识已附加；来源 " + srcKeys.length + " 条");
           var md = (res && res.reply) || "";
@@ -944,7 +950,7 @@ window.Agent = (function () {
 
   return {
     classify: classify, retrieve: retrieve, decidePath: decidePath, localKbItems: localKbItems,
-    computeDeadline: computeDeadline, buildChecklist: buildChecklist,
+    computeDeadline: computeDeadline, buildChecklist: buildChecklist, detectCountry: detectCountry,
     renderMaterial: renderMaterial, askAsync: askAsync, buildAnswer: buildAnswer,
     glossaryTranslate: glossaryTranslate, efficiencyModel: efficiencyModel,
     bridgeOk: bridgeOk, bridgeBase: bridgeBase, setBridge: setBridge, ensureBridge: ensureBridge, onBridgeSettle: onBridgeSettle, whenBridgeReady: whenBridgeReady, askSmart: askSmart, buildLLMAnswer: buildLLMAnswer, genMaterialLLM: genMaterialLLM, extractKb: extractKb,
