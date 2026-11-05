@@ -372,27 +372,36 @@
     $(id).addEventListener("change", function () { applyGenDefaults(false); genContent(); });
   });
 
-  /* 生成器表单默认值（十语）：默认值会写进生成材料，必须随「材料语种」切换，
-     否则俄文/阿文材料里会残留中文默认值。用户手改过的字段不再覆盖。 */
+  /* 生成器表单默认值（十三语）：默认值会写进生成材料，必须随「材料语种」切换，
+     否则俄文/阿文材料里会残留中文默认值。用户手改过的字段不再覆盖。
+     演示用的截止日期按「下一个 10 月 15 日」动态计算，避免任何时间打开都显示过期日期。 */
+  var DEMO_YEAR = (function () {
+    var d = new Date(), y = d.getFullYear(), md = (d.getMonth() + 1) * 100 + d.getDate();
+    return md > 1015 ? y + 1 : y;
+  })();
+  var DEMO_DL = DEMO_YEAR + "-10-15";
   var GEN_DEFAULTS = {
     topic: {
       zh: "秋季学期居留许可集中办理", en: "Fall-semester residence permit processing",
       ru: "Оформление вида на жительство на осенний семестр", ar: "إنجاز تصريح الإقامة للفصل الخريفي",
       fr: "Traitement des permis de séjour du semestre d'automne", es: "Tramitación del permiso de residencia del semestre de otoño",
       vi: "Xử lý giấy phép cư trú học kỳ thu", th: "การดำเนินการใบอนุญาตพำนักภาคเรียนฤดูใบไม้ร่วง",
-      my: "ဆောင်းဦးစာသင်နှစ် နေထိုင်ခွင့်လက်မှတ် စုပေါင်းဆောင်ရွက်ခြင်း", ms: "Pemprosesan permit kediaman semester luruh"
+      my: "ဆောင်းဦးစာသင်နှစ် နေထိုင်ခွင့်လက်မှတ် စုပေါင်းဆောင်ရွက်ခြင်း", ms: "Pemprosesan permit kediaman semester luruh",
+      ja: "秋季学期の在留許可集中手続き", ko: "가을학기 체류허가 일괄 처리", de: "Konzentrierte Bearbeitung der Aufenthaltsgenehmigung im Herbstsemester"
     },
     deadline: {
-      zh: "2026-10-15 前", en: "by 2026-10-15", ru: "до 2026-10-15", ar: "قبل 2026-10-15",
-      fr: "avant le 2026-10-15", es: "antes del 2026-10-15", vi: "trước 2026-10-15",
-      th: "ภายใน 2026-10-15", my: "2026-10-15 မတိုင်မီ", ms: "sebelum 2026-10-15"
+      zh: DEMO_DL + " 前", en: "by " + DEMO_DL, ru: "до " + DEMO_DL, ar: "قبل " + DEMO_DL,
+      fr: "avant le " + DEMO_DL, es: "antes del " + DEMO_DL, vi: "trước " + DEMO_DL,
+      th: "ภายใน " + DEMO_DL, my: DEMO_DL + " မတိုင်မီ", ms: "sebelum " + DEMO_DL,
+      ja: DEMO_DL + " まで", ko: DEMO_DL + " 이전", de: "bis " + DEMO_DL
     },
     contact: {
       zh: "国际学生办公室 · 电话 0000-0000000", en: "International Student Office · Tel 0000-0000000",
       ru: "Офис иностранных студентов · тел. 0000-0000000", ar: "مكتب الطلاب الدوليين · هاتف 0000-0000000",
       fr: "Bureau des étudiants internationaux · tél. 0000-0000000", es: "Oficina de Estudiantes Internacionales · tel. 0000-0000000",
       vi: "Văn phòng sinh viên quốc tế · ĐT 0000-0000000", th: "สำนักงานนักศึกษานานาชาติ · โทร 0000-0000000",
-      my: "နိုင်ငံတကာ ကျောင်းသား ရုံး · ဖုန်း 0000-0000000", ms: "Pejabat Pelajar Antarabangsa · Tel 0000-0000000"
+      my: "နိုင်ငံတကာ ကျောင်းသား ရုံး · ဖုန်း 0000-0000000", ms: "Pejabat Pelajar Antarabangsa · Tel 0000-0000000",
+      ja: "留学生課 · 電話 0000-0000000", ko: "국제학생처 · 전화 0000-0000000", de: "International Office · Tel. 0000-0000000"
     }
   };
   var GEN_FIELDS = [["gTopic", "topic"], ["gDeadline", "deadline"], ["gContact", "contact"]];
